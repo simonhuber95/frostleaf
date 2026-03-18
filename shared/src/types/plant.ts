@@ -18,15 +18,7 @@ export interface PlantThermalProperties {
   confidence: ConfidenceLevel;
 }
 
-export type CropGroup =
-  | 'vegetable'
-  | 'herb'
-  | 'fruit'
-  | 'berry'
-  | 'legume'
-  | 'root'
-  | 'brassica'
-  | 'leafy_green';
+export type CropGroup = 'vegetable' | 'herb' | 'fruit' | 'berry' | 'legume' | 'root' | 'brassica' | 'leafy_green';
 
 export type LightRequirement = 'full_sun' | 'partial_shade' | 'full_shade';
 
