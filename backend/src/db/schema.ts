@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, real, integer, date, timestamp, boolean, pgEnum, uniqueIndex } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, text, real, integer, date, timestamp, pgEnum, uniqueIndex } from 'drizzle-orm/pg-core';
 
 // --- Enums ---
 
@@ -19,6 +19,10 @@ export const thermalDataSourceEnum = pgEnum('thermal_data_source', ['measured', 
 
 export const confidenceLevelEnum = pgEnum('confidence_level', ['high', 'medium', 'low']);
 
+export const plantSourceEnum = pgEnum('plant_source', ['seed', 'trefle', 'manual']);
+
+export const durationEnum = pgEnum('duration', ['annual', 'biennial', 'perennial']);
+
 // --- Tables ---
 
 export const plants = pgTable('plants', {
@@ -27,22 +31,43 @@ export const plants = pgTable('plants', {
   commonName: text('common_name').notNull(),
   family: text('family').notNull(),
   cropGroup: cropGroupEnum('crop_group').notNull(),
-  daysToHarvest: integer('days_to_harvest').notNull(),
-  lightRequirement: lightRequirementEnum('light_requirement').notNull(),
-  soilPreferences: text('soil_preferences').array().notNull().default([]),
+  source: plantSourceEnum('source').notNull().default('seed'),
+  externalId: text('external_id'),
+  imageUrl: text('image_url'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
 });
 
-export const plantThermalProperties = pgTable('plant_thermal_properties', {
+export const plantProperties = pgTable('plant_properties', {
   id: uuid('id').primaryKey().defaultRandom(),
   plantId: uuid('plant_id')
     .notNull()
     .references(() => plants.id, { onDelete: 'cascade' })
     .unique(),
-  tBase: real('t_base').notNull(),
-  tUpper: real('t_upper').notNull(),
+
+  // Growing info
+  daysToHarvest: integer('days_to_harvest'),
+  lightRequirement: lightRequirementEnum('light_requirement'),
+  soilPreferences: text('soil_preferences').array().notNull().default([]),
+  duration: durationEnum('duration'),
+  edibleParts: text('edible_parts').array().notNull().default([]),
+  description: text('description'),
+  sowingInfo: text('sowing_info'),
+  bloomMonths: text('bloom_months').array().notNull().default([]),
+  growthMonths: text('growth_months').array().notNull().default([]),
+
+  // Temperature tolerance (from Trefle or other sources)
+  minTemperature: real('min_temperature'),
+  maxTemperature: real('max_temperature'),
+
+  // Thermal properties (from GDD paper / curated data)
+  tBase: real('t_base'),
+  tUpper: real('t_upper'),
   gddRequired: integer('gdd_required'),
-  source: thermalDataSourceEnum('source').notNull(),
-  confidence: confidenceLevelEnum('confidence').notNull(),
+  thermalSource: thermalDataSourceEnum('thermal_source'),
+  thermalConfidence: confidenceLevelEnum('thermal_confidence'),
+
+  // Enrichment tracking
+  lastEnrichedAt: timestamp('last_enriched_at'),
 });
 
 export const weatherStations = pgTable('weather_stations', {

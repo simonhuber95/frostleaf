@@ -24,24 +24,27 @@
 
 ---
 
-## Phase 1: Data Foundation ← NEXT
+## Phase 1: Data Foundation
 
 **Goal:** Populate the system with plant and climate data.
 
-- [ ] Curate V1 plant seed list (~50–80 plants) with thermal properties
-  - Common Norwegian hobby garden crops (tomato, potato, carrot, kale, peas, beans, herbs, strawberries, etc.)
-  - Thermal data: T_base, T_upper, GDD required, days to harvest
-- [ ] Build seed script to populate plants + thermal properties tables
-- [ ] Integrate MET Norway Frost API
-  - [ ] Weather station lookup by coordinates
-  - [ ] Fetch historical temperature data
-  - [ ] Cache responses in DB
-- [ ] Integrate Trefle API (supplementary plant data)
-  - [ ] Proxy + cache layer
-- [ ] GDD calculation engine
-  - [ ] Daily GDD from temperature data
-  - [ ] Seasonal accumulation
-  - [ ] Frost date detection (last spring / first autumn)
+- [x] Curate V1 plant seed list (65 plants) with thermal properties
+  - GDD paper parsed → CSV thermal data + summary
+  - Norwegian hobby garden focus: vegetables, herbs, berries, fruit trees
+- [x] Build seed script (`pnpm db:seed`) to populate plants + thermal properties
+- [x] Integrate MET Norway Frost API (route → service → client architecture)
+  - [x] Weather station lookup by coordinates (haversine nearest, cached in DB)
+  - [x] Fetch historical temperature data
+  - [x] Cache responses in DB
+- [x] GDD calculation engine (`services/gdd.ts`)
+  - [x] Daily GDD from temperature data (FAO simplified method)
+  - [x] Seasonal accumulation
+  - [x] Frost date detection (last spring / first autumn)
+- [x] Plants REST API (`GET /api/plants`, `GET /api/plants/:id`)
+- [x] Location REST API (`POST /api/location`, `GET /api/location/:id`)
+- [x] Integrate Trefle API (supplementary plant data)
+  - [x] Generated typed client from OpenAPI spec (`openapi-typescript` + `openapi-fetch`)
+  - [x] Proxy endpoints: `GET /api/plants/search/trefle`, `GET /api/plants/trefle/:id`
 
 ---
 
