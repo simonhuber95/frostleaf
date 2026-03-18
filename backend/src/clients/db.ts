@@ -1,6 +1,6 @@
 import { db } from '../db/index';
 import { plants, plantProperties, weatherStations, climateData, derivedMetrics, locations } from '../db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, ilike, or } from 'drizzle-orm';
 import type { StationMetrics } from '../types/weather';
 
 // --- Plants ---
@@ -48,6 +48,21 @@ export async function findPlantByExternalId(externalId: string) {
     ...r.plants,
     properties: r.plant_properties,
   };
+}
+
+export async function searchPlants(query: string) {
+  const pattern = `%${query}%`;
+  const result = await db
+    .select()
+    .from(plants)
+    .leftJoin(plantProperties, eq(plantProperties.plantId, plants.id))
+    .where(or(ilike(plants.commonName, pattern), ilike(plants.scientificName, pattern), ilike(plants.family, pattern)))
+    .orderBy(plants.commonName);
+
+  return result.map((r) => ({
+    ...r.plants,
+    properties: r.plant_properties,
+  }));
 }
 
 export async function insertPlant(data: typeof plants.$inferInsert) {

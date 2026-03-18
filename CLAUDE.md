@@ -71,6 +71,7 @@ backend/src/
 - **No inline types** — all types in `backend/src/types/` or `shared/src/types/`
 - **`type` over `interface`** — use type aliases everywhere
 - **day.js** for all date calculations
+- **Guard clauses** over deep nesting — early return instead of nested ifs
 
 ## Key Conventions
 

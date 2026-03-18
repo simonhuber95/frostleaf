@@ -1,5 +1,5 @@
 import createClient from 'openapi-fetch';
-import type { paths } from '../types/trefle.generated';
+import type { paths, components } from '../types/trefle.generated';
 
 function getToken(): string {
   const token = process.env.TREFLE_API_TOKEN;
@@ -17,14 +17,23 @@ function createTrefleClient() {
           searchParams.set(key, String(value));
         }
       }
-      // Always append token
       searchParams.set('token', getToken());
       return searchParams.toString();
     },
   });
 }
 
-export async function searchSpecies(query: string, page = 1) {
+// Normalized result from either Trefle plants or species endpoint
+export type TrefleExternalPlant = {
+  externalId: string;
+  scientificName: string;
+  commonName: string | null;
+  family: string | null;
+  imageUrl: string | null;
+  species: components['schemas']['species'] | null;
+};
+
+export async function search(query: string, page = 1) {
   const client = createTrefleClient();
   const { data, error } = await client.GET('/api/v1/species/search', {
     params: { query: { q: query, page } },
@@ -34,52 +43,22 @@ export async function searchSpecies(query: string, page = 1) {
   return data;
 }
 
-export async function getSpeciesById(id: number) {
+export async function fetchById(trefleId: number): Promise<TrefleExternalPlant | null> {
+  // Try species first (has the richest data)
   const client = createTrefleClient();
   const { data, error } = await client.GET('/api/v1/species/{id}', {
-    params: { path: { id: String(id) } },
+    params: { path: { id: String(trefleId) } },
   });
 
-  if (error) throw new Error(`Trefle species error: ${JSON.stringify(error)}`);
-  return data;
-}
+  if (error || !data?.data) return null;
 
-export async function listSpecies(page = 1) {
-  const client = createTrefleClient();
-  const { data, error } = await client.GET('/api/v1/species', {
-    params: { query: { page } },
-  });
-
-  if (error) throw new Error(`Trefle species list error: ${JSON.stringify(error)}`);
-  return data;
-}
-
-export async function searchPlants(query: string, page = 1) {
-  const client = createTrefleClient();
-  const { data, error } = await client.GET('/api/v1/plants/search', {
-    params: { query: { q: query, page } },
-  });
-
-  if (error) throw new Error(`Trefle plants search error: ${JSON.stringify(error)}`);
-  return data;
-}
-
-export async function getPlantById(id: number) {
-  const client = createTrefleClient();
-  const { data, error } = await client.GET('/api/v1/plants/{id}', {
-    params: { path: { id: String(id) } },
-  });
-
-  if (error) throw new Error(`Trefle plant error: ${JSON.stringify(error)}`);
-  return data;
-}
-
-export async function listPlants(page = 1) {
-  const client = createTrefleClient();
-  const { data, error } = await client.GET('/api/v1/plants', {
-    params: { query: { page } },
-  });
-
-  if (error) throw new Error(`Trefle plants list error: ${JSON.stringify(error)}`);
-  return data;
+  const species = data.data;
+  return {
+    externalId: `trefle:${trefleId}`,
+    scientificName: species.scientific_name,
+    commonName: species.common_name ?? null,
+    family: species.family ?? null,
+    imageUrl: species.image_url ?? null,
+    species,
+  };
 }

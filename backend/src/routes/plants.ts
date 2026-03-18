@@ -1,25 +1,18 @@
 import { Router, type Router as RouterType } from 'express';
-import {
-  listPlants,
-  getPlant,
-  searchPlantsByQuery,
-  getPlantFromCatalog,
-  searchSpeciesByQuery,
-  getSpecies,
-} from '../services/plants';
+import { listPlants, getPlant, searchPlants, importExternal } from '../services/plants';
 
 export const plantsRouter: RouterType = Router();
 
-// GET /api/plants — list all plants with thermal properties
+// GET /api/plants — list all plants
 plantsRouter.get('/', async (_req, res) => {
   const result = await listPlants();
   res.json(result);
 });
 
-// GET /api/plants/trefle/plants/search — search Trefle plants (lightweight)
-plantsRouter.get('/trefle/plants/search', async (req, res) => {
+// GET /api/plants/search?q=&includeExternal=true — search plants, optionally include Trefle
+plantsRouter.get('/search', async (req, res) => {
   const q = req.query.q as string;
-  const page = parseInt(req.query.page as string) || 1;
+  const includeExternal = req.query.includeExternal === 'true';
 
   if (!q) {
     res.status(400).json({ error: 'Query parameter "q" is required' });
@@ -27,7 +20,7 @@ plantsRouter.get('/trefle/plants/search', async (req, res) => {
   }
 
   try {
-    const result = await searchPlantsByQuery(q, page);
+    const result = await searchPlants(q, includeExternal);
     res.json(result);
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';
@@ -35,16 +28,20 @@ plantsRouter.get('/trefle/plants/search', async (req, res) => {
   }
 });
 
-// GET /api/plants/trefle/plants/:id — get Trefle plant by ID (lightweight)
-plantsRouter.get('/trefle/plants/:id', async (req, res) => {
-  const id = parseInt(req.params.id);
-  if (isNaN(id)) {
-    res.status(400).json({ error: 'Invalid plant ID' });
+// POST /api/plants/import/:trefleId — import a plant from Trefle into our DB
+plantsRouter.post('/import/:trefleId', async (req, res) => {
+  const trefleId = parseInt(req.params.trefleId);
+  if (isNaN(trefleId)) {
+    res.status(400).json({ error: 'Invalid Trefle ID' });
     return;
   }
 
   try {
-    const result = await getPlantFromCatalog(id);
+    const result = await importExternal(trefleId);
+    if (!result) {
+      res.status(404).json({ error: 'Plant not found on Trefle' });
+      return;
+    }
     res.json(result);
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';
@@ -52,43 +49,7 @@ plantsRouter.get('/trefle/plants/:id', async (req, res) => {
   }
 });
 
-// GET /api/plants/trefle/species/search — search Trefle species (detailed)
-plantsRouter.get('/trefle/species/search', async (req, res) => {
-  const q = req.query.q as string;
-  const page = parseInt(req.query.page as string) || 1;
-
-  if (!q) {
-    res.status(400).json({ error: 'Query parameter "q" is required' });
-    return;
-  }
-
-  try {
-    const result = await searchSpeciesByQuery(q, page);
-    res.json(result);
-  } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error';
-    res.status(500).json({ error: message });
-  }
-});
-
-// GET /api/plants/trefle/species/:id — get Trefle species by ID (detailed, with growth data)
-plantsRouter.get('/trefle/species/:id', async (req, res) => {
-  const id = parseInt(req.params.id);
-  if (isNaN(id)) {
-    res.status(400).json({ error: 'Invalid species ID' });
-    return;
-  }
-
-  try {
-    const result = await getSpecies(id);
-    res.json(result);
-  } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error';
-    res.status(500).json({ error: message });
-  }
-});
-
-// GET /api/plants/:id — single plant with thermal properties
+// GET /api/plants/:id — get plant by our UUID
 plantsRouter.get('/:id', async (req, res) => {
   const { id } = req.params;
   const result = await getPlant(id);
