@@ -1,0 +1,43 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: frostleaf
+      POSTGRES_PASSWORD: frostleaf_dev
+      POSTGRES_DB: frostleaf
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://frostleaf:frostleaf_dev@db:5432/frostleaf
+      PORT: '3000'
+    ports:
+      - '3000:3000'
+    depends_on:
+      - db
+    volumes:
+      - ./backend/src:/app/backend/src
+      - ./shared/src:/app/shared/src
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    restart: unless-stopped
+    environment:
+      PUBLIC_API_URL: http://localhost:3000
+    ports:
+      - '5173:5173'
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
