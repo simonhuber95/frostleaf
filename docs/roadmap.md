@@ -1,22 +1,36 @@
 # Frostleaf – Development Roadmap
 
-## Phase 0: Project Setup
+## Phase 0: Project Setup ✓
 
 - [x] Define core concept and methodology
 - [x] Choose tech stack (SvelteKit + Node.js + TypeScript + PostgreSQL)
-- [x] Define data model
-- [ ] Initialize monorepo with workspaces (frontend, backend, shared)
-- [ ] Docker Compose setup (PostgreSQL, backend, frontend)
-- [ ] Database schema + migrations (Prisma or Drizzle)
-- [ ] Basic CI: linting, type-checking
+- [x] Define data model (shared types: plant, location, garden, climate)
+- [x] Initialize monorepo with pnpm workspaces (frontend, backend, shared)
+- [x] Docker Compose setup (PostgreSQL 16, backend, frontend)
+- [x] ESLint + Prettier configuration
+- [x] Dockerfiles for backend and frontend
+- [x] Base TypeScript config with ESM
+- [x] Health check route on backend
+- [x] CLAUDE.md + memory setup
+- [x] Database schema with Drizzle ORM (8 tables, enums, indexes)
+- [x] Drizzle Kit config + migration scripts
+- [x] Node 24 LTS via nvm
+
+- [x] Run first migration — all 8 tables live in PostgreSQL
+
+**Remaining:**
+
+- [ ] Basic CI: linting, type-checking (GitHub Actions — when needed)
 
 ---
 
-## Phase 1: Data Foundation
+## Phase 1: Data Foundation ← NEXT
 
 **Goal:** Populate the system with plant and climate data.
 
-- [ ] Curate V1 plant seed list (~50-80 plants) with thermal properties
+- [ ] Curate V1 plant seed list (~50–80 plants) with thermal properties
+  - Common Norwegian hobby garden crops (tomato, potato, carrot, kale, peas, beans, herbs, strawberries, etc.)
+  - Thermal data: T_base, T_upper, GDD required, days to harvest
 - [ ] Build seed script to populate plants + thermal properties tables
 - [ ] Integrate MET Norway Frost API
   - [ ] Weather station lookup by coordinates
@@ -36,9 +50,9 @@
 **Goal:** Given a location, determine which plants are viable.
 
 - [ ] Location resolution service
-  - [ ] Address → geocode → nearest weather station
-  - [ ] Coordinate input
-  - [ ] Municipality lookup
+  - [ ] Coordinate input → nearest weather station
+  - [ ] Address → geocode → nearest station
+  - [ ] Municipality lookup (Norwegian kommuner)
 - [ ] Viability calculation
   - [ ] Compare location GDD vs plant GDD requirements
   - [ ] Confidence scoring (measured vs inferred T_base)
@@ -55,11 +69,10 @@
 
 **Goal:** Users can enter a location and see viable plants.
 
-- [ ] SvelteKit app scaffolding
 - [ ] Location entry page (address / coordinates / municipality)
 - [ ] Viability results page
   - [ ] Ranked plant list with viability scores
-  - [ ] Filter by crop group (vegetable, herb, fruit)
+  - [ ] Filter by crop group (vegetable, herb, fruit, berry, etc.)
   - [ ] Plant detail view (thermal info, growing tips)
 - [ ] Basic responsive design (mobile-friendly)
 
@@ -67,9 +80,9 @@
 
 ## Phase 4: My Garden
 
-**Goal:** Users can create and manage a virtual garden.
+**Goal:** Users can create and manage a virtual garden (list-based).
 
-- [ ] Auth system (signup, login, JWT or session-based)
+- [ ] Auth system (signup, login)
 - [ ] Garden CRUD
   - [ ] Create garden (name, location)
   - [ ] Add/remove plants
@@ -99,7 +112,7 @@
 
 ## Phase 6: Visual Garden Layout
 
-**Goal:** Spatial garden planning.
+**Goal:** Spatial garden planning with grid-based plots.
 
 - [ ] Grid-based plot editor
   - [ ] Define bed dimensions
@@ -132,14 +145,13 @@
   - [ ] API key management
   - [ ] Documentation (OpenAPI/Swagger)
 - [ ] Landing page
-- [ ] Global climate data support (NASA POWER API as fallback)
+- [ ] Global climate data support (extend beyond Norway, NASA POWER API as fallback)
 
 ---
 
 ## Open Questions
 
-- ORM choice: Prisma vs Drizzle vs raw SQL?
 - Auth library: Lucia, custom JWT, or passport.js?
 - Do we want SSR for viability pages (SEO) or pure SPA?
-- Frost API client ID: need to register at https://frost.met.no
-- Trefle API key: need to register at https://trefle.io
+- Frost API client ID: register at https://frost.met.no
+- Trefle API key: register at https://trefle.io
