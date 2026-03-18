@@ -1,10 +1,8 @@
 import { Router, type Router as RouterType } from 'express';
 import dayjs from 'dayjs';
-import { db } from '../db/index.js';
-import { locations, derivedMetrics } from '../db/schema.js';
-import { eq } from 'drizzle-orm';
-import { findNearestStation, getTemperatureData } from '../services/weather.js';
-import { computeStationMetrics } from '../services/gdd.js';
+import * as db from '../clients/db';
+import { findNearestStation, getTemperatureData } from '../services/weather';
+import { computeStationMetrics } from '../services/gdd';
 
 export const locationRouter: RouterType = Router();
 
@@ -19,41 +17,21 @@ locationRouter.post('/', async (req, res) => {
 
   try {
     const station = await findNearestStation(latitude, longitude);
+    const location = await db.insertLocation(latitude, longitude, station.id);
 
-    const [location] = await db
-      .insert(locations)
-      .values({ latitude, longitude, nearestStationId: station.id })
-      .returning();
-
-    // Fetch last 5 years of temperature data
     const currentYear = dayjs().year();
     const fromDate = `${currentYear - 5}-01-01`;
     const toDate = `${currentYear - 1}-12-31`;
 
     const tempData = await getTemperatureData(station.frostApiId, station.id, fromDate, toDate);
 
-    // Compute derived metrics per year
     const metricsResults = [];
     for (let year = currentYear - 5; year < currentYear; year++) {
       const yearRecords = tempData.filter((r) => r.date.startsWith(`${year}`));
       if (yearRecords.length < 100) continue;
 
       const metrics = computeStationMetrics(station.id, year, yearRecords);
-
-      const [saved] = await db
-        .insert(derivedMetrics)
-        .values(metrics)
-        .onConflictDoUpdate({
-          target: [derivedMetrics.stationId, derivedMetrics.year],
-          set: {
-            gddAccumulated: metrics.gddAccumulated,
-            lastFrostSpring: metrics.lastFrostSpring,
-            firstFrostAutumn: metrics.firstFrostAutumn,
-            frostFreeDays: metrics.frostFreeDays,
-          },
-        })
-        .returning();
-
+      const saved = await db.upsertDerivedMetrics(metrics);
       metricsResults.push(saved);
     }
 
@@ -72,15 +50,12 @@ locationRouter.post('/', async (req, res) => {
 locationRouter.get('/:id', async (req, res) => {
   const { id } = req.params;
 
-  const result = await db.select().from(locations).where(eq(locations.id, id));
-
-  if (result.length === 0) {
+  const location = await db.findLocationById(id);
+  if (!location) {
     res.status(404).json({ error: 'Location not found' });
     return;
   }
 
-  const location = result[0];
-  const metrics = await db.select().from(derivedMetrics).where(eq(derivedMetrics.stationId, location.nearestStationId));
-
+  const metrics = await db.findDerivedMetricsByStation(location.nearestStationId);
   res.json({ location, metrics });
 });

@@ -7,9 +7,9 @@ const __dirname = dirname(__filename);
 config({ path: resolve(__dirname, '../../.env') });
 import express from 'express';
 import cors from 'cors';
-import { healthRouter } from './routes/health.js';
-import { plantsRouter } from './routes/plants.js';
-import { locationRouter } from './routes/location.js';
+import { healthRouter } from './routes/health';
+import { plantsRouter } from './routes/plants';
+import { locationRouter } from './routes/location';
 
 const app = express();
 const port = process.env.PORT || 3000;

@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import type { TemperatureRecord, DailyGddRecord, FrostDates, StationMetrics } from '../types/weather.js';
+import type { TemperatureRecord, DailyGddRecord, FrostDates, StationMetrics } from '../types/weather';
 
 /**
  * Calculate daily GDD for a single day using the simplified FAO method.

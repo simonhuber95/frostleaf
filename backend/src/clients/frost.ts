@@ -1,4 +1,4 @@
-import type { FrostSourcesResponse, FrostObservationsResponse } from '../types/frost.js';
+import type { FrostSourcesResponse, FrostObservationsResponse } from '../types/frost';
 
 const FROST_API_BASE = 'https://frost.met.no';
 

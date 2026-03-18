@@ -1,15 +1,10 @@
 import dayjs from 'dayjs';
-import { db } from '../db/index.js';
-import { weatherStations, climateData } from '../db/schema.js';
-import { eq, and } from 'drizzle-orm';
-import { fetchNearbyStations, fetchObservations } from '../clients/frost.js';
-import type { TemperatureRecord } from '../types/weather.js';
+import * as db from '../clients/db';
+import * as frostClient from '../clients/frost';
+import type { TemperatureRecord } from '../types/weather';
 
-// --- Station lookup ---
-
-export async function findNearestStation(lat: number, lon: number): Promise<typeof weatherStations.$inferSelect> {
-  // Check cached stations first
-  const cached = await db.select().from(weatherStations);
+export async function findNearestStation(lat: number, lon: number) {
+  const cached = await db.findAllStations();
 
   if (cached.length > 0) {
     const nearest = findNearestByDistance(cached, lat, lon);
@@ -17,32 +12,23 @@ export async function findNearestStation(lat: number, lon: number): Promise<type
     if (distKm < 50) return nearest;
   }
 
-  // Fetch from Frost API
-  const response = await fetchNearbyStations(lat, lon);
+  const response = await frostClient.fetchNearbyStations(lat, lon);
 
   if (!response.data || response.data.length === 0) {
     throw new Error('No weather stations found near this location');
   }
 
-  // Cache stations in DB
   const stations = [];
   for (const source of response.data) {
     const [stationLon, stationLat] = source.geometry.coordinates;
 
-    const [station] = await db
-      .insert(weatherStations)
-      .values({
-        frostApiId: source.id,
-        name: source.name,
-        latitude: stationLat,
-        longitude: stationLon,
-        availableObservations: ['min(air_temperature P1D)', 'max(air_temperature P1D)'],
-      })
-      .onConflictDoUpdate({
-        target: weatherStations.frostApiId,
-        set: { name: source.name, latitude: stationLat, longitude: stationLon },
-      })
-      .returning();
+    const station = await db.upsertStation({
+      frostApiId: source.id,
+      name: source.name,
+      latitude: stationLat,
+      longitude: stationLon,
+      availableObservations: ['min(air_temperature P1D)', 'max(air_temperature P1D)'],
+    });
 
     stations.push(station);
   }
@@ -50,16 +36,13 @@ export async function findNearestStation(lat: number, lon: number): Promise<type
   return findNearestByDistance(stations, lat, lon);
 }
 
-// --- Temperature data with DB caching ---
-
 export async function getTemperatureData(
   stationFrostId: string,
   stationDbId: string,
   fromDate: string,
   toDate: string,
 ): Promise<TemperatureRecord[]> {
-  // Check cache
-  const cached = await db.select().from(climateData).where(eq(climateData.stationId, stationDbId));
+  const cached = await db.findClimateDataByStation(stationDbId);
 
   if (cached.length > 0) {
     const dates = new Set(cached.map((r) => r.date));
@@ -80,14 +63,12 @@ export async function getTemperatureData(
     }
   }
 
-  // Fetch from Frost API
-  const response = await fetchObservations(stationFrostId, fromDate, toDate);
+  const response = await frostClient.fetchObservations(stationFrostId, fromDate, toDate);
 
   if (!response.data || response.data.length === 0) {
     return [];
   }
 
-  // Parse observations into daily records
   const dailyData = new Map<string, { tempMin: number; tempMax: number }>();
 
   for (const obs of response.data) {
@@ -105,25 +86,12 @@ export async function getTemperatureData(
     dailyData.set(date, existing);
   }
 
-  // Upsert into DB cache
   const results: TemperatureRecord[] = [];
 
   for (const [date, temps] of dailyData) {
     if (temps.tempMin === Infinity || temps.tempMax === -Infinity) continue;
 
-    await db
-      .insert(climateData)
-      .values({
-        stationId: stationDbId,
-        date,
-        tempMin: temps.tempMin,
-        tempMax: temps.tempMax,
-      })
-      .onConflictDoUpdate({
-        target: [climateData.stationId, climateData.date],
-        set: { tempMin: temps.tempMin, tempMax: temps.tempMax, fetchedAt: new Date() },
-      });
-
+    await db.upsertClimateRecord(stationDbId, date, temps.tempMin, temps.tempMax);
     results.push({ date, tempMin: temps.tempMin, tempMax: temps.tempMax });
   }
 
