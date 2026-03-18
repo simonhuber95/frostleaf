@@ -48,6 +48,11 @@ pnpm -F @frostleaf/backend dev
 pnpm -F @frostleaf/frontend dev
 ```
 
+## Workflow
+
+- **Roadmap:** Always update `docs/roadmap.md` after completing tasks (check off items, mark phases done)
+- **Database:** Drizzle ORM with schema in `backend/src/db/schema.ts`, migrations via `drizzle-kit`
+
 ## Key Conventions
 
 - All packages use ES modules (`"type": "module"`)
