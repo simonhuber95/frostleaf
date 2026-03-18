@@ -1,5 +1,5 @@
 {
-  "id": "90dd0ce5-4782-44b2-9959-04f2f33014c0",
+  "id": "fae43c82-9c30-4c37-aa2a-ff58716fd8f4",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -388,8 +388,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.plant_thermal_properties": {
-      "name": "plant_thermal_properties",
+    "public.plant_properties": {
+      "name": "plant_properties",
       "schema": "",
       "columns": {
         "id": {
@@ -405,17 +405,89 @@
           "primaryKey": false,
           "notNull": true
         },
+        "days_to_harvest": {
+          "name": "days_to_harvest",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "light_requirement": {
+          "name": "light_requirement",
+          "type": "light_requirement",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "soil_preferences": {
+          "name": "soil_preferences",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'"
+        },
+        "duration": {
+          "name": "duration",
+          "type": "duration",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "edible_parts": {
+          "name": "edible_parts",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'"
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sowing_info": {
+          "name": "sowing_info",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bloom_months": {
+          "name": "bloom_months",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'"
+        },
+        "growth_months": {
+          "name": "growth_months",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'"
+        },
+        "min_temperature": {
+          "name": "min_temperature",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "max_temperature": {
+          "name": "max_temperature",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
         "t_base": {
           "name": "t_base",
           "type": "real",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "t_upper": {
           "name": "t_upper",
           "type": "real",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "gdd_required": {
           "name": "gdd_required",
@@ -423,26 +495,32 @@
           "primaryKey": false,
           "notNull": false
         },
-        "source": {
-          "name": "source",
+        "thermal_source": {
+          "name": "thermal_source",
           "type": "thermal_data_source",
           "typeSchema": "public",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
-        "confidence": {
-          "name": "confidence",
+        "thermal_confidence": {
+          "name": "thermal_confidence",
           "type": "confidence_level",
           "typeSchema": "public",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
+        },
+        "last_enriched_at": {
+          "name": "last_enriched_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "plant_thermal_properties_plant_id_plants_id_fk": {
-          "name": "plant_thermal_properties_plant_id_plants_id_fk",
-          "tableFrom": "plant_thermal_properties",
+        "plant_properties_plant_id_plants_id_fk": {
+          "name": "plant_properties_plant_id_plants_id_fk",
+          "tableFrom": "plant_properties",
           "tableTo": "plants",
           "columnsFrom": [
             "plant_id"
@@ -456,8 +534,8 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "plant_thermal_properties_plant_id_unique": {
-          "name": "plant_thermal_properties_plant_id_unique",
+        "plant_properties_plant_id_unique": {
+          "name": "plant_properties_plant_id_unique",
           "nullsNotDistinct": false,
           "columns": [
             "plant_id"
@@ -504,25 +582,32 @@
           "primaryKey": false,
           "notNull": true
         },
-        "days_to_harvest": {
-          "name": "days_to_harvest",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "light_requirement": {
-          "name": "light_requirement",
-          "type": "light_requirement",
+        "source": {
+          "name": "source",
+          "type": "plant_source",
           "typeSchema": "public",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "'seed'"
         },
-        "soil_preferences": {
-          "name": "soil_preferences",
-          "type": "text[]",
+        "external_id": {
+          "name": "external_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "image_url": {
+          "name": "image_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
-          "default": "'{}'"
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -617,6 +702,15 @@
         "leafy_green"
       ]
     },
+    "public.duration": {
+      "name": "duration",
+      "schema": "public",
+      "values": [
+        "annual",
+        "biennial",
+        "perennial"
+      ]
+    },
     "public.light_requirement": {
       "name": "light_requirement",
       "schema": "public",
@@ -624,6 +718,15 @@
         "full_sun",
         "partial_shade",
         "full_shade"
+      ]
+    },
+    "public.plant_source": {
+      "name": "plant_source",
+      "schema": "public",
+      "values": [
+        "seed",
+        "trefle",
+        "manual"
       ]
     },
     "public.thermal_data_source": {

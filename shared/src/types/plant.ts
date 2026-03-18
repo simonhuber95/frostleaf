@@ -4,21 +4,42 @@ export type Plant = {
   commonName: string;
   family: string;
   cropGroup: CropGroup;
-  daysToHarvest: number;
-  lightRequirement: LightRequirement;
-  soilPreferences: string[];
+  source: PlantSource;
+  externalId: string | null;
+  imageUrl: string | null;
+  createdAt: string;
 };
 
-export type PlantThermalProperties = {
+export type PlantProperties = {
   plantId: string;
-  tBase: number;
-  tUpper: number;
+  daysToHarvest: number | null;
+  lightRequirement: LightRequirement | null;
+  soilPreferences: string[];
+  duration: Duration | null;
+  edibleParts: string[];
+  description: string | null;
+  sowingInfo: string | null;
+  bloomMonths: string[];
+  growthMonths: string[];
+  minTemperature: number | null;
+  maxTemperature: number | null;
+  tBase: number | null;
+  tUpper: number | null;
   gddRequired: number | null;
-  source: ThermalDataSource;
-  confidence: ConfidenceLevel;
+  thermalSource: ThermalDataSource | null;
+  thermalConfidence: ConfidenceLevel | null;
+  lastEnrichedAt: string | null;
+};
+
+export type PlantWithProperties = Plant & {
+  properties: PlantProperties | null;
 };
 
 export type CropGroup = 'vegetable' | 'herb' | 'fruit' | 'berry' | 'legume' | 'root' | 'brassica' | 'leafy_green';
+
+export type PlantSource = 'seed' | 'trefle' | 'manual';
+
+export type Duration = 'annual' | 'biennial' | 'perennial';
 
 export type LightRequirement = 'full_sun' | 'partial_shade' | 'full_shade';
 
@@ -27,8 +48,7 @@ export type ThermalDataSource = 'measured' | 'estimated' | 'inferred';
 export type ConfidenceLevel = 'high' | 'medium' | 'low';
 
 export type PlantViability = {
-  plant: Plant;
-  thermalProperties: PlantThermalProperties;
+  plant: PlantWithProperties;
   viabilityScore: number; // 0-1
   isViable: boolean;
   locationGdd: number;

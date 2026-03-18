@@ -1,7 +1,7 @@
 import { config } from 'dotenv';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
-import { plants, plantThermalProperties } from './schema';
+import { plants, plantProperties } from './schema';
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
@@ -45,25 +45,26 @@ async function seed() {
         commonName: plant.commonName,
         family: plant.family,
         cropGroup: plant.cropGroup,
-        daysToHarvest: plant.daysToHarvest,
-        lightRequirement: plant.lightRequirement,
-        soilPreferences: plant.soilPreferences,
+        source: 'seed',
       })
       .returning({ id: plants.id });
 
-    await db.insert(plantThermalProperties).values({
+    await db.insert(plantProperties).values({
       plantId: inserted.id,
+      daysToHarvest: plant.daysToHarvest,
+      lightRequirement: plant.lightRequirement,
+      soilPreferences: plant.soilPreferences,
       tBase: plant.thermal.tBase,
       tUpper: plant.thermal.tUpper,
       gddRequired: plant.thermal.gddRequired,
-      source: plant.thermal.source,
-      confidence: plant.thermal.confidence,
+      thermalSource: plant.thermal.source,
+      thermalConfidence: plant.thermal.confidence,
     });
 
     console.log(`  ✓ ${plant.commonName}`);
   }
 
-  console.log(`\nDone! Seeded ${seedData.length} plants with thermal properties.`);
+  console.log(`\nDone! Seeded ${seedData.length} plants with properties.`);
   await client.end();
 }
 

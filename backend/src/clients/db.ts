@@ -1,5 +1,5 @@
 import { db } from '../db/index';
-import { plants, plantThermalProperties, weatherStations, climateData, derivedMetrics, locations } from '../db/schema';
+import { plants, plantProperties, weatherStations, climateData, derivedMetrics, locations } from '../db/schema';
 import { eq } from 'drizzle-orm';
 import type { StationMetrics } from '../types/weather';
 
@@ -9,12 +9,12 @@ export async function findAllPlants() {
   const result = await db
     .select()
     .from(plants)
-    .leftJoin(plantThermalProperties, eq(plantThermalProperties.plantId, plants.id))
+    .leftJoin(plantProperties, eq(plantProperties.plantId, plants.id))
     .orderBy(plants.commonName);
 
   return result.map((r) => ({
     ...r.plants,
-    thermalProperties: r.plant_thermal_properties,
+    properties: r.plant_properties,
   }));
 }
 
@@ -22,7 +22,7 @@ export async function findPlantById(id: string) {
   const result = await db
     .select()
     .from(plants)
-    .leftJoin(plantThermalProperties, eq(plantThermalProperties.plantId, plants.id))
+    .leftJoin(plantProperties, eq(plantProperties.plantId, plants.id))
     .where(eq(plants.id, id));
 
   if (result.length === 0) return null;
@@ -30,8 +30,42 @@ export async function findPlantById(id: string) {
   const r = result[0];
   return {
     ...r.plants,
-    thermalProperties: r.plant_thermal_properties,
+    properties: r.plant_properties,
   };
+}
+
+export async function findPlantByExternalId(externalId: string) {
+  const result = await db
+    .select()
+    .from(plants)
+    .leftJoin(plantProperties, eq(plantProperties.plantId, plants.id))
+    .where(eq(plants.externalId, externalId));
+
+  if (result.length === 0) return null;
+
+  const r = result[0];
+  return {
+    ...r.plants,
+    properties: r.plant_properties,
+  };
+}
+
+export async function insertPlant(data: typeof plants.$inferInsert) {
+  const [inserted] = await db.insert(plants).values(data).returning();
+  return inserted;
+}
+
+export async function upsertPlantProperties(data: typeof plantProperties.$inferInsert) {
+  const [result] = await db
+    .insert(plantProperties)
+    .values(data)
+    .onConflictDoUpdate({
+      target: plantProperties.plantId,
+      set: { ...data, lastEnrichedAt: new Date() },
+    })
+    .returning();
+
+  return result;
 }
 
 // --- Weather Stations ---
