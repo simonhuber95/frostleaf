@@ -89,6 +89,11 @@ export async function findAllStations() {
   return db.select().from(weatherStations);
 }
 
+export async function findStationById(id: string) {
+  const result = await db.select().from(weatherStations).where(eq(weatherStations.id, id));
+  return result.length > 0 ? result[0] : null;
+}
+
 export async function upsertStation(data: {
   frostApiId: string;
   name: string;
@@ -149,6 +154,11 @@ export async function findDerivedMetricsByStation(stationId: string) {
 }
 
 // --- Locations ---
+
+export async function findLocationByStation(stationId: string) {
+  const result = await db.select().from(locations).where(eq(locations.nearestStationId, stationId));
+  return result.length > 0 ? result[0] : null;
+}
 
 export async function insertLocation(latitude: number, longitude: number, nearestStationId: string) {
   const [location] = await db.insert(locations).values({ latitude, longitude, nearestStationId }).returning();
