@@ -52,19 +52,24 @@
 
 **Goal:** Given a location, determine which plants are viable.
 
-- [ ] Location resolution service
-  - [ ] Coordinate input → nearest weather station
-  - [ ] Address → geocode → nearest station
-  - [ ] Municipality lookup (Norwegian kommuner)
-- [ ] Viability calculation
-  - [ ] Compare location GDD vs plant GDD requirements
-  - [ ] Confidence scoring (measured vs inferred T_base)
-  - [ ] Rank plants by viability score
-- [ ] REST API endpoints
-  - [ ] `POST /api/location` — resolve and store location
-  - [ ] `GET /api/viability/:locationId` — viable plants for location
-  - [ ] `GET /api/plants` — browse plant catalog
-  - [ ] `GET /api/plants/:id` — plant detail with thermal data
+- [x] Location resolution service (`services/location.ts`)
+  - [x] Coordinate input → nearest weather station
+  - [x] Address geocoding via Kartverket API (`clients/kartverket.ts`)
+  - [x] Municipality lookup (Norwegian kommuner)
+- [x] Viability calculation (`services/viability.ts`)
+  - [x] Compare location avg GDD vs plant GDD requirements
+  - [x] Confidence scoring from thermal data source
+  - [x] Rank plants by viability score (0-1)
+  - [x] Fallback to frost-free days when no GDD data
+- [x] REST API endpoints
+  - [x] `POST /api/location` — resolve coordinates/address/municipality
+  - [x] `GET /api/location/:id` — location with metrics
+  - [x] `GET /api/viability/:locationId` — viability report
+  - [x] `GET /api/plants/search?q=&includeExternal=true` — unified search with Trefle import
+  - [x] `POST /api/plants/import/:trefleId` — import single plant from Trefle
+
+**Known issues:**
+- Weather service should fallback to next nearest station on Frost API 412 errors
 
 ---
 

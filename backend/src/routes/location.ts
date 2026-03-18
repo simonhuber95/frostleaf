@@ -1,61 +1,55 @@
 import { Router, type Router as RouterType } from 'express';
-import dayjs from 'dayjs';
-import * as db from '../clients/db';
-import { findNearestStation, getTemperatureData } from '../services/weather';
-import { computeStationMetrics } from '../services/gdd';
+import * as locationService from '../services/location';
+import type { LocationInput } from '../types/location';
 
 export const locationRouter: RouterType = Router();
 
-// POST /api/location — resolve location to nearest weather station, fetch climate data
-locationRouter.post('/', async (req, res) => {
-  const { latitude, longitude } = req.body;
+// GET /api/location/resolve?type=coordinates&latitude=59.9&longitude=10.7
+// GET /api/location/resolve?type=address&query=Karl+Johans+gate
+// GET /api/location/resolve?type=municipality&query=Oslo
+locationRouter.get('/resolve', async (req, res) => {
+  const { type, latitude, longitude, query } = req.query;
 
-  if (typeof latitude !== 'number' || typeof longitude !== 'number') {
-    res.status(400).json({ error: 'latitude and longitude are required as numbers' });
+  if (!type || !['coordinates', 'address', 'municipality'].includes(type as string)) {
+    res.status(400).json({ error: 'type must be "coordinates", "address", or "municipality"' });
     return;
   }
 
-  try {
-    const station = await findNearestStation(latitude, longitude);
-    const location = await db.insertLocation(latitude, longitude, station.id);
+  let input: LocationInput;
 
-    const currentYear = dayjs().year();
-    const fromDate = `${currentYear - 5}-01-01`;
-    const toDate = `${currentYear - 1}-12-31`;
-
-    const tempData = await getTemperatureData(station.frostApiId, station.id, fromDate, toDate);
-
-    const metricsResults = [];
-    for (let year = currentYear - 5; year < currentYear; year++) {
-      const yearRecords = tempData.filter((r) => r.date.startsWith(`${year}`));
-      if (yearRecords.length < 100) continue;
-
-      const metrics = computeStationMetrics(station.id, year, yearRecords);
-      const saved = await db.upsertDerivedMetrics(metrics);
-      metricsResults.push(saved);
+  if (type === 'coordinates') {
+    const lat = parseFloat(latitude as string);
+    const lon = parseFloat(longitude as string);
+    if (isNaN(lat) || isNaN(lon)) {
+      res.status(400).json({ error: 'latitude and longitude are required for type "coordinates"' });
+      return;
     }
+    input = { type: 'coordinates', latitude: lat, longitude: lon };
+  } else {
+    if (typeof query !== 'string' || !query.trim()) {
+      res.status(400).json({ error: 'query is required for type "address" or "municipality"' });
+      return;
+    }
+    input = { type: type as 'address' | 'municipality', query };
+  }
 
-    res.json({
-      location,
-      station: { id: station.id, name: station.name, frostApiId: station.frostApiId },
-      metrics: metricsResults,
-    });
+  try {
+    const result = await locationService.resolveLocation(input);
+    res.json(result);
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';
     res.status(500).json({ error: message });
   }
 });
 
-// GET /api/location/:id — get location with its station and metrics
+// GET /api/location/:id
 locationRouter.get('/:id', async (req, res) => {
-  const { id } = req.params;
+  const result = await locationService.getLocation(req.params.id);
 
-  const location = await db.findLocationById(id);
-  if (!location) {
+  if (!result) {
     res.status(404).json({ error: 'Location not found' });
     return;
   }
 
-  const metrics = await db.findDerivedMetricsByStation(location.nearestStationId);
-  res.json({ location, metrics });
+  res.json(result);
 });

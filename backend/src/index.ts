@@ -10,6 +10,7 @@ import cors from 'cors';
 import { healthRouter } from './routes/health';
 import { plantsRouter } from './routes/plants';
 import { locationRouter } from './routes/location';
+import { viabilityRouter } from './routes/viability';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -20,6 +21,7 @@ app.use(express.json());
 app.use('/api/health', healthRouter);
 app.use('/api/plants', plantsRouter);
 app.use('/api/location', locationRouter);
+app.use('/api/viability', viabilityRouter);
 
 app.listen(port, () => {
   console.log(`Frostleaf API running on port ${port}`);
