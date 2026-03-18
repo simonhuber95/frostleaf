@@ -1,0 +1,45 @@
+category,common_name,scientific_name,season_type,gdd_ini,gdd_dev,gdd_mid,gdd_late,gdd_total
+Roots/tubers/bulbs,Carrots,Daucus carota,Common,320,465,500,290,1575
+Roots/tubers/bulbs,Garlic,Allium sativum,Short season,150,340,335,315,1140
+Roots/tubers/bulbs,Garlic,Allium sativum,Long season,580,615,315,240,1750
+Roots/tubers/bulbs,Onions,Allium cepa,Common,460,470,880,480,2290
+Roots/tubers/bulbs,Potato,Solanum tuberosum,Short season,260,490,525,325,1600
+Roots/tubers/bulbs,Potato,Solanum tuberosum,Long season,405,530,490,835,2260
+Leaves/flowers,Broccoli,Brassica oleracea cv. italica,Short season,195,250,210,100,755
+Leaves/flowers,Broccoli,Brassica oleracea cv. italica,Long season,295,350,525,110,1280
+Leaves/flowers,Lettuce,Lactuca sativa,Short season,365,385,215,20,985
+Leaves/flowers,Lettuce,Lactuca sativa,Long season,360,455,455,20,1290
+Fruit vegetables,Bell pepper,Capsicum annuum,Common,445,1180,745,45,2415
+Fruit vegetables,Melon,Cucumis melo,Short season,185,520,315,155,1175
+Fruit vegetables,Melon,Cucumis melo,Long season,140,545,460,455,1600
+Fruit vegetables,Tomato,Solanum lycopersicum,Industry,280,520,880,220,1900
+Fruit vegetables,Tomato,Solanum lycopersicum,Market,325,660,880,200,2065
+Grain legumes,Bean (seed),Phaseolus vulgaris,Short season,160,260,360,180,960
+Grain legumes,Bean (seed),Phaseolus vulgaris,Long season,320,410,400,220,1350
+Grain legumes,Pea (fresh),Pisum sativum,Industry,90,300,510,25,925
+Grain legumes,Pea (fresh),Pisum sativum,Market,155,350,575,320,1400
+Grain legumes,Soybean,Glycine max,Short season,300,350,650,350,1660
+Grain legumes,Soybean,Glycine max,Long season,310,410,680,560,1960
+Fiber crops,Cotton,Gossypium hirsutum,Short season,280,520,800,350,1950
+Fiber crops,Cotton,Gossypium hirsutum,Long season,345,905,615,285,2150
+Oil crops,Canola,Brassica napus,Short season,330,310,450,595,1685
+Oil crops,Canola,Brassica napus,Long season,460,555,905,595,2515
+Oil crops,Sunflower,Helianthus annuus,Short season,345,555,715,175,1790
+Oil crops,Sunflower,Helianthus annuus,Long season,385,570,685,265,1905
+Cereals,Barley,Hordeum vulgare,Short season,290,455,345,360,1450
+Cereals,Barley,Hordeum vulgare,Long season,300,675,690,660,2330
+Cereals,Maize (grain),Zea mays,Short season,200,380,500,340,1540
+Cereals,Maize (grain),Zea mays,Long season,295,420,775,465,1955
+Cereals,Maize (silage),Zea mays,Short season,200,380,430,120,1155
+Cereals,Maize (silage),Zea mays,Long season,250,500,600,200,1550
+Cereals,Maize (sweet),Zea mays,Short season,200,310,360,115,985
+Cereals,Maize (sweet),Zea mays,Long season,355,500,430,200,1485
+Cereals,Oats,Avena sativa,Common,450,595,550,255,1850
+Cereals,Wheat (winter),Triticum aestivum,Short season,395,445,440,365,1645
+Cereals,Wheat (winter),Triticum aestivum,Long season,560,405,730,410,2105
+Cereals,Wheat (spring),Triticum aestivum,Short season,360,480,590,190,1640
+Cereals,Wheat (spring),Triticum aestivum,Long season,360,680,720,540,2300
+Cereals,Rice,Oryza sativa,Short season,235,465,665,295,1670
+Cereals,Rice,Oryza sativa,Long season,255,490,740,320,1730
+Cereals,Sorghum,Sorghum bicolor,Short season,280,300,570,230,1380
+Cereals,Sorghum,Sorghum bicolor,Long season,280,310,650,280,1520

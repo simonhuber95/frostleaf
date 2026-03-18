@@ -1,0 +1,10 @@
+category,common_name,scientific_name,season_type,gdd_ini,gdd_dev,gdd_mid,gdd_late,gdd_total
+Fruit trees,Olive,Olea europaea,Early maturation,50,430,1385,800,2665
+Fruit trees,Olive,Olea europaea,Late maturation,380,350,2055,720,3505
+Fruit trees/vines,Wine grapes,Vitis vinifera,Early maturation,435,1225,505,160,2325
+Fruit trees/vines,Wine grapes,Vitis vinifera,Late maturation,465,1145,800,590,3000
+Fruit trees,Citrus,Citrus sp.,Common,35,220,1580,60,1895
+Fruit trees,Pomegranate,Punica granatum,Common,95,185,1900,265,2445
+Nut trees,Almond,Prunus dulcis,Early maturation,250,300,2260,815,3625
+Nut trees,Almond,Prunus dulcis,Late maturation,280,325,2730,475,3810
+Nut trees,Pistachio,Pistacia vera,Common,225,555,1130,210,2120

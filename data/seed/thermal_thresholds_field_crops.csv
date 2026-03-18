@@ -1,0 +1,47 @@
+category,common_name,scientific_name,tbase_c,tupper_c
+Grain legumes,Bean,Phaseolus vulgaris,10,32
+Grain legumes,Mungbean,Vigna radiata,8,40
+Grain legumes,Black and green gram,Vigna mungo,10,40
+Grain legumes,Chickpea,Cicer arietinum,5,32
+Grain legumes,Cowpea,Vigna unguiculata,10,35
+Grain legumes,Fava bean,Vicia faba,5,30
+Grain legumes,Groundnut/Peanut,Arachis hypogaea,10,35
+Grain legumes,Lentil,Lens culinaris,2,35
+Grain legumes,Pea,Pisum sativum,5,27
+Grain legumes,Soybean,Glycine max,10,40
+Fiber crops,Cotton,Gossypium hirsutum,12.5,35
+Fiber crops,Flax/Linseed,Linum usitatissimum,0,36
+Fiber crops,Sisal,Agave sisalana,10,35
+Sugar crops,Sugar beet,Beta vulgaris,5,30
+Sugar crops,Sugar cane,Saccharum officinarum,10,45
+Oil crops,Camelina,Camelina sativa,4,30
+Oil crops,Canola,Brassica napus,2,30
+Oil crops,Castorbean,Ricinus communis,10,30
+Oil crops,Guar,Cyamopsis tetragonoloba,15,40
+Oil crops,Mustard,Brassica juncea,5,40
+Oil crops,Safflower,Carthamus tinctorius,5,35
+Oil crops,Sesame,Sesamum indicum,10,40
+Oil crops,Sunflower,Helianthus annuus,8,30
+Cereals/pseudocereals,Amaranth grain,Amaranthus sp.,7,40
+Cereals/pseudocereals,Barley,Hordeum vulgare,0,30
+Cereals/pseudocereals,Maize,Zea mays,10,32
+Cereals/pseudocereals,Oats,Avena sativa,0,30
+Cereals/pseudocereals,Pearl Millet,Pennisetum glaucum,10,40
+Cereals/pseudocereals,Quinoa,Chenopodium quinoa,2,25
+Cereals/pseudocereals,Rye,Secale cereale,4,35
+Cereals/pseudocereals,Sorghum,Sorghum bicolor,10,30
+Cereals/pseudocereals,Teff,Eragrostis tef,10,30
+Cereals/pseudocereals,Wheat (common),Triticum aestivum,0,35
+Cereals/pseudocereals,Wheat (durum),Triticum durum,0,35
+Cereals/pseudocereals,Rice,Oryza sativa,12,35
+Grasses,Alfalfa,Medicago sativa,0,30
+Grasses,Bermuda grass,Cynodon dactylon,10,30
+Grasses,Berseem clover,Trifolium alexandrinum,4,30
+Grasses,Common vetch,Vicia sativa,0,30
+Grasses,Elephant grass,Pennisetum sp.,15,40
+Grasses,Grass pastures,,4,30
+Grasses,Guinea grass,Panicum maximum,14,40
+Grasses,Hairy vetch,Vicia villosa,2,25
+Grasses,Italian ryegrass,Lolium multiflorum,2,25
+Grasses,Persian clover,Trifolium resupinatum,6,35
+Grasses,Sudan grass,Sorghum x drummondii,10,35

@@ -50,6 +50,7 @@ pnpm -F @frostleaf/frontend dev
 
 ## Workflow
 
+- **Branching:** Work in feature branches off `main`, never commit directly to `main`
 - **Roadmap:** Always update `docs/roadmap.md` after completing tasks (check off items, mark phases done)
 - **Database:** Drizzle ORM with schema in `backend/src/db/schema.ts`, migrations via `drizzle-kit`
 

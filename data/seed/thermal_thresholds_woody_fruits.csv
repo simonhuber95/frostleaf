@@ -1,0 +1,27 @@
+category,common_name,scientific_name,tbase_c,tupper_c
+Mediterranean,Olive,Olea europaea,7,35
+Mediterranean,Wine and table grapes,Vitis vinifera,10,35
+Mediterranean,Citrus,Citrus sp.,13,30
+Warm temperate,Avocado,Persea americana,6,33
+Warm temperate,Loquat,Eriobotrya japonica,4,42
+Temperate/Pomme fruit,Apple,Malus domestica,4,35
+Temperate/Pomme fruit,Pear,Pyrus communis,4,35
+Temperate/Stone fruit,Apricot,Prunus armeniaca,7,25
+Temperate/Stone fruit,Cherry,Prunus avium,4.5,30
+Temperate/Stone fruit,Peach and nectarine,Prunus persica,7,35
+Temperate/Stone fruit,Plum,Prunus domestica,4.5,25
+Temperate/Nut fruit,Almond,Prunus dulcis,4.5,35
+Temperate/Nut fruit,Pistachio,Pistacia vera,9,35
+Temperate/Nut fruit,Walnut,Juglans regia,4.5,30
+Temperate/Vines and shrubs,Kiwifruit,Actinidia deliciosa,6,30
+Temperate/Vines and shrubs,Hop,Humulus lupulus,5,30
+Temperate/Vines and shrubs,Berries,Vaccinium sp.,6,30
+Subtropical/tropical,Passionfruit,Passiflora edulis,10,35
+Subtropical/tropical,Pomegranate,Punica granatum,10,35
+Subtropical/tropical evergreen,Coffee,Coffea arabica,10,32
+Subtropical/tropical evergreen,Guava,Psidium guajava,12,35
+Subtropical/tropical evergreen,Lychee,Litchi chinensis,10,30
+Subtropical/tropical evergreen,Mango,Mangifera indica,12,32
+Subtropical/tropical evergreen,Papaya,Carica papaya,15,35
+Palm plantations,Date palm,Phoenix dactylifera,10,35
+Palm plantations,Oil palm,Elaeis guineensis,15,40
