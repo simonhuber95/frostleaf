@@ -1,0 +1,652 @@
+[
+  {
+    "commonName": "Potato",
+    "scientificName": "Solanum tuberosum",
+    "family": "Solanaceae",
+    "cropGroup": "root",
+    "daysToHarvest": 90,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "sandy loam", "slightly acidic"],
+    "thermal": { "tBase": 2, "tUpper": 30, "gddRequired": 1600, "source": "measured", "confidence": "high" }
+  },
+  {
+    "commonName": "Tomato",
+    "scientificName": "Solanum lycopersicum",
+    "family": "Solanaceae",
+    "cropGroup": "vegetable",
+    "daysToHarvest": 75,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "loamy", "slightly acidic"],
+    "thermal": { "tBase": 7, "tUpper": 28, "gddRequired": 1900, "source": "measured", "confidence": "high" }
+  },
+  {
+    "commonName": "Carrot",
+    "scientificName": "Daucus carota",
+    "family": "Apiaceae",
+    "cropGroup": "root",
+    "daysToHarvest": 75,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["deep", "sandy loam", "well-drained"],
+    "thermal": { "tBase": 6, "tUpper": 30, "gddRequired": 1575, "source": "measured", "confidence": "high" }
+  },
+  {
+    "commonName": "Onion",
+    "scientificName": "Allium cepa",
+    "family": "Amaryllidaceae",
+    "cropGroup": "root",
+    "daysToHarvest": 100,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "fertile", "loamy"],
+    "thermal": { "tBase": 4.5, "tUpper": 35, "gddRequired": 2290, "source": "measured", "confidence": "high" }
+  },
+  {
+    "commonName": "Garlic",
+    "scientificName": "Allium sativum",
+    "family": "Amaryllidaceae",
+    "cropGroup": "root",
+    "daysToHarvest": 90,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "fertile", "loamy"],
+    "thermal": { "tBase": 4, "tUpper": 30, "gddRequired": 1140, "source": "measured", "confidence": "high" }
+  },
+  {
+    "commonName": "Lettuce",
+    "scientificName": "Lactuca sativa",
+    "family": "Asteraceae",
+    "cropGroup": "leafy_green",
+    "daysToHarvest": 50,
+    "lightRequirement": "partial_shade",
+    "soilPreferences": ["moist", "well-drained", "fertile"],
+    "thermal": { "tBase": 4, "tUpper": 28, "gddRequired": 985, "source": "measured", "confidence": "high" }
+  },
+  {
+    "commonName": "Spinach",
+    "scientificName": "Spinacia oleracea",
+    "family": "Amaranthaceae",
+    "cropGroup": "leafy_green",
+    "daysToHarvest": 45,
+    "lightRequirement": "partial_shade",
+    "soilPreferences": ["moist", "fertile", "well-drained"],
+    "thermal": { "tBase": 4, "tUpper": 25, "gddRequired": 800, "source": "estimated", "confidence": "medium" }
+  },
+  {
+    "commonName": "Kale",
+    "scientificName": "Brassica oleracea var. sabellica",
+    "family": "Brassicaceae",
+    "cropGroup": "brassica",
+    "daysToHarvest": 65,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["fertile", "well-drained", "slightly alkaline"],
+    "thermal": { "tBase": 4.5, "tUpper": 30, "gddRequired": 900, "source": "estimated", "confidence": "medium" }
+  },
+  {
+    "commonName": "Broccoli",
+    "scientificName": "Brassica oleracea var. italica",
+    "family": "Brassicaceae",
+    "cropGroup": "brassica",
+    "daysToHarvest": 70,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["fertile", "moist", "well-drained"],
+    "thermal": { "tBase": 4.5, "tUpper": 30, "gddRequired": 755, "source": "measured", "confidence": "high" }
+  },
+  {
+    "commonName": "Cauliflower",
+    "scientificName": "Brassica oleracea var. botrytis",
+    "family": "Brassicaceae",
+    "cropGroup": "brassica",
+    "daysToHarvest": 80,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["fertile", "moist", "well-drained"],
+    "thermal": { "tBase": 4.5, "tUpper": 30, "gddRequired": 1000, "source": "estimated", "confidence": "medium" }
+  },
+  {
+    "commonName": "Cabbage",
+    "scientificName": "Brassica oleracea var. capitata",
+    "family": "Brassicaceae",
+    "cropGroup": "brassica",
+    "daysToHarvest": 80,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["fertile", "moist", "clay loam"],
+    "thermal": { "tBase": 4.5, "tUpper": 30, "gddRequired": 1100, "source": "estimated", "confidence": "medium" }
+  },
+  {
+    "commonName": "Brussels Sprouts",
+    "scientificName": "Brassica oleracea var. gemmifera",
+    "family": "Brassicaceae",
+    "cropGroup": "brassica",
+    "daysToHarvest": 110,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["fertile", "moist", "clay loam"],
+    "thermal": { "tBase": 4.5, "tUpper": 30, "gddRequired": 1400, "source": "estimated", "confidence": "medium" }
+  },
+  {
+    "commonName": "Turnip",
+    "scientificName": "Brassica rapa",
+    "family": "Brassicaceae",
+    "cropGroup": "root",
+    "daysToHarvest": 55,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "fertile", "loamy"],
+    "thermal": { "tBase": 4, "tUpper": 35, "gddRequired": 850, "source": "estimated", "confidence": "medium" }
+  },
+  {
+    "commonName": "Radish",
+    "scientificName": "Raphanus sativus",
+    "family": "Brassicaceae",
+    "cropGroup": "root",
+    "daysToHarvest": 30,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["loose", "well-drained", "sandy loam"],
+    "thermal": { "tBase": 4.5, "tUpper": 30, "gddRequired": 500, "source": "estimated", "confidence": "medium" }
+  },
+  {
+    "commonName": "Table Beet",
+    "scientificName": "Beta vulgaris",
+    "family": "Amaranthaceae",
+    "cropGroup": "root",
+    "daysToHarvest": 60,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "fertile", "loamy"],
+    "thermal": { "tBase": 4.5, "tUpper": 30, "gddRequired": 900, "source": "estimated", "confidence": "medium" }
+  },
+  {
+    "commonName": "Pea",
+    "scientificName": "Pisum sativum",
+    "family": "Fabaceae",
+    "cropGroup": "legume",
+    "daysToHarvest": 65,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "loamy", "slightly alkaline"],
+    "thermal": { "tBase": 5, "tUpper": 27, "gddRequired": 925, "source": "measured", "confidence": "high" }
+  },
+  {
+    "commonName": "Bean (Green)",
+    "scientificName": "Phaseolus vulgaris",
+    "family": "Fabaceae",
+    "cropGroup": "legume",
+    "daysToHarvest": 55,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "loamy", "fertile"],
+    "thermal": { "tBase": 10, "tUpper": 32, "gddRequired": 960, "source": "measured", "confidence": "high" }
+  },
+  {
+    "commonName": "Fava Bean",
+    "scientificName": "Vicia faba",
+    "family": "Fabaceae",
+    "cropGroup": "legume",
+    "daysToHarvest": 85,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["fertile", "moist", "clay loam"],
+    "thermal": { "tBase": 5, "tUpper": 30, "gddRequired": 1200, "source": "estimated", "confidence": "medium" }
+  },
+  {
+    "commonName": "Cucumber",
+    "scientificName": "Cucumis sativus",
+    "family": "Cucurbitaceae",
+    "cropGroup": "vegetable",
+    "daysToHarvest": 60,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "fertile", "loamy"],
+    "thermal": { "tBase": 10, "tUpper": 32, "gddRequired": 1200, "source": "estimated", "confidence": "medium" }
+  },
+  {
+    "commonName": "Zucchini",
+    "scientificName": "Cucurbita pepo",
+    "family": "Cucurbitaceae",
+    "cropGroup": "vegetable",
+    "daysToHarvest": 55,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "fertile", "loamy"],
+    "thermal": { "tBase": 10, "tUpper": 32, "gddRequired": 1100, "source": "estimated", "confidence": "medium" }
+  },
+  {
+    "commonName": "Pumpkin",
+    "scientificName": "Cucurbita maxima",
+    "family": "Cucurbitaceae",
+    "cropGroup": "vegetable",
+    "daysToHarvest": 100,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "fertile", "loamy"],
+    "thermal": { "tBase": 10, "tUpper": 32, "gddRequired": 1800, "source": "estimated", "confidence": "medium" }
+  },
+  {
+    "commonName": "Bell Pepper",
+    "scientificName": "Capsicum annuum",
+    "family": "Solanaceae",
+    "cropGroup": "vegetable",
+    "daysToHarvest": 75,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "fertile", "loamy"],
+    "thermal": { "tBase": 10, "tUpper": 35, "gddRequired": 2415, "source": "measured", "confidence": "high" }
+  },
+  {
+    "commonName": "Chili Pepper",
+    "scientificName": "Capsicum annuum",
+    "family": "Solanaceae",
+    "cropGroup": "vegetable",
+    "daysToHarvest": 80,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "fertile", "loamy"],
+    "thermal": { "tBase": 10, "tUpper": 35, "gddRequired": 2500, "source": "estimated", "confidence": "medium" }
+  },
+  {
+    "commonName": "Eggplant",
+    "scientificName": "Solanum melongena",
+    "family": "Solanaceae",
+    "cropGroup": "vegetable",
+    "daysToHarvest": 80,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "fertile", "loamy"],
+    "thermal": { "tBase": 10, "tUpper": 35, "gddRequired": 2200, "source": "estimated", "confidence": "medium" }
+  },
+  {
+    "commonName": "Celery",
+    "scientificName": "Apium graveolens",
+    "family": "Apiaceae",
+    "cropGroup": "vegetable",
+    "daysToHarvest": 85,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["moist", "fertile", "rich organic"],
+    "thermal": { "tBase": 4, "tUpper": 24, "gddRequired": 1200, "source": "estimated", "confidence": "medium" }
+  },
+  {
+    "commonName": "Leek",
+    "scientificName": "Allium ampeloprasum",
+    "family": "Amaryllidaceae",
+    "cropGroup": "root",
+    "daysToHarvest": 100,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["fertile", "moist", "well-drained"],
+    "thermal": { "tBase": 4, "tUpper": 30, "gddRequired": 1400, "source": "estimated", "confidence": "medium" }
+  },
+  {
+    "commonName": "Asparagus",
+    "scientificName": "Asparagus officinalis",
+    "family": "Asparagaceae",
+    "cropGroup": "vegetable",
+    "daysToHarvest": 730,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "sandy loam", "slightly alkaline"],
+    "thermal": { "tBase": 4.5, "tUpper": 35, "gddRequired": null, "source": "measured", "confidence": "medium" }
+  },
+  {
+    "commonName": "Rhubarb",
+    "scientificName": "Rheum rhabarbarum",
+    "family": "Polygonaceae",
+    "cropGroup": "vegetable",
+    "daysToHarvest": 365,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["fertile", "moist", "well-drained"],
+    "thermal": { "tBase": 3, "tUpper": 28, "gddRequired": null, "source": "estimated", "confidence": "low" }
+  },
+  {
+    "commonName": "Sweet Corn",
+    "scientificName": "Zea mays",
+    "family": "Poaceae",
+    "cropGroup": "vegetable",
+    "daysToHarvest": 75,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "fertile", "loamy"],
+    "thermal": { "tBase": 10, "tUpper": 32, "gddRequired": 985, "source": "measured", "confidence": "high" }
+  },
+  {
+    "commonName": "Strawberry",
+    "scientificName": "Fragaria x ananassa",
+    "family": "Rosaceae",
+    "cropGroup": "berry",
+    "daysToHarvest": 60,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "slightly acidic", "sandy loam"],
+    "thermal": { "tBase": 3, "tUpper": 30, "gddRequired": 1000, "source": "estimated", "confidence": "medium" }
+  },
+  {
+    "commonName": "Raspberry",
+    "scientificName": "Rubus idaeus",
+    "family": "Rosaceae",
+    "cropGroup": "berry",
+    "daysToHarvest": 365,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "slightly acidic", "loamy"],
+    "thermal": { "tBase": 5, "tUpper": 30, "gddRequired": null, "source": "estimated", "confidence": "low" }
+  },
+  {
+    "commonName": "Blueberry",
+    "scientificName": "Vaccinium corymbosum",
+    "family": "Ericaceae",
+    "cropGroup": "berry",
+    "daysToHarvest": 365,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["acidic", "well-drained", "peat-rich"],
+    "thermal": { "tBase": 6, "tUpper": 30, "gddRequired": null, "source": "measured", "confidence": "medium" }
+  },
+  {
+    "commonName": "Blackcurrant",
+    "scientificName": "Ribes nigrum",
+    "family": "Grossulariaceae",
+    "cropGroup": "berry",
+    "daysToHarvest": 365,
+    "lightRequirement": "partial_shade",
+    "soilPreferences": ["moist", "fertile", "well-drained"],
+    "thermal": { "tBase": 4, "tUpper": 28, "gddRequired": null, "source": "estimated", "confidence": "low" }
+  },
+  {
+    "commonName": "Redcurrant",
+    "scientificName": "Ribes rubrum",
+    "family": "Grossulariaceae",
+    "cropGroup": "berry",
+    "daysToHarvest": 365,
+    "lightRequirement": "partial_shade",
+    "soilPreferences": ["moist", "fertile", "well-drained"],
+    "thermal": { "tBase": 4, "tUpper": 28, "gddRequired": null, "source": "estimated", "confidence": "low" }
+  },
+  {
+    "commonName": "Gooseberry",
+    "scientificName": "Ribes uva-crispa",
+    "family": "Grossulariaceae",
+    "cropGroup": "berry",
+    "daysToHarvest": 365,
+    "lightRequirement": "partial_shade",
+    "soilPreferences": ["moist", "fertile", "well-drained"],
+    "thermal": { "tBase": 4, "tUpper": 28, "gddRequired": null, "source": "estimated", "confidence": "low" }
+  },
+  {
+    "commonName": "Apple",
+    "scientificName": "Malus domestica",
+    "family": "Rosaceae",
+    "cropGroup": "fruit",
+    "daysToHarvest": 365,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "loamy", "slightly acidic"],
+    "thermal": { "tBase": 4, "tUpper": 35, "gddRequired": null, "source": "measured", "confidence": "medium" }
+  },
+  {
+    "commonName": "Pear",
+    "scientificName": "Pyrus communis",
+    "family": "Rosaceae",
+    "cropGroup": "fruit",
+    "daysToHarvest": 365,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "loamy", "fertile"],
+    "thermal": { "tBase": 4, "tUpper": 35, "gddRequired": null, "source": "measured", "confidence": "medium" }
+  },
+  {
+    "commonName": "Cherry",
+    "scientificName": "Prunus avium",
+    "family": "Rosaceae",
+    "cropGroup": "fruit",
+    "daysToHarvest": 365,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "loamy", "slightly alkaline"],
+    "thermal": { "tBase": 4.5, "tUpper": 30, "gddRequired": null, "source": "measured", "confidence": "medium" }
+  },
+  {
+    "commonName": "Plum",
+    "scientificName": "Prunus domestica",
+    "family": "Rosaceae",
+    "cropGroup": "fruit",
+    "daysToHarvest": 365,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "fertile", "loamy"],
+    "thermal": { "tBase": 4.5, "tUpper": 25, "gddRequired": null, "source": "measured", "confidence": "medium" }
+  },
+  {
+    "commonName": "Dill",
+    "scientificName": "Anethum graveolens",
+    "family": "Apiaceae",
+    "cropGroup": "herb",
+    "daysToHarvest": 45,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "loamy"],
+    "thermal": { "tBase": 4, "tUpper": 30, "gddRequired": 700, "source": "estimated", "confidence": "low" }
+  },
+  {
+    "commonName": "Parsley",
+    "scientificName": "Petroselinum crispum",
+    "family": "Apiaceae",
+    "cropGroup": "herb",
+    "daysToHarvest": 70,
+    "lightRequirement": "partial_shade",
+    "soilPreferences": ["moist", "fertile", "well-drained"],
+    "thermal": { "tBase": 4, "tUpper": 27, "gddRequired": 900, "source": "measured", "confidence": "medium" }
+  },
+  {
+    "commonName": "Basil",
+    "scientificName": "Ocimum basilicum",
+    "family": "Lamiaceae",
+    "cropGroup": "herb",
+    "daysToHarvest": 50,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "fertile", "loamy"],
+    "thermal": { "tBase": 10, "tUpper": 30, "gddRequired": 800, "source": "measured", "confidence": "medium" }
+  },
+  {
+    "commonName": "Coriander",
+    "scientificName": "Coriandrum sativum",
+    "family": "Apiaceae",
+    "cropGroup": "herb",
+    "daysToHarvest": 45,
+    "lightRequirement": "partial_shade",
+    "soilPreferences": ["well-drained", "loamy"],
+    "thermal": { "tBase": 4, "tUpper": 30, "gddRequired": 700, "source": "measured", "confidence": "medium" }
+  },
+  {
+    "commonName": "Mint",
+    "scientificName": "Mentha spicata",
+    "family": "Lamiaceae",
+    "cropGroup": "herb",
+    "daysToHarvest": 60,
+    "lightRequirement": "partial_shade",
+    "soilPreferences": ["moist", "fertile"],
+    "thermal": { "tBase": 0, "tUpper": 35, "gddRequired": null, "source": "measured", "confidence": "medium" }
+  },
+  {
+    "commonName": "Chives",
+    "scientificName": "Allium schoenoprasum",
+    "family": "Amaryllidaceae",
+    "cropGroup": "herb",
+    "daysToHarvest": 60,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["moist", "fertile", "well-drained"],
+    "thermal": { "tBase": 3, "tUpper": 30, "gddRequired": null, "source": "estimated", "confidence": "low" }
+  },
+  {
+    "commonName": "Oregano",
+    "scientificName": "Origanum vulgare",
+    "family": "Lamiaceae",
+    "cropGroup": "herb",
+    "daysToHarvest": 80,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "sandy", "slightly alkaline"],
+    "thermal": { "tBase": 5, "tUpper": 30, "gddRequired": null, "source": "measured", "confidence": "medium" }
+  },
+  {
+    "commonName": "Thyme",
+    "scientificName": "Thymus vulgaris",
+    "family": "Lamiaceae",
+    "cropGroup": "herb",
+    "daysToHarvest": 75,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "sandy", "slightly alkaline"],
+    "thermal": { "tBase": 5, "tUpper": 30, "gddRequired": null, "source": "estimated", "confidence": "low" }
+  },
+  {
+    "commonName": "Lemon Balm",
+    "scientificName": "Melissa officinalis",
+    "family": "Lamiaceae",
+    "cropGroup": "herb",
+    "daysToHarvest": 70,
+    "lightRequirement": "partial_shade",
+    "soilPreferences": ["moist", "well-drained", "loamy"],
+    "thermal": { "tBase": 5, "tUpper": 35, "gddRequired": null, "source": "measured", "confidence": "medium" }
+  },
+  {
+    "commonName": "Parsnip",
+    "scientificName": "Pastinaca sativa",
+    "family": "Apiaceae",
+    "cropGroup": "root",
+    "daysToHarvest": 120,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["deep", "well-drained", "sandy loam"],
+    "thermal": { "tBase": 4, "tUpper": 30, "gddRequired": 1500, "source": "estimated", "confidence": "low" }
+  },
+  {
+    "commonName": "Celeriac",
+    "scientificName": "Apium graveolens var. rapaceum",
+    "family": "Apiaceae",
+    "cropGroup": "root",
+    "daysToHarvest": 120,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["moist", "fertile", "rich organic"],
+    "thermal": { "tBase": 4, "tUpper": 24, "gddRequired": 1400, "source": "estimated", "confidence": "low" }
+  },
+  {
+    "commonName": "Kohlrabi",
+    "scientificName": "Brassica oleracea var. gongylodes",
+    "family": "Brassicaceae",
+    "cropGroup": "brassica",
+    "daysToHarvest": 55,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["fertile", "moist", "well-drained"],
+    "thermal": { "tBase": 4.5, "tUpper": 30, "gddRequired": 700, "source": "estimated", "confidence": "medium" }
+  },
+  {
+    "commonName": "Pak Choi",
+    "scientificName": "Brassica rapa var. chinensis",
+    "family": "Brassicaceae",
+    "cropGroup": "leafy_green",
+    "daysToHarvest": 45,
+    "lightRequirement": "partial_shade",
+    "soilPreferences": ["moist", "fertile", "well-drained"],
+    "thermal": { "tBase": 4, "tUpper": 30, "gddRequired": 600, "source": "estimated", "confidence": "low" }
+  },
+  {
+    "commonName": "Swiss Chard",
+    "scientificName": "Beta vulgaris var. cicla",
+    "family": "Amaranthaceae",
+    "cropGroup": "leafy_green",
+    "daysToHarvest": 55,
+    "lightRequirement": "partial_shade",
+    "soilPreferences": ["moist", "fertile", "well-drained"],
+    "thermal": { "tBase": 4.5, "tUpper": 30, "gddRequired": 800, "source": "estimated", "confidence": "medium" }
+  },
+  {
+    "commonName": "Arugula",
+    "scientificName": "Eruca vesicaria",
+    "family": "Brassicaceae",
+    "cropGroup": "leafy_green",
+    "daysToHarvest": 30,
+    "lightRequirement": "partial_shade",
+    "soilPreferences": ["well-drained", "fertile"],
+    "thermal": { "tBase": 4, "tUpper": 28, "gddRequired": 400, "source": "estimated", "confidence": "low" }
+  },
+  {
+    "commonName": "Spring Onion",
+    "scientificName": "Allium fistulosum",
+    "family": "Amaryllidaceae",
+    "cropGroup": "root",
+    "daysToHarvest": 60,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "fertile", "loamy"],
+    "thermal": { "tBase": 4, "tUpper": 30, "gddRequired": 800, "source": "estimated", "confidence": "low" }
+  },
+  {
+    "commonName": "Sunflower",
+    "scientificName": "Helianthus annuus",
+    "family": "Asteraceae",
+    "cropGroup": "vegetable",
+    "daysToHarvest": 85,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "fertile", "loamy"],
+    "thermal": { "tBase": 8, "tUpper": 30, "gddRequired": 1790, "source": "measured", "confidence": "high" }
+  },
+  {
+    "commonName": "Melon",
+    "scientificName": "Cucumis melo",
+    "family": "Cucurbitaceae",
+    "cropGroup": "vegetable",
+    "daysToHarvest": 80,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "sandy loam", "fertile"],
+    "thermal": { "tBase": 10, "tUpper": 38, "gddRequired": 1175, "source": "measured", "confidence": "high" }
+  },
+  {
+    "commonName": "Artichoke",
+    "scientificName": "Cynara scolymus",
+    "family": "Asteraceae",
+    "cropGroup": "vegetable",
+    "daysToHarvest": 150,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "fertile", "loamy"],
+    "thermal": { "tBase": 5, "tUpper": 32, "gddRequired": 1800, "source": "estimated", "confidence": "low" }
+  },
+  {
+    "commonName": "Fennel",
+    "scientificName": "Foeniculum vulgare",
+    "family": "Apiaceae",
+    "cropGroup": "herb",
+    "daysToHarvest": 80,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "fertile", "loamy"],
+    "thermal": { "tBase": 6, "tUpper": 30, "gddRequired": 1100, "source": "estimated", "confidence": "low" }
+  },
+  {
+    "commonName": "Sugar Snap Pea",
+    "scientificName": "Pisum sativum var. macrocarpon",
+    "family": "Fabaceae",
+    "cropGroup": "legume",
+    "daysToHarvest": 60,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "loamy", "slightly alkaline"],
+    "thermal": { "tBase": 5, "tUpper": 27, "gddRequired": 900, "source": "estimated", "confidence": "medium" }
+  },
+  {
+    "commonName": "Runner Bean",
+    "scientificName": "Phaseolus coccineus",
+    "family": "Fabaceae",
+    "cropGroup": "legume",
+    "daysToHarvest": 65,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["moist", "fertile", "well-drained"],
+    "thermal": { "tBase": 10, "tUpper": 30, "gddRequired": 1000, "source": "estimated", "confidence": "low" }
+  },
+  {
+    "commonName": "Black Cumin",
+    "scientificName": "Nigella sativa",
+    "family": "Ranunculaceae",
+    "cropGroup": "herb",
+    "daysToHarvest": 90,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "sandy loam"],
+    "thermal": { "tBase": 5, "tUpper": 30, "gddRequired": null, "source": "measured", "confidence": "medium" }
+  },
+  {
+    "commonName": "Lentil",
+    "scientificName": "Lens culinaris",
+    "family": "Fabaceae",
+    "cropGroup": "legume",
+    "daysToHarvest": 90,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "sandy loam"],
+    "thermal": { "tBase": 2, "tUpper": 35, "gddRequired": 1200, "source": "estimated", "confidence": "medium" }
+  },
+  {
+    "commonName": "Barley",
+    "scientificName": "Hordeum vulgare",
+    "family": "Poaceae",
+    "cropGroup": "vegetable",
+    "daysToHarvest": 90,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "fertile", "loamy"],
+    "thermal": { "tBase": 0, "tUpper": 30, "gddRequired": 1450, "source": "measured", "confidence": "high" }
+  },
+  {
+    "commonName": "Oats",
+    "scientificName": "Avena sativa",
+    "family": "Poaceae",
+    "cropGroup": "vegetable",
+    "daysToHarvest": 100,
+    "lightRequirement": "full_sun",
+    "soilPreferences": ["well-drained", "loamy", "slightly acidic"],
+    "thermal": { "tBase": 0, "tUpper": 30, "gddRequired": 1850, "source": "measured", "confidence": "high" }
+  }
+]
