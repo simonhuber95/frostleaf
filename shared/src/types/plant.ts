@@ -1,4 +1,4 @@
-export interface Plant {
+export type Plant = {
   id: string;
   scientificName: string;
   commonName: string;
@@ -7,16 +7,16 @@ export interface Plant {
   daysToHarvest: number;
   lightRequirement: LightRequirement;
   soilPreferences: string[];
-}
+};
 
-export interface PlantThermalProperties {
+export type PlantThermalProperties = {
   plantId: string;
   tBase: number;
   tUpper: number;
   gddRequired: number | null;
   source: ThermalDataSource;
   confidence: ConfidenceLevel;
-}
+};
 
 export type CropGroup = 'vegetable' | 'herb' | 'fruit' | 'berry' | 'legume' | 'root' | 'brassica' | 'leafy_green';
 
@@ -26,11 +26,11 @@ export type ThermalDataSource = 'measured' | 'estimated' | 'inferred';
 
 export type ConfidenceLevel = 'high' | 'medium' | 'low';
 
-export interface PlantViability {
+export type PlantViability = {
   plant: Plant;
   thermalProperties: PlantThermalProperties;
   viabilityScore: number; // 0-1
   isViable: boolean;
   locationGdd: number;
   requiredGdd: number;
-}
+};

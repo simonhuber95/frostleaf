@@ -1,24 +1,24 @@
-export interface ClimateData {
+export type ClimateData = {
   stationId: string;
   date: string;
   tempMin: number;
   tempMax: number;
   fetchedAt: string;
-}
+};
 
-export interface DerivedMetrics {
+export type DerivedMetrics = {
   stationId: string;
   year: number;
   gddAccumulated: number;
   lastFrostSpring: string | null;
   firstFrostAutumn: string | null;
   frostFreeDays: number;
-}
+};
 
-export interface DailyGdd {
+export type DailyGdd = {
   date: string;
   tempMin: number;
   tempMax: number;
   tempMean: number;
   gdd: number;
-}
+};

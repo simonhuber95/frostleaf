@@ -1,19 +1,19 @@
-export interface Garden {
+export type Garden = {
   id: string;
   userId: string | null;
   name: string;
   locationId: string;
   createdAt: string;
-}
+};
 
-export interface GardenPlant {
+export type GardenPlant = {
   gardenId: string;
   plantId: string;
   plantedDate: string | null;
   notes: string;
-}
+};
 
-export interface GardenExport {
+export type GardenExport = {
   version: 1;
   name: string;
   location: {
@@ -27,4 +27,4 @@ export interface GardenExport {
     notes: string;
   }>;
   exportedAt: string;
-}
+};
