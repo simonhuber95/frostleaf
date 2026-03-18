@@ -54,12 +54,27 @@ pnpm -F @frostleaf/frontend dev
 - **Roadmap:** Always update `docs/roadmap.md` after completing tasks (check off items, mark phases done)
 - **Database:** Drizzle ORM with schema in `backend/src/db/schema.ts`, migrations via `drizzle-kit`
 
+## Backend Architecture
+
+```
+backend/src/
+├── routes/       # HTTP handlers — validation, response formatting
+├── services/     # Business logic, orchestration
+├── clients/      # External API wrappers (Frost, Trefle, etc.)
+├── db/           # Drizzle schema, connection, seed
+└── types/        # Backend-specific type definitions
+```
+
+- **Route → Service → Client** layering: routes call services, services call clients
+- **No inline types** — all types in `backend/src/types/` or `shared/src/types/`
+- **`type` over `interface`** — use type aliases everywhere
+- **day.js** for all date calculations
+- Weather service wraps the Frost client (extensible to other sources)
+
 ## Key Conventions
 
 - All packages use ES modules (`"type": "module"`)
 - Shared types are defined in `shared/src/types/` and exported from `shared/src/index.ts`
-- Backend routes go in `backend/src/routes/`
-- Backend services go in `backend/src/services/`
 - Use `.js` extensions in TypeScript imports (ESM resolution)
 - Database connection via `DATABASE_URL` env var
 - External APIs (Frost, Trefle) are proxied through backend and cached in DB
