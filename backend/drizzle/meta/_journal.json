@@ -8,6 +8,13 @@
       "when": 1773833742966,
       "tag": "0000_orange_zaladane",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1773906252724,
+      "tag": "0001_empty_prowler",
+      "breakpoints": true
     }
   ]
 }
