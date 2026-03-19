@@ -77,12 +77,17 @@
 
 **Goal:** Users can enter a location and see viable plants.
 
-- [ ] Location entry page (address / coordinates / municipality)
-- [ ] Viability results page
-  - [ ] Ranked plant list with viability scores
-  - [ ] Filter by crop group (vegetable, herb, fruit, berry, etc.)
-  - [ ] Plant detail view (thermal info, growing tips)
-- [ ] Basic responsive design (mobile-friendly)
+- [x] SvelteKit + Tailwind v4 + shadcn-svelte setup
+- [x] App layout shell (nav, footer)
+- [x] API client layer (`lib/api/`)
+- [x] Landing page with location entry (municipality / address / coordinates)
+- [x] Viability results page
+  - [x] Climate summary cards (GDD, frost-free days, frost dates)
+  - [x] Ranked plant list with viability scores (color-coded)
+  - [x] Filter by viability status + crop group
+- [x] Plant catalog/search page (with Trefle external toggle)
+- [x] Plant detail page (growing info, thermal properties, sowing)
+- [ ] Basic responsive design polish (mobile-friendly)
 
 ---
 
