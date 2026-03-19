@@ -1,0 +1,102 @@
+<script lang="ts">
+  import { goto } from '$app/navigation';
+  import { untrack } from 'svelte';
+  import { authStore } from '$lib/stores/auth.svelte';
+  import Loader from '@lucide/svelte/icons/loader';
+
+  let name = $state('');
+  let email = $state('');
+  let password = $state('');
+  let error = $state('');
+  let loading = $state(false);
+
+  // Redirect if already authenticated
+  $effect(() => {
+    if (authStore.isAuthenticated) {
+      untrack(() => goto('/garden'));
+    }
+  });
+
+  async function handleSubmit() {
+    if (!name.trim() || !email.trim() || !password) return;
+    loading = true;
+    error = '';
+
+    try {
+      await authStore.signUp(name.trim(), email.trim(), password);
+      await goto('/garden');
+    } catch (err) {
+      error = err instanceof Error ? err.message : 'Sign up failed';
+    } finally {
+      loading = false;
+    }
+  }
+</script>
+
+<div class="flex flex-col items-center justify-center pt-16">
+  <div class="w-full max-w-sm space-y-6">
+    <div class="text-center">
+      <h1 class="text-2xl font-bold tracking-tight">Create Account</h1>
+      <p class="mt-1 text-sm text-muted-foreground">Sign up to save your gardens online</p>
+    </div>
+
+    <form onsubmit={handleSubmit} class="space-y-4">
+      <div>
+        <label for="name" class="block text-sm font-medium mb-1">Name</label>
+        <input
+          id="name"
+          bind:value={name}
+          type="text"
+          required
+          class="w-full rounded-md border border-input bg-background px-4 py-2.5 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          disabled={loading}
+        />
+      </div>
+      <div>
+        <label for="email" class="block text-sm font-medium mb-1">Email</label>
+        <input
+          id="email"
+          bind:value={email}
+          type="email"
+          required
+          class="w-full rounded-md border border-input bg-background px-4 py-2.5 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          disabled={loading}
+        />
+      </div>
+      <div>
+        <label for="password" class="block text-sm font-medium mb-1">Password</label>
+        <input
+          id="password"
+          bind:value={password}
+          type="password"
+          required
+          minlength="8"
+          class="w-full rounded-md border border-input bg-background px-4 py-2.5 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          disabled={loading}
+          placeholder="At least 8 characters"
+        />
+      </div>
+
+      {#if error}
+        <p class="text-sm text-destructive">{error}</p>
+      {/if}
+
+      <button
+        type="submit"
+        class="w-full rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+        disabled={loading}
+      >
+        {#if loading}
+          <Loader class="mx-auto h-4 w-4 animate-spin" />
+        {:else}
+          Create Account
+        {/if}
+      </button>
+    </form>
+
+    <p class="text-center text-sm text-muted-foreground">
+      Already have an account?
+      <a href="/auth/login" class="text-primary hover:underline">Sign in</a>
+    </p>
+  </div>
+</div>
