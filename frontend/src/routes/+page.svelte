@@ -1,6 +1,7 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
   import { resolveLocation } from '$lib/api/location';
+  import { locationStore } from '$lib/stores/location.svelte';
   import Search from '@lucide/svelte/icons/search';
   import MapPin from '@lucide/svelte/icons/map-pin';
   import Loader from '@lucide/svelte/icons/loader';
@@ -32,7 +33,17 @@
       }
 
       const result = await resolveLocation(locationType, params);
-      goto(`/viability/${result.location.id}`);
+      // Set partial location state — viability page will fill in the rest
+      locationStore.set({
+        locationId: result.location.id,
+        displayName: result.displayName,
+        stationName: result.station.name,
+        averageGdd: 0,
+        frostFreeDays: 0,
+        lastFrostSpring: null,
+        firstFrostAutumn: null,
+      });
+      await goto('/plants');
     } catch (err) {
       error = err instanceof Error ? err.message : 'Something went wrong';
     } finally {

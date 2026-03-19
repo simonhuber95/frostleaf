@@ -1,7 +1,9 @@
 <script lang="ts">
   import type { Plant } from '$lib/api/plants';
+  import { locationStore } from '$lib/stores/location.svelte';
+  import TemperatureScale from '$lib/components/TemperatureScale.svelte';
+  import PlantTimeline from '$lib/components/PlantTimeline.svelte';
   import Leaf from '@lucide/svelte/icons/leaf';
-  import Thermometer from '@lucide/svelte/icons/thermometer';
   import Sun from '@lucide/svelte/icons/sun';
   import Calendar from '@lucide/svelte/icons/calendar';
   import ArrowLeft from '@lucide/svelte/icons/arrow-left';
@@ -9,19 +11,51 @@
   let { data }: { data: { plant: Plant } } = $props();
   let plant: Plant = $derived(data.plant);
   let plantProps = $derived(plant.properties);
+
+  function monthNamesToNumbers(names: string[]): number[] {
+    const map: Record<string, number> = {
+      january: 1, february: 2, march: 3, april: 4, may: 5, june: 6,
+      july: 7, august: 8, september: 9, october: 10, november: 11, december: 12,
+    };
+    return names.map((n) => map[n.toLowerCase()]).filter((n) => n != null);
+  }
+
+  // Use last frost date from location store, or fall back to May estimate
+  let sowingStartMonth = $derived(locationStore.lastFrostMonth ?? 5);
+
+  function estimateGrowthMonths(daysToHarvest: number): number[] {
+    const monthsNeeded = Math.ceil(daysToHarvest / 30);
+    return Array.from({ length: monthsNeeded }, (_, i) => sowingStartMonth + i).filter((m) => m <= 12);
+  }
+
+  let timelineGrowthMonths = $derived(
+    plantProps?.growthMonths.length
+      ? monthNamesToNumbers(plantProps.growthMonths)
+      : plantProps?.daysToHarvest
+        ? estimateGrowthMonths(plantProps.daysToHarvest)
+        : [],
+  );
+
+  let timelineBloomMonths = $derived(plantProps?.bloomMonths.length ? monthNamesToNumbers(plantProps.bloomMonths) : []);
+
+  let hasTimeline = $derived(timelineGrowthMonths.length > 0 || timelineBloomMonths.length > 0);
+  let hasThermal = $derived(plantProps?.tBase != null || plantProps?.tUpper != null);
+
+  let backHref = '/plants';
+  let backLabel = 'Back to plants';
 </script>
 
 <div class="space-y-8">
-  <a href="/plants" class="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+  <a href={backHref} class="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
     <ArrowLeft class="h-4 w-4" />
-    Back to catalog
+    {backLabel}
   </a>
 
   <div class="flex gap-6">
     {#if plant.imageUrl}
-      <img src={plant.imageUrl} alt={plant.commonName} class="h-32 w-32 rounded-lg object-cover" />
+      <img src={plant.imageUrl} alt={plant.commonName} class="h-32 w-32 rounded-lg object-cover shadow-md" />
     {:else}
-      <div class="flex h-32 w-32 items-center justify-center rounded-lg bg-muted">
+      <div class="flex h-32 w-32 items-center justify-center rounded-lg bg-muted shadow-md">
         <Leaf class="h-10 w-10 text-muted-foreground" />
       </div>
     {/if}
@@ -29,7 +63,7 @@
       <h1 class="text-3xl font-bold tracking-tight">{plant.commonName}</h1>
       <p class="mt-1 text-lg text-muted-foreground italic">{plant.scientificName}</p>
       <div class="mt-2 flex gap-2">
-        <span class="rounded-md bg-secondary px-2.5 py-0.5 text-sm">{plant.family}</span>
+        <span class="rounded-md bg-primary/10 px-2.5 py-0.5 text-sm text-primary font-medium">{plant.family}</span>
         <span class="rounded-md bg-secondary px-2.5 py-0.5 text-sm">{plant.cropGroup}</span>
         {#if plant.source !== 'seed'}
           <span class="rounded-md bg-muted px-2.5 py-0.5 text-xs text-muted-foreground">{plant.source}</span>
@@ -39,98 +73,91 @@
   </div>
 
   {#if plantProps}
+    <!-- Growing Info + Temperature side by side -->
     <div class="grid gap-6 sm:grid-cols-2">
-      <div class="space-y-4">
+      <div class="rounded-lg border bg-card p-5 space-y-3">
         <h2 class="text-lg font-semibold">Growing Info</h2>
-        <div class="space-y-3">
-          {#if plantProps.daysToHarvest}
-            <div class="flex items-center gap-3">
-              <Calendar class="h-4 w-4 text-muted-foreground" />
-              <span class="text-sm"><strong>Days to harvest:</strong> {plantProps.daysToHarvest}</span>
-            </div>
-          {/if}
-          {#if plantProps.lightRequirement}
-            <div class="flex items-center gap-3">
-              <Sun class="h-4 w-4 text-muted-foreground" />
-              <span class="text-sm"><strong>Light:</strong> {plantProps.lightRequirement.replace('_', ' ')}</span>
-            </div>
-          {/if}
-          {#if plantProps.duration}
-            <div class="flex items-center gap-3">
-              <Leaf class="h-4 w-4 text-muted-foreground" />
-              <span class="text-sm"><strong>Duration:</strong> {plantProps.duration}</span>
-            </div>
-          {/if}
-          {#if plantProps.soilPreferences.length > 0}
-            <div class="text-sm">
-              <strong>Soil:</strong>
-              {plantProps.soilPreferences.join(', ')}
-            </div>
-          {/if}
-          {#if plantProps.edibleParts.length > 0}
-            <div class="text-sm">
-              <strong>Edible parts:</strong>
-              {plantProps.edibleParts.join(', ')}
-            </div>
-          {/if}
-        </div>
+        {#if plantProps.daysToHarvest}
+          <div class="flex items-center gap-3">
+            <Calendar class="h-4 w-4 text-muted-foreground" />
+            <span class="text-sm"><strong>Days to harvest:</strong> {plantProps.daysToHarvest}</span>
+          </div>
+        {/if}
+        {#if plantProps.lightRequirement}
+          <div class="flex items-center gap-3">
+            <Sun class="h-4 w-4 text-muted-foreground" />
+            <span class="text-sm"><strong>Light:</strong> {plantProps.lightRequirement.replace('_', ' ')}</span>
+          </div>
+        {/if}
+        {#if plantProps.duration}
+          <div class="flex items-center gap-3">
+            <Leaf class="h-4 w-4 text-muted-foreground" />
+            <span class="text-sm"><strong>Duration:</strong> {plantProps.duration}</span>
+          </div>
+        {/if}
+        {#if plantProps.soilPreferences.length > 0}
+          <div class="text-sm">
+            <strong>Soil:</strong> {plantProps.soilPreferences.join(', ')}
+          </div>
+        {/if}
+        {#if plantProps.edibleParts.length > 0}
+          <div class="text-sm">
+            <strong>Edible parts:</strong> {plantProps.edibleParts.join(', ')}
+          </div>
+        {/if}
       </div>
 
-      <div class="space-y-4">
-        <h2 class="text-lg font-semibold">Thermal Properties</h2>
-        <div class="space-y-3">
-          {#if plantProps.tBase != null}
-            <div class="flex items-center gap-3">
-              <Thermometer class="h-4 w-4 text-muted-foreground" />
-              <span class="text-sm"><strong>Base temp (T<sub>base</sub>):</strong> {plantProps.tBase}°C</span>
-            </div>
-          {/if}
-          {#if plantProps.tUpper != null}
-            <div class="flex items-center gap-3">
-              <Thermometer class="h-4 w-4 text-muted-foreground" />
-              <span class="text-sm"><strong>Upper temp (T<sub>upper</sub>):</strong> {plantProps.tUpper}°C</span>
-            </div>
-          {/if}
+      {#if hasThermal}
+        <div class="rounded-lg border bg-card p-5">
+          <h2 class="mb-4 text-lg font-semibold">Temperature Range</h2>
+          <TemperatureScale tBase={plantProps.tBase} tUpper={plantProps.tUpper} />
           {#if plantProps.gddRequired}
-            <div class="text-sm">
-              <strong>GDD required:</strong> {plantProps.gddRequired}°C
-            </div>
-          {/if}
-          {#if plantProps.thermalSource}
-            <div class="text-sm text-muted-foreground">
-              Source: {plantProps.thermalSource}
-              {#if plantProps.thermalConfidence}
-                (confidence: {plantProps.thermalConfidence})
+            <div class="mt-3 text-sm text-muted-foreground">
+              <span class="font-medium text-foreground">GDD required:</span> {plantProps.gddRequired}°C-days
+              {#if plantProps.thermalSource}
+                <span class="ml-2 text-xs">(source: {plantProps.thermalSource}{#if plantProps.thermalConfidence}, {plantProps.thermalConfidence} confidence{/if})</span>
               {/if}
             </div>
           {/if}
         </div>
-      </div>
+      {/if}
     </div>
 
-    {#if plantProps.description}
-      <div>
-        <h2 class="text-lg font-semibold">Description</h2>
-        <p class="mt-2 text-sm text-muted-foreground">{plantProps.description}</p>
+    <!-- Plant Timeline -->
+    {#if hasTimeline}
+      <div class="rounded-lg border bg-card p-5">
+        <h2 class="mb-4 text-lg font-semibold">Growing Calendar</h2>
+        <PlantTimeline
+          growthMonths={timelineGrowthMonths}
+          bloomMonths={timelineBloomMonths}
+          frostFreeStart={locationStore.lastFrostMonth ?? undefined}
+          frostFreeEnd={locationStore.firstFrostMonth ?? undefined}
+        />
+        {#if locationStore.current}
+          <p class="mt-2 text-xs text-muted-foreground">
+            Based on climate data for {locationStore.current.displayName} (last frost: {locationStore.current.lastFrostSpring ?? 'unknown'}, first autumn frost: {locationStore.current.firstFrostAutumn ?? 'unknown'})
+          </p>
+        {:else if !plantProps.growthMonths.length && plantProps.daysToHarvest}
+          <p class="mt-2 text-xs text-muted-foreground">Estimated from {plantProps.daysToHarvest} days to harvest. Set a location for accurate frost dates.</p>
+        {/if}
       </div>
     {/if}
 
-    {#if plantProps.sowingInfo}
-      <div>
-        <h2 class="text-lg font-semibold">Sowing</h2>
-        <p class="mt-2 text-sm text-muted-foreground">{plantProps.sowingInfo}</p>
-      </div>
-    {/if}
-
-    {#if plantProps.bloomMonths.length > 0}
-      <div class="text-sm">
-        <strong>Bloom months:</strong> {plantProps.bloomMonths.join(', ')}
-      </div>
-    {/if}
-
-    {#if plantProps.growthMonths.length > 0}
-      <div class="text-sm">
-        <strong>Growth months:</strong> {plantProps.growthMonths.join(', ')}
+    <!-- Description + Sowing -->
+    {#if plantProps.description || plantProps.sowingInfo}
+      <div class="grid gap-6 sm:grid-cols-2">
+        {#if plantProps.description}
+          <div class="rounded-lg border bg-card p-5">
+            <h2 class="text-lg font-semibold">Description</h2>
+            <p class="mt-2 text-sm text-muted-foreground">{plantProps.description}</p>
+          </div>
+        {/if}
+        {#if plantProps.sowingInfo}
+          <div class="rounded-lg border bg-card p-5">
+            <h2 class="text-lg font-semibold">Sowing</h2>
+            <p class="mt-2 text-sm text-muted-foreground">{plantProps.sowingInfo}</p>
+          </div>
+        {/if}
       </div>
     {/if}
   {:else}
