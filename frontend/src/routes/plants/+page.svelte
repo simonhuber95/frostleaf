@@ -1,14 +1,18 @@
 <script lang="ts">
   import { untrack, onMount } from 'svelte';
+  import { page } from '$app/stores';
   import { searchPlants, type Plant } from '$lib/api/plants';
   import { getViability, type ViabilityReport, type ViabilityResult } from '$lib/api/viability';
   import { locationStore } from '$lib/stores/location.svelte';
+  import { gardenStore } from '$lib/stores/garden.svelte';
   import Search from '@lucide/svelte/icons/search';
   import Leaf from '@lucide/svelte/icons/leaf';
   import Snowflake from '@lucide/svelte/icons/snowflake';
   import Thermometer from '@lucide/svelte/icons/thermometer';
   import Calendar from '@lucide/svelte/icons/calendar';
   import Loader from '@lucide/svelte/icons/loader';
+  import Plus from '@lucide/svelte/icons/plus';
+  import Check from '@lucide/svelte/icons/check';
 
   // Search state
   let query = $state('');
@@ -81,6 +85,19 @@
 
   // Show search results or viability plants
   let showingSearch = $derived(searched && searchResults.length > 0);
+
+  // Add to garden mode
+  let addToGardenId = $derived($page.url.searchParams.get('addToGarden'));
+  let addToGarden = $derived(addToGardenId ? gardenStore.getGarden(addToGardenId) : null);
+  let recentlyAdded = $state<Set<string>>(new Set());
+
+  function handleAddToGarden(plantId: string, commonName: string) {
+    if (!addToGardenId) return;
+    const added = gardenStore.addPlant(addToGardenId, plantId, commonName);
+    if (added) {
+      recentlyAdded = new Set([...recentlyAdded, plantId]);
+    }
+  }
 </script>
 
 <div class="space-y-6">
@@ -94,6 +111,21 @@
       {/if}
     </p>
   </div>
+
+  <!-- Add to garden banner -->
+  {#if addToGarden}
+    <div class="flex items-center justify-between rounded-lg border border-primary/30 bg-primary/5 p-3">
+      <p class="text-sm">
+        <strong>Adding to:</strong> {addToGarden.name} &middot; Click plants to add them
+      </p>
+      <a
+        href="/garden/{addToGardenId}"
+        class="rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+      >
+        Done ({addToGarden.plants.length} plants)
+      </a>
+    </div>
+  {/if}
 
   <!-- Climate stats banner (only with location) -->
   {#if report}
@@ -256,6 +288,19 @@
                 {Math.round(viability.viabilityScore * 100)}
               </div>
             {/if}
+            {#if addToGarden}
+              {#if recentlyAdded.has(plant.id)}
+                <Check class="h-5 w-5 text-green-600 dark:text-green-400" />
+              {:else}
+                <button
+                  onclick={(e) => { e.preventDefault(); handleAddToGarden(plant.id, plant.commonName); }}
+                  class="rounded-md bg-primary/10 p-2 text-primary hover:bg-primary/20"
+                  title="Add to garden"
+                >
+                  <Plus class="h-4 w-4" />
+                </button>
+              {/if}
+            {/if}
           </div>
         </a>
       {/each}
@@ -297,6 +342,19 @@
             >
               {Math.round(plant.viabilityScore * 100)}
             </div>
+            {#if addToGarden}
+              {#if recentlyAdded.has(plant.plantId)}
+                <Check class="h-5 w-5 text-green-600 dark:text-green-400" />
+              {:else}
+                <button
+                  onclick={(e) => { e.preventDefault(); handleAddToGarden(plant.plantId, plant.commonName); }}
+                  class="rounded-md bg-primary/10 p-2 text-primary hover:bg-primary/20"
+                  title="Add to garden"
+                >
+                  <Plus class="h-4 w-4" />
+                </button>
+              {/if}
+            {/if}
           </div>
         </a>
       {/each}
