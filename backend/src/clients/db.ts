@@ -1,6 +1,6 @@
 import { db } from '../db/index';
-import { plants, plantProperties, weatherStations, climateData, derivedMetrics, locations } from '../db/schema';
-import { eq, ilike, or } from 'drizzle-orm';
+import { plants, plantProperties, weatherStations, climateData, derivedMetrics, locations, gardens, gardenPlants } from '../db/schema';
+import { eq, and, ilike, or } from 'drizzle-orm';
 import type { StationMetrics } from '../types/weather';
 
 // --- Plants ---
@@ -168,4 +168,66 @@ export async function insertLocation(latitude: number, longitude: number, neares
 export async function findLocationById(id: string) {
   const result = await db.select().from(locations).where(eq(locations.id, id));
   return result.length > 0 ? result[0] : null;
+}
+
+// --- Gardens ---
+
+export async function insertGarden(data: { userId: string; name: string; locationId: string }) {
+  const [garden] = await db.insert(gardens).values(data).returning();
+  return garden;
+}
+
+export async function findGardensByUser(userId: string) {
+  return db.select().from(gardens).where(eq(gardens.userId, userId)).orderBy(gardens.createdAt);
+}
+
+export async function findGardenById(id: string) {
+  const result = await db.select().from(gardens).where(eq(gardens.id, id));
+  return result.length > 0 ? result[0] : null;
+}
+
+export async function updateGarden(id: string, data: { name?: string; locationId?: string }) {
+  const [updated] = await db.update(gardens).set(data).where(eq(gardens.id, id)).returning();
+  return updated ?? null;
+}
+
+export async function deleteGarden(id: string) {
+  await db.delete(gardens).where(eq(gardens.id, id));
+}
+
+// --- Garden Plants ---
+
+export async function findGardenPlants(gardenId: string) {
+  return db
+    .select()
+    .from(gardenPlants)
+    .leftJoin(plants, eq(plants.id, gardenPlants.plantId))
+    .where(eq(gardenPlants.gardenId, gardenId));
+}
+
+export async function insertGardenPlant(data: { gardenId: string; plantId: string; notes?: string }) {
+  const [inserted] = await db
+    .insert(gardenPlants)
+    .values({ ...data, notes: data.notes ?? '' })
+    .onConflictDoUpdate({
+      target: [gardenPlants.gardenId, gardenPlants.plantId],
+      set: { notes: data.notes ?? '' },
+    })
+    .returning();
+  return inserted;
+}
+
+export async function deleteGardenPlant(gardenId: string, plantId: string) {
+  await db
+    .delete(gardenPlants)
+    .where(and(eq(gardenPlants.gardenId, gardenId), eq(gardenPlants.plantId, plantId)));
+}
+
+export async function updateGardenPlant(gardenId: string, plantId: string, data: { notes?: string; plantedDate?: string | null }) {
+  const [updated] = await db
+    .update(gardenPlants)
+    .set(data)
+    .where(and(eq(gardenPlants.gardenId, gardenId), eq(gardenPlants.plantId, plantId)))
+    .returning();
+  return updated ?? null;
 }
