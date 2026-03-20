@@ -21,6 +21,7 @@
   import Leaf from '@lucide/svelte/icons/leaf';
   import Download from '@lucide/svelte/icons/download';
   import Upload from '@lucide/svelte/icons/upload';
+  import ChevronRight from '@lucide/svelte/icons/chevron-right';
   import CalendarRange from '@lucide/svelte/icons/calendar-range';
   import Table from '@lucide/svelte/icons/table';
 
@@ -36,6 +37,17 @@
 
   // View mode
   let viewMode = $state<'timeline' | 'table'>('timeline');
+
+  // Group by mode
+  let groupBy = $state<'viability' | 'crop_group' | 'soil' | 'sowing' | 'light'>('viability');
+  let collapsedGroups = $state<Set<string>>(new Set());
+
+  function toggleGroup(label: string) {
+    const next = new Set(collapsedGroups);
+    if (next.has(label)) next.delete(label);
+    else next.add(label);
+    collapsedGroups = next;
+  }
 
   // Fetch plant details + viability + climate data
   onMount(async () => {
@@ -141,15 +153,83 @@
   }
 
 
-  // Plant bins by viability
-  let sortedPlants = $derived(
-    [...(garden?.plants ?? [])].sort((a, b) =>
+  // Plant grouping
+  type PlantGroup = { label: string; plants: LocalGardenPlant[] };
+
+  function groupByViability(): PlantGroup[] {
+    const sorted = [...(garden?.plants ?? [])].sort((a, b) =>
       (viabilityMap.get(b.plantId)?.viabilityScore ?? -1) - (viabilityMap.get(a.plantId)?.viabilityScore ?? -1)
-    ),
+    );
+    const viable = sorted.filter((p) => (viabilityMap.get(p.plantId)?.viabilityScore ?? 0) >= 0.6);
+    const maybe = sorted.filter((p) => { const s = viabilityMap.get(p.plantId)?.viabilityScore ?? 0; return s >= 0.25 && s < 0.6; });
+    const unviable = sorted.filter((p) => (viabilityMap.get(p.plantId)?.viabilityScore ?? 0) < 0.25);
+    const groups: PlantGroup[] = [];
+    if (viable.length) groups.push({ label: `Viable (${viable.length})`, plants: viable });
+    if (maybe.length) groups.push({ label: `Maybe viable (${maybe.length})`, plants: maybe });
+    if (unviable.length) groups.push({ label: `Not viable (${unviable.length})`, plants: unviable });
+    return groups;
+  }
+
+  function groupByCropGroup(): PlantGroup[] {
+    const buckets = new Map<string, LocalGardenPlant[]>();
+    for (const p of garden?.plants ?? []) {
+      const group = plantDetails.get(p.plantId)?.cropGroup ?? 'unknown';
+      const label = group.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+      if (!buckets.has(label)) buckets.set(label, []);
+      buckets.get(label)!.push(p);
+    }
+    return [...buckets.entries()]
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .map(([label, plants]) => ({ label: `${label} (${plants.length})`, plants }));
+  }
+
+  function groupBySoil(): PlantGroup[] {
+    const buckets = new Map<string, LocalGardenPlant[]>();
+    for (const p of garden?.plants ?? []) {
+      const prefs = plantDetails.get(p.plantId)?.properties?.soilPreferences ?? [];
+      const key = prefs.length > 0 ? prefs[0] : 'unknown';
+      const label = key.replace(/\b\w/g, (c) => c.toUpperCase());
+      if (!buckets.has(label)) buckets.set(label, []);
+      buckets.get(label)!.push(p);
+    }
+    return [...buckets.entries()]
+      .sort((a, b) => b[1].length - a[1].length)
+      .map(([label, plants]) => ({ label: `${label} (${plants.length})`, plants }));
+  }
+
+  function groupBySowing(): PlantGroup[] {
+    const buckets = new Map<string, LocalGardenPlant[]>();
+    const labels: Record<string, string> = { indoor: 'Indoor', direct: 'Direct', both: 'Indoor or Direct' };
+    for (const p of garden?.plants ?? []) {
+      const method = plantDetails.get(p.plantId)?.properties?.sowingMethod ?? 'unknown';
+      const label = labels[method] ?? 'Unknown';
+      if (!buckets.has(label)) buckets.set(label, []);
+      buckets.get(label)!.push(p);
+    }
+    return [...buckets.entries()]
+      .map(([label, plants]) => ({ label: `${label} (${plants.length})`, plants }));
+  }
+
+  function groupByLight(): PlantGroup[] {
+    const buckets = new Map<string, LocalGardenPlant[]>();
+    const labels: Record<string, string> = { full_sun: 'Full Sun', partial_shade: 'Partial Shade', full_shade: 'Full Shade' };
+    for (const p of garden?.plants ?? []) {
+      const light = plantDetails.get(p.plantId)?.properties?.lightRequirement ?? 'unknown';
+      const label = labels[light] ?? 'Unknown';
+      if (!buckets.has(label)) buckets.set(label, []);
+      buckets.get(label)!.push(p);
+    }
+    return [...buckets.entries()]
+      .map(([label, plants]) => ({ label: `${label} (${plants.length})`, plants }));
+  }
+
+  let plantGroups = $derived<PlantGroup[]>(
+    groupBy === 'viability' ? groupByViability()
+    : groupBy === 'crop_group' ? groupByCropGroup()
+    : groupBy === 'soil' ? groupBySoil()
+    : groupBy === 'sowing' ? groupBySowing()
+    : groupByLight()
   );
-  let viablePlants = $derived(sortedPlants.filter((p) => (viabilityMap.get(p.plantId)?.viabilityScore ?? 0) >= 0.6));
-  let maybePlants = $derived(sortedPlants.filter((p) => { const s = viabilityMap.get(p.plantId)?.viabilityScore ?? 0; return s >= 0.25 && s < 0.6; }));
-  let unviablePlants = $derived(sortedPlants.filter((p) => (viabilityMap.get(p.plantId)?.viabilityScore ?? 0) < 0.25));
 
   // Delete garden
   let confirmDelete = $state(false);
@@ -286,7 +366,7 @@
       <div class="group relative rounded-lg border transition-colors hover:bg-accent">
         <a
           href={resolve('/plants/[id]', { id: plant.plantId }) + `?from=${garden.id}`}
-          class="flex items-center gap-3 p-3 pb-1.5"
+          class="flex items-center gap-2.5 p-2.5 pb-1"
         >
           {#if viability}
             <div
@@ -315,7 +395,7 @@
         </a>
         <!-- Sowing method control -->
         {#if method}
-          <div class="px-3 pb-2.5 pt-0.5 pl-15">
+          <div class="px-2.5 pb-2 pt-0.5 pl-11.5">
             {#if method === 'both'}
               <div class="inline-flex items-center rounded-md bg-muted p-0.5 text-[11px]">
                 <button
@@ -353,39 +433,49 @@
     {/snippet}
 
     {#if garden.plants.length > 0}
-      <div class="space-y-6">
-        {#if viablePlants.length > 0}
-          <div>
-            <h3 class="mb-2 text-sm font-medium text-green-700 dark:text-green-400">Viable ({viablePlants.length})</h3>
-            <div class="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
-              {#each viablePlants as plant (plant.plantId)}
-                {@render plantCard(plant)}
-              {/each}
-            </div>
-          </div>
-        {/if}
+      <!-- Group by selector -->
+      <div class="flex items-center gap-2">
+        <span class="text-xs text-muted-foreground">Group by</span>
+        <div class="inline-flex items-center rounded-md bg-muted p-0.5 text-xs">
+          {#each [
+            { value: 'viability', label: 'Viability' },
+            { value: 'crop_group', label: 'Crop' },
+            { value: 'soil', label: 'Soil' },
+            { value: 'light', label: 'Light' },
+            { value: 'sowing', label: 'Sowing' },
+          ] as opt (opt.value)}
+            <button
+              onclick={() => { groupBy = opt.value as typeof groupBy; collapsedGroups = new Set(); }}
+              class="rounded px-2.5 py-1 font-medium transition-colors {groupBy === opt.value
+                ? 'bg-background text-foreground shadow-sm'
+                : 'text-muted-foreground hover:text-foreground'}"
+            >
+              {opt.label}
+            </button>
+          {/each}
+        </div>
+      </div>
 
-        {#if maybePlants.length > 0}
+      <div class="space-y-4">
+        {#each plantGroups as group (group.label)}
+          {@const collapsed = collapsedGroups.has(group.label)}
           <div>
-            <h3 class="mb-2 text-sm font-medium text-yellow-700 dark:text-yellow-400">Maybe viable ({maybePlants.length})</h3>
-            <div class="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
-              {#each maybePlants as plant (plant.plantId)}
-                {@render plantCard(plant)}
-              {/each}
-            </div>
+            <button
+              onclick={() => toggleGroup(group.label)}
+              class="flex items-center gap-1.5 mb-2 text-sm font-medium text-foreground hover:opacity-80 transition-opacity"
+            >
+              <ChevronRight class="h-3.5 w-3.5 transition-transform {collapsed ? '' : 'rotate-90'}" />
+              {group.label}
+            </button>
+            {#if !collapsed}
+              <div class="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                {#each group.plants as plant (plant.plantId)}
+                  {@render plantCard(plant)}
+                {/each}
+              </div>
+            {/if}
           </div>
-        {/if}
-
-        {#if unviablePlants.length > 0}
-          <div>
-            <h3 class="mb-2 text-sm font-medium text-red-700 dark:text-red-400">Not viable ({unviablePlants.length})</h3>
-            <div class="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
-              {#each unviablePlants as plant (plant.plantId)}
-                {@render plantCard(plant)}
-              {/each}
-            </div>
-          </div>
-        {/if}
+        {/each}
       </div>
     {:else}
       <div class="flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center">
