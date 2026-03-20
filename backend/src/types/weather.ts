@@ -2,6 +2,14 @@ export type TemperatureRecord = {
   date: string;
   tempMin: number;
   tempMax: number;
+  tempMean: number;
+};
+
+export type DailyClimateAverage = {
+  dayOfYear: number; // 1-366
+  avgMin: number;
+  avgMax: number;
+  avgMean: number;
 };
 
 export type DailyGddRecord = {
@@ -18,11 +26,11 @@ export type FrostDates = {
   frostFreeDays: number;
 };
 
-export type StationMetrics = {
+export type StationClimate = {
   stationId: string;
-  year: number;
-  gddAccumulated: number;
-  lastFrostSpring: string | null;
-  firstFrostAutumn: string | null;
-  frostFreeDays: number;
+  avgGdd: number;
+  avgFrostFreeDays: number;
+  lastFrostSpring: string | null; // MM-DD
+  firstFrostAutumn: string | null; // MM-DD
+  dailyAverages: DailyClimateAverage[];
 };

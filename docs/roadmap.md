@@ -95,16 +95,18 @@
 
 **Goal:** Users can create and manage a virtual garden (list-based).
 
-- [ ] Auth system (signup, login)
-- [ ] Garden CRUD
-  - [ ] Create garden (name, location)
-  - [ ] Add/remove plants
-  - [ ] Notes per plant
-- [ ] Garden list view (dashboard)
-- [ ] Anonymous mode
-  - [ ] Download garden as JSON
-  - [ ] Upload garden from JSON
-- [ ] Basic planting timeline (when to start based on frost dates)
+- [x] Auth system (signup, login) — BetterAuth with Drizzle adapter
+- [x] Garden CRUD
+  - [x] Create garden (name, location)
+  - [x] Add/remove plants
+  - [x] Notes per plant
+- [x] Garden list view (dashboard)
+- [x] Anonymous mode
+  - [x] Download garden as JSON
+  - [x] Upload garden from JSON
+- [x] Basic planting timeline (when to start based on frost dates)
+  - [x] Multi-plant visual timeline (GardenTimeline component)
+  - [x] Table view with CSV export
 
 ---
 
@@ -164,7 +166,7 @@
 
 ## Open Questions
 
-- Auth library: Lucia, custom JWT, or passport.js?
+- ~~Auth library: Lucia, custom JWT, or passport.js?~~ → Resolved: **BetterAuth** with Drizzle adapter
 - Do we want SSR for viability pages (SEO) or pure SPA?
 - Frost API client ID: register at https://frost.met.no
 - Trefle API key: register at https://trefle.io

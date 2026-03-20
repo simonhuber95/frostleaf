@@ -15,6 +15,7 @@
   "dependencies": {
     "@frostleaf/shared": "workspace:*",
     "@lucide/svelte": "^0.577.0",
+    "better-auth": "^1.5.5",
     "bits-ui": "^2.16.3",
     "clsx": "^2.1.1",
     "tailwind-merge": "^3.5.0",

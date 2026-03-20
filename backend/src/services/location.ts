@@ -1,50 +1,53 @@
-import dayjs from 'dayjs';
 import * as db from '../clients/db';
 import * as kartverket from '../clients/kartverket';
 import * as weatherService from './weather';
-import * as gddService from './gdd';
 import type { LocationInput } from '../types/location';
 
-export async function resolveLocation(input: LocationInput) {
+export async function findNearbyStations(input: LocationInput) {
   const coords = await resolveCoordinates(input);
-  const station = await weatherService.findNearestStation(coords.latitude, coords.longitude);
+  const stations = await weatherService.findNearbyStations(coords.latitude, coords.longitude);
+
+  return {
+    displayName: coords.displayName,
+    latitude: coords.latitude,
+    longitude: coords.longitude,
+    stations,
+  };
+}
+
+export async function resolveLocation(
+  latitude: number,
+  longitude: number,
+  stationId: string,
+  displayName: string,
+) {
+  const station = await db.findStationById(stationId);
+  if (!station) throw new Error('Station not found');
 
   // Return existing location if we already have one for this station
   const existingLocation = await db.findLocationByStation(station.id);
   if (existingLocation) {
-    const metrics = await db.findDerivedMetricsByStation(station.id);
+    await weatherService.getStationClimate(station.frostApiId, station.id);
+    const updatedStation = await db.findStationById(station.id);
+
     return {
       location: existingLocation,
-      displayName: coords.displayName,
+      displayName,
       station: { id: station.id, name: station.name },
-      metrics,
+      climate: updatedStation,
     };
   }
 
-  const location = await db.insertLocation(coords.latitude, coords.longitude, station.id);
+  const location = await db.insertLocation(latitude, longitude, station.id);
 
-  // Fetch and compute climate metrics
-  const currentYear = dayjs().year();
-  const fromDate = `${currentYear - 5}-01-01`;
-  const toDate = `${currentYear - 1}-12-31`;
-
-  const tempData = await weatherService.getTemperatureData(station.frostApiId, station.id, fromDate, toDate);
-
-  const metrics = [];
-  for (let year = currentYear - 5; year < currentYear; year++) {
-    const yearRecords = tempData.filter((r) => r.date.startsWith(`${year}`));
-    if (yearRecords.length < 100) continue;
-
-    const computed = gddService.computeStationMetrics(station.id, year, yearRecords);
-    const saved = await db.upsertDerivedMetrics(computed);
-    metrics.push(saved);
-  }
+  await weatherService.getStationClimate(station.frostApiId, station.id);
+  const updatedStation = await db.findStationById(station.id);
 
   return {
     location,
-    displayName: coords.displayName,
+    displayName,
     station: { id: station.id, name: station.name },
-    metrics,
+    climate: updatedStation,
   };
 }
 
@@ -52,8 +55,26 @@ export async function getLocation(id: string) {
   const location = await db.findLocationById(id);
   if (!location) return null;
 
-  const metrics = await db.findDerivedMetricsByStation(location.nearestStationId);
-  return { location, metrics };
+  const station = await db.findStationById(location.nearestStationId);
+  return { location, climate: station };
+}
+
+export async function getLocationClimate(locationId: string) {
+  const location = await db.findLocationById(locationId);
+  if (!location) return null;
+
+  const station = await db.findStationById(location.nearestStationId);
+  if (!station) return null;
+
+  const dailyAverages = await db.findDailyAveragesByStation(station.id);
+  if (dailyAverages.length === 0) return null;
+
+  return {
+    stationName: station.name,
+    lastFrostSpring: station.lastFrostSpring,
+    firstFrostAutumn: station.firstFrostAutumn,
+    dailyAverages,
+  };
 }
 
 async function resolveCoordinates(input: LocationInput) {

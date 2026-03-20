@@ -7,21 +7,34 @@ const __dirname = dirname(__filename);
 config({ path: resolve(__dirname, '../../.env') });
 import express from 'express';
 import cors from 'cors';
+import { toNodeHandler } from 'better-auth/node';
+import { getAuth } from './auth';
 import { healthRouter } from './routes/health';
 import { plantsRouter } from './routes/plants';
 import { locationRouter } from './routes/location';
 import { viabilityRouter } from './routes/viability';
+import { gardensRouter } from './routes/gardens';
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://localhost:4173'],
+  credentials: true,
+}));
+
+// BetterAuth handler — must come before express.json() since it handles its own body parsing
+app.all('/api/auth/*splat', (req, res, next) => {
+  toNodeHandler(getAuth())(req, res).catch(next);
+});
+
 app.use(express.json());
 
 app.use('/api/health', healthRouter);
 app.use('/api/plants', plantsRouter);
 app.use('/api/location', locationRouter);
 app.use('/api/viability', viabilityRouter);
+app.use('/api/gardens', gardensRouter);
 
 app.listen(port, () => {
   console.log(`Frostleaf API running on port ${port}`);

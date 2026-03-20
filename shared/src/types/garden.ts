@@ -13,6 +13,23 @@ export type GardenPlant = {
   notes: string;
 };
 
+export type LocalGardenPlant = {
+  plantId: string;
+  commonName: string;
+  plantedDate: string | null;
+  notes: string;
+};
+
+export type LocalGarden = {
+  id: string;
+  name: string;
+  locationId: string;
+  latitude: number;
+  longitude: number;
+  plants: LocalGardenPlant[];
+  createdAt: string;
+};
+
 export type GardenExport = {
   version: 1;
   name: string;

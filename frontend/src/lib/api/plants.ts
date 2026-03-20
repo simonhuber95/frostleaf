@@ -22,8 +22,9 @@ export type PlantProperties = {
   sowingInfo: string | null;
   bloomMonths: string[];
   growthMonths: string[];
-  tBase: number | null;
-  tUpper: number | null;
+  minTemperature: number | null;
+  baseTemperature: number | null;
+  maxTemperature: number | null;
   gddRequired: number | null;
   thermalSource: string | null;
   thermalConfidence: string | null;

@@ -1,7 +1,7 @@
 import { db } from '../db/index';
-import { plants, plantProperties, weatherStations, climateData, derivedMetrics, locations } from '../db/schema';
-import { eq, ilike, or } from 'drizzle-orm';
-import type { StationMetrics } from '../types/weather';
+import { plants, plantProperties, weatherStations, climateDailyAverages, locations, gardens, gardenPlants } from '../db/schema';
+import { eq, and, ilike, or } from 'drizzle-orm';
+import type { DailyClimateAverage } from '../types/weather';
 
 // --- Plants ---
 
@@ -99,7 +99,6 @@ export async function upsertStation(data: {
   name: string;
   latitude: number;
   longitude: number;
-  availableObservations: string[];
 }) {
   const [station] = await db
     .insert(weatherStations)
@@ -113,44 +112,57 @@ export async function upsertStation(data: {
   return station;
 }
 
-// --- Climate Data ---
+// --- Climate Daily Averages ---
 
-export async function findClimateDataByStation(stationId: string) {
-  return db.select().from(climateData).where(eq(climateData.stationId, stationId));
+export async function findDailyAveragesByStation(stationId: string): Promise<DailyClimateAverage[]> {
+  const rows = await db
+    .select()
+    .from(climateDailyAverages)
+    .where(eq(climateDailyAverages.stationId, stationId))
+    .orderBy(climateDailyAverages.dayOfYear);
+
+  return rows.map((r) => ({
+    dayOfYear: r.dayOfYear,
+    avgMin: r.avgMin,
+    avgMax: r.avgMax,
+    avgMean: r.avgMean,
+  }));
 }
 
-export async function upsertClimateRecord(stationId: string, date: string, tempMin: number, tempMax: number) {
+export async function insertDailyAverages(
+  stationId: string,
+  averages: DailyClimateAverage[],
+) {
+  await db.insert(climateDailyAverages).values(
+    averages.map((a) => ({
+      stationId,
+      dayOfYear: a.dayOfYear,
+      avgMin: a.avgMin,
+      avgMax: a.avgMax,
+      avgMean: a.avgMean,
+    })),
+  );
+}
+
+export async function deleteDailyAveragesByStation(stationId: string) {
+  await db.delete(climateDailyAverages).where(eq(climateDailyAverages.stationId, stationId));
+}
+
+export async function updateStationClimate(
+  stationId: string,
+  data: {
+    dataYearsFrom: number;
+    dataYearsTo: number;
+    avgGdd: number;
+    avgFrostFreeDays: number;
+    lastFrostSpring: string | null;
+    firstFrostAutumn: string | null;
+  },
+) {
   await db
-    .insert(climateData)
-    .values({ stationId, date, tempMin, tempMax })
-    .onConflictDoUpdate({
-      target: [climateData.stationId, climateData.date],
-      set: { tempMin, tempMax, fetchedAt: new Date() },
-    });
-}
-
-// --- Derived Metrics ---
-
-export async function upsertDerivedMetrics(metrics: StationMetrics) {
-  const [saved] = await db
-    .insert(derivedMetrics)
-    .values(metrics)
-    .onConflictDoUpdate({
-      target: [derivedMetrics.stationId, derivedMetrics.year],
-      set: {
-        gddAccumulated: metrics.gddAccumulated,
-        lastFrostSpring: metrics.lastFrostSpring,
-        firstFrostAutumn: metrics.firstFrostAutumn,
-        frostFreeDays: metrics.frostFreeDays,
-      },
-    })
-    .returning();
-
-  return saved;
-}
-
-export async function findDerivedMetricsByStation(stationId: string) {
-  return db.select().from(derivedMetrics).where(eq(derivedMetrics.stationId, stationId));
+    .update(weatherStations)
+    .set({ ...data, lastFetchedAt: new Date() })
+    .where(eq(weatherStations.id, stationId));
 }
 
 // --- Locations ---
@@ -168,4 +180,66 @@ export async function insertLocation(latitude: number, longitude: number, neares
 export async function findLocationById(id: string) {
   const result = await db.select().from(locations).where(eq(locations.id, id));
   return result.length > 0 ? result[0] : null;
+}
+
+// --- Gardens ---
+
+export async function insertGarden(data: { userId: string; name: string; locationId: string }) {
+  const [garden] = await db.insert(gardens).values(data).returning();
+  return garden;
+}
+
+export async function findGardensByUser(userId: string) {
+  return db.select().from(gardens).where(eq(gardens.userId, userId)).orderBy(gardens.createdAt);
+}
+
+export async function findGardenById(id: string) {
+  const result = await db.select().from(gardens).where(eq(gardens.id, id));
+  return result.length > 0 ? result[0] : null;
+}
+
+export async function updateGarden(id: string, data: { name?: string; locationId?: string }) {
+  const [updated] = await db.update(gardens).set(data).where(eq(gardens.id, id)).returning();
+  return updated ?? null;
+}
+
+export async function deleteGarden(id: string) {
+  await db.delete(gardens).where(eq(gardens.id, id));
+}
+
+// --- Garden Plants ---
+
+export async function findGardenPlants(gardenId: string) {
+  return db
+    .select()
+    .from(gardenPlants)
+    .leftJoin(plants, eq(plants.id, gardenPlants.plantId))
+    .where(eq(gardenPlants.gardenId, gardenId));
+}
+
+export async function insertGardenPlant(data: { gardenId: string; plantId: string; notes?: string }) {
+  const [inserted] = await db
+    .insert(gardenPlants)
+    .values({ ...data, notes: data.notes ?? '' })
+    .onConflictDoUpdate({
+      target: [gardenPlants.gardenId, gardenPlants.plantId],
+      set: { notes: data.notes ?? '' },
+    })
+    .returning();
+  return inserted;
+}
+
+export async function deleteGardenPlant(gardenId: string, plantId: string) {
+  await db
+    .delete(gardenPlants)
+    .where(and(eq(gardenPlants.gardenId, gardenId), eq(gardenPlants.plantId, plantId)));
+}
+
+export async function updateGardenPlant(gardenId: string, plantId: string, data: { notes?: string; plantedDate?: string | null }) {
+  const [updated] = await db
+    .update(gardenPlants)
+    .set(data)
+    .where(and(eq(gardenPlants.gardenId, gardenId), eq(gardenPlants.plantId, plantId)))
+    .returning();
+  return updated ?? null;
 }

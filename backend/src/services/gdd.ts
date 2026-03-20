@@ -1,5 +1,8 @@
 import dayjs from 'dayjs';
-import type { TemperatureRecord, DailyGddRecord, FrostDates, StationMetrics } from '../types/weather';
+import dayOfYear from 'dayjs/plugin/dayOfYear';
+import type { TemperatureRecord, DailyClimateAverage, FrostDates } from '../types/weather';
+
+dayjs.extend(dayOfYear);
 
 /**
  * Calculate daily GDD for a single day using the simplified FAO method.
@@ -8,41 +11,18 @@ import type { TemperatureRecord, DailyGddRecord, FrostDates, StationMetrics } fr
  * GDD = Tavg - Tbase             if Tbase ≤ Tavg ≤ Tupper
  * GDD = Tupper - Tbase           if Tavg > Tupper
  */
-export function calculateDailyGdd(tempMin: number, tempMax: number, tBase: number, tUpper: number): number {
-  const tavg = (tempMin + tempMax) / 2;
-
-  if (tavg < tBase) return 0;
-  if (tavg > tUpper) return tUpper - tBase;
-  return tavg - tBase;
-}
-
-/**
- * Calculate daily GDD series from temperature records.
- * Default Tbase 5°C / Tupper 30°C for location-level accumulation.
- */
-export function calculateDailyGddSeries(
-  records: TemperatureRecord[],
-  tBase: number = 5,
-  tUpper: number = 30,
-): DailyGddRecord[] {
-  return records.map((r) => {
-    const tempMean = (r.tempMin + r.tempMax) / 2;
-    const gdd = calculateDailyGdd(r.tempMin, r.tempMax, tBase, tUpper);
-    return {
-      date: r.date,
-      tempMin: r.tempMin,
-      tempMax: r.tempMax,
-      tempMean: Math.round(tempMean * 10) / 10,
-      gdd: Math.round(gdd * 10) / 10,
-    };
-  });
+export function calculateDailyGdd(tempMean: number, tBase: number, tUpper: number): number {
+  if (tempMean < tBase) return 0;
+  if (tempMean > tUpper) return tUpper - tBase;
+  return tempMean - tBase;
 }
 
 /**
  * Calculate cumulative/seasonal GDD from daily temperature records.
+ * Uses actual mean temperature (not min+max/2 approximation).
  */
 export function calculateSeasonalGdd(records: TemperatureRecord[], tBase: number = 5, tUpper: number = 30): number {
-  return records.reduce((sum, r) => sum + calculateDailyGdd(r.tempMin, r.tempMax, tBase, tUpper), 0);
+  return records.reduce((sum, r) => sum + calculateDailyGdd(r.tempMean, tBase, tUpper), 0);
 }
 
 /**
@@ -77,32 +57,67 @@ export function detectFrostDates(records: TemperatureRecord[], year: number): Fr
 }
 
 /**
- * Compute full derived metrics for a station-year: GDD accumulation + frost dates.
- * GDD is accumulated only during the frost-free period.
+ * Average frost dates across multiple years.
+ * Returns MM-DD strings (year-independent) by averaging the day-of-year.
  */
-export function computeStationMetrics(
-  stationId: string,
-  year: number,
-  records: TemperatureRecord[],
-  tBase: number = 5,
-  tUpper: number = 30,
-): StationMetrics {
-  const { lastFrostSpring, firstFrostAutumn, frostFreeDays } = detectFrostDates(records, year);
+export function averageFrostDates(metricsByYear: FrostDates[]): FrostDates {
+  const springDoys: number[] = [];
+  const autumnDoys: number[] = [];
 
-  const growingRecords = records.filter((r) => {
-    if (lastFrostSpring && r.date <= lastFrostSpring) return false;
-    if (firstFrostAutumn && r.date >= firstFrostAutumn) return false;
-    return true;
-  });
+  for (const m of metricsByYear) {
+    if (m.lastFrostSpring) {
+      springDoys.push(dayjs(m.lastFrostSpring).dayOfYear());
+    }
+    if (m.firstFrostAutumn) {
+      autumnDoys.push(dayjs(m.firstFrostAutumn).dayOfYear());
+    }
+  }
 
-  const gddAccumulated = calculateSeasonalGdd(growingRecords, tBase, tUpper);
+  const avgSpringDoy = springDoys.length > 0 ? Math.round(springDoys.reduce((a, b) => a + b, 0) / springDoys.length) : null;
+  const avgAutumnDoy = autumnDoys.length > 0 ? Math.round(autumnDoys.reduce((a, b) => a + b, 0) / autumnDoys.length) : null;
 
-  return {
-    stationId,
-    year,
-    gddAccumulated: Math.round(gddAccumulated),
-    lastFrostSpring,
-    firstFrostAutumn,
-    frostFreeDays,
-  };
+  const lastFrostSpring = avgSpringDoy !== null ? dayjs('2024-01-01').dayOfYear(avgSpringDoy).format('MM-DD') : null;
+  const firstFrostAutumn = avgAutumnDoy !== null ? dayjs('2024-01-01').dayOfYear(avgAutumnDoy).format('MM-DD') : null;
+
+  const frostFreeDays = avgSpringDoy !== null && avgAutumnDoy !== null ? avgAutumnDoy - avgSpringDoy : 0;
+
+  return { lastFrostSpring, firstFrostAutumn, frostFreeDays };
+}
+
+/**
+ * Find the first date (MM-DD) in spring where a daily average crosses a threshold.
+ * Works directly with stored DailyClimateAverage data.
+ */
+export function findThresholdDate(
+  dailyAverages: DailyClimateAverage[],
+  threshold: number,
+  field: 'avgMin' | 'avgMax' | 'avgMean' = 'avgMean',
+): string | null {
+  // Search spring: DOY 1 (Jan 1) through DOY 182 (Jul 1)
+  for (const avg of dailyAverages) {
+    if (avg.dayOfYear > 182) break;
+    if (avg[field] >= threshold) {
+      return dayjs('2024-01-01').dayOfYear(avg.dayOfYear).format('MM-DD');
+    }
+  }
+  return null;
+}
+
+/**
+ * Compute average monthly temperatures from daily climate averages.
+ * Returns array of 12 entries (index 0 = January).
+ */
+export function computeMonthlyAverages(dailyAverages: DailyClimateAverage[]): number[] {
+  const monthDays = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  const result: number[] = [];
+  let doy = 0;
+  for (let m = 0; m < 12; m++) {
+    let sum = 0;
+    for (let d = 0; d < monthDays[m]; d++) {
+      sum += dailyAverages[doy]?.avgMean ?? 0;
+      doy++;
+    }
+    result.push(Math.round((sum / monthDays[m]) * 10) / 10);
+  }
+  return result;
 }

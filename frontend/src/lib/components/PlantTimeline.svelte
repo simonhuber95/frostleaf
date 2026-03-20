@@ -1,10 +1,5 @@
 <script lang="ts">
-  type Stage = {
-    label: string;
-    startMonth: number;
-    endMonth: number;
-    color: string;
-  };
+  import { monthLabels, monthsToStages, monthToPercent, monthWidthPercent, stageColors, type TimelineRow } from '$lib/utils/timeline';
 
   type Props = {
     sowingMonths?: number[];
@@ -24,45 +19,16 @@
     frostFreeEnd,
   }: Props = $props();
 
-  const monthLabels = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
-
-  function monthsToStages(months: number[], label: string, color: string): Stage[] {
-    if (!months.length) return [];
-
-    const sorted = [...months].sort((a, b) => a - b);
-    const stages: Stage[] = [];
-    let start = sorted[0];
-    let prev = sorted[0];
-
-    for (let i = 1; i < sorted.length; i++) {
-      if (sorted[i] !== prev + 1) {
-        stages.push({ label, startMonth: start, endMonth: prev, color });
-        start = sorted[i];
-      }
-      prev = sorted[i];
-    }
-    stages.push({ label, startMonth: start, endMonth: prev, color });
-    return stages;
-  }
-
-  type TimelineRow = { label: string; color: string; stages: Stage[] };
+  const gridLines = Array.from({ length: 12 }, (__, i) => i);
 
   let rows = $derived<TimelineRow[]>(
     [
-      { label: 'Sowing', color: 'bg-amber-500', stages: monthsToStages(sowingMonths, 'Sowing', 'bg-amber-500') },
-      { label: 'Growth', color: 'bg-emerald-500', stages: monthsToStages(growthMonths, 'Growth', 'bg-emerald-500') },
-      { label: 'Bloom', color: 'bg-pink-400', stages: monthsToStages(bloomMonths, 'Bloom', 'bg-pink-400') },
-      { label: 'Harvest', color: 'bg-orange-500', stages: monthsToStages(harvestMonths, 'Harvest', 'bg-orange-500') },
+      { label: 'Sowing', color: stageColors.Sowing, stages: monthsToStages(sowingMonths, 'Sowing', stageColors.Sowing) },
+      { label: 'Growth', color: stageColors.Growth, stages: monthsToStages(growthMonths, 'Growth', stageColors.Growth) },
+      { label: 'Bloom', color: stageColors.Bloom, stages: monthsToStages(bloomMonths, 'Bloom', stageColors.Bloom) },
+      { label: 'Harvest', color: stageColors.Harvest, stages: monthsToStages(harvestMonths, 'Harvest', stageColors.Harvest) },
     ].filter((r) => r.stages.length > 0),
   );
-
-  function monthToPercent(month: number): number {
-    return ((month - 1) / 12) * 100;
-  }
-
-  function monthWidthPercent(start: number, end: number): number {
-    return ((end - start + 1) / 12) * 100;
-  }
 </script>
 
 {#if rows.length > 0}
@@ -71,7 +37,7 @@
     <div class="flex">
       <div class="w-16 shrink-0"></div>
       <div class="flex flex-1">
-        {#each monthLabels as label}
+        {#each monthLabels as label, i (i)}
           <div class="flex-1 text-center text-[10px] text-muted-foreground">{label}</div>
         {/each}
       </div>
@@ -87,26 +53,23 @@
             class="absolute top-0 h-full rounded-sm bg-sky-200/60 dark:bg-sky-800/40"
             style="left: {monthToPercent(frostFreeStart)}%; width: {monthWidthPercent(frostFreeStart, frostFreeEnd)}%;"
           ></div>
-          <!-- Grid lines -->
-          {#each Array(12) as _, i}
-            <div class="absolute top-0 h-full w-px bg-border/30" style="left: {(i / 12) * 100}%"></div>
+          {#each gridLines as gi (gi)}
+            <div class="absolute top-0 h-full w-px bg-border/30" style="left: {(gi / 12) * 100}%"></div>
           {/each}
         </div>
       </div>
     {/if}
 
     <!-- Stage rows -->
-    {#each rows as row}
+    {#each rows as row (row.label)}
       <div class="flex items-center">
         <div class="w-16 shrink-0 text-xs font-medium text-muted-foreground">{row.label}</div>
         <div class="relative flex-1 h-5">
           <div class="absolute inset-0 rounded-sm bg-muted/30"></div>
-          <!-- Grid lines -->
-          {#each Array(12) as _, i}
-            <div class="absolute top-0 h-full w-px bg-border/30" style="left: {(i / 12) * 100}%"></div>
+          {#each gridLines as gi (gi)}
+            <div class="absolute top-0 h-full w-px bg-border/30" style="left: {(gi / 12) * 100}%"></div>
           {/each}
-          <!-- Stage bars -->
-          {#each row.stages as stage}
+          {#each row.stages as stage (stage.label)}
             <div
               class="absolute top-0.5 h-4 rounded-sm {stage.color} opacity-80"
               style="left: {monthToPercent(stage.startMonth)}%; width: {monthWidthPercent(stage.startMonth, stage.endMonth)}%;"

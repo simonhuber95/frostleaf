@@ -10,7 +10,8 @@
       "Bash(pnpm -F @frostleaf/frontend add -D tailwindcss @tailwindcss/vite)",
       "WebFetch(domain:www.shadcn-svelte.com)",
       "Bash(pnpm -F @frostleaf/frontend typecheck)",
-      "Bash(pnpm -F @frostleaf/frontend check)"
+      "Bash(pnpm -F @frostleaf/frontend check)",
+      "Bash(pnpm -F @frostleaf/shared build)"
     ]
   }
 }

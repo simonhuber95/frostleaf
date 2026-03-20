@@ -1,5 +1,14 @@
 import { api } from './client';
 
+export type PlantTimeline = {
+  sowingStart: string;
+  sowingEnd: string;
+  growthStart: string;
+  growthEnd: string;
+  harvestStart: string;
+  harvestEnd: string;
+};
+
 export type ViabilityResult = {
   plantId: string;
   commonName: string;
@@ -11,6 +20,7 @@ export type ViabilityResult = {
   locationGdd: number;
   requiredGdd: number | null;
   confidence: string | null;
+  timeline: PlantTimeline | null;
 };
 
 export type ViabilityReport = {
@@ -20,6 +30,7 @@ export type ViabilityReport = {
   frostFreeDays: number;
   lastFrostSpring: string | null;
   firstFrostAutumn: string | null;
+  monthlyAverages: number[];
   plants: ViabilityResult[];
 };
 

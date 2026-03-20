@@ -6,8 +6,19 @@
     "cropGroup": "root",
     "daysToHarvest": 90,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "sandy loam", "slightly acidic"],
-    "thermal": { "tBase": 2, "tUpper": 30, "gddRequired": 1600, "source": "measured", "confidence": "high" }
+    "soilPreferences": [
+      "well-drained",
+      "sandy loam",
+      "slightly acidic"
+    ],
+    "thermal": {
+      "minTemperature": 0,
+      "baseTemperature": 2,
+      "maxTemperature": 30,
+      "gddRequired": 1600,
+      "source": "measured",
+      "confidence": "high"
+    }
   },
   {
     "commonName": "Tomato",
@@ -16,8 +27,19 @@
     "cropGroup": "vegetable",
     "daysToHarvest": 75,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "loamy", "slightly acidic"],
-    "thermal": { "tBase": 7, "tUpper": 28, "gddRequired": 1900, "source": "measured", "confidence": "high" }
+    "soilPreferences": [
+      "well-drained",
+      "loamy",
+      "slightly acidic"
+    ],
+    "thermal": {
+      "minTemperature": 10,
+      "baseTemperature": 7,
+      "maxTemperature": 28,
+      "gddRequired": 1900,
+      "source": "measured",
+      "confidence": "high"
+    }
   },
   {
     "commonName": "Carrot",
@@ -26,8 +48,19 @@
     "cropGroup": "root",
     "daysToHarvest": 75,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["deep", "sandy loam", "well-drained"],
-    "thermal": { "tBase": 6, "tUpper": 30, "gddRequired": 1575, "source": "measured", "confidence": "high" }
+    "soilPreferences": [
+      "deep",
+      "sandy loam",
+      "well-drained"
+    ],
+    "thermal": {
+      "minTemperature": -3,
+      "baseTemperature": 6,
+      "maxTemperature": 30,
+      "gddRequired": 1575,
+      "source": "measured",
+      "confidence": "high"
+    }
   },
   {
     "commonName": "Onion",
@@ -36,8 +69,19 @@
     "cropGroup": "root",
     "daysToHarvest": 100,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "fertile", "loamy"],
-    "thermal": { "tBase": 4.5, "tUpper": 35, "gddRequired": 2290, "source": "measured", "confidence": "high" }
+    "soilPreferences": [
+      "well-drained",
+      "fertile",
+      "loamy"
+    ],
+    "thermal": {
+      "minTemperature": -3,
+      "baseTemperature": 4.5,
+      "maxTemperature": 35,
+      "gddRequired": 2290,
+      "source": "measured",
+      "confidence": "high"
+    }
   },
   {
     "commonName": "Garlic",
@@ -46,8 +90,19 @@
     "cropGroup": "root",
     "daysToHarvest": 90,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "fertile", "loamy"],
-    "thermal": { "tBase": 4, "tUpper": 30, "gddRequired": 1140, "source": "measured", "confidence": "high" }
+    "soilPreferences": [
+      "well-drained",
+      "fertile",
+      "loamy"
+    ],
+    "thermal": {
+      "minTemperature": -10,
+      "baseTemperature": 4,
+      "maxTemperature": 30,
+      "gddRequired": 1140,
+      "source": "measured",
+      "confidence": "high"
+    }
   },
   {
     "commonName": "Lettuce",
@@ -56,8 +111,19 @@
     "cropGroup": "leafy_green",
     "daysToHarvest": 50,
     "lightRequirement": "partial_shade",
-    "soilPreferences": ["moist", "well-drained", "fertile"],
-    "thermal": { "tBase": 4, "tUpper": 28, "gddRequired": 985, "source": "measured", "confidence": "high" }
+    "soilPreferences": [
+      "moist",
+      "well-drained",
+      "fertile"
+    ],
+    "thermal": {
+      "minTemperature": -2,
+      "baseTemperature": 4,
+      "maxTemperature": 28,
+      "gddRequired": 985,
+      "source": "measured",
+      "confidence": "high"
+    }
   },
   {
     "commonName": "Spinach",
@@ -66,8 +132,19 @@
     "cropGroup": "leafy_green",
     "daysToHarvest": 45,
     "lightRequirement": "partial_shade",
-    "soilPreferences": ["moist", "fertile", "well-drained"],
-    "thermal": { "tBase": 4, "tUpper": 25, "gddRequired": 800, "source": "estimated", "confidence": "medium" }
+    "soilPreferences": [
+      "moist",
+      "fertile",
+      "well-drained"
+    ],
+    "thermal": {
+      "minTemperature": -5,
+      "baseTemperature": 4,
+      "maxTemperature": 25,
+      "gddRequired": 800,
+      "source": "estimated",
+      "confidence": "medium"
+    }
   },
   {
     "commonName": "Kale",
@@ -76,8 +153,19 @@
     "cropGroup": "brassica",
     "daysToHarvest": 65,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["fertile", "well-drained", "slightly alkaline"],
-    "thermal": { "tBase": 4.5, "tUpper": 30, "gddRequired": 900, "source": "estimated", "confidence": "medium" }
+    "soilPreferences": [
+      "fertile",
+      "well-drained",
+      "slightly alkaline"
+    ],
+    "thermal": {
+      "minTemperature": -10,
+      "baseTemperature": 4.5,
+      "maxTemperature": 30,
+      "gddRequired": 900,
+      "source": "estimated",
+      "confidence": "medium"
+    }
   },
   {
     "commonName": "Broccoli",
@@ -86,8 +174,19 @@
     "cropGroup": "brassica",
     "daysToHarvest": 70,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["fertile", "moist", "well-drained"],
-    "thermal": { "tBase": 4.5, "tUpper": 30, "gddRequired": 755, "source": "measured", "confidence": "high" }
+    "soilPreferences": [
+      "fertile",
+      "moist",
+      "well-drained"
+    ],
+    "thermal": {
+      "minTemperature": -3,
+      "baseTemperature": 4.5,
+      "maxTemperature": 30,
+      "gddRequired": 755,
+      "source": "measured",
+      "confidence": "high"
+    }
   },
   {
     "commonName": "Cauliflower",
@@ -96,8 +195,19 @@
     "cropGroup": "brassica",
     "daysToHarvest": 80,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["fertile", "moist", "well-drained"],
-    "thermal": { "tBase": 4.5, "tUpper": 30, "gddRequired": 1000, "source": "estimated", "confidence": "medium" }
+    "soilPreferences": [
+      "fertile",
+      "moist",
+      "well-drained"
+    ],
+    "thermal": {
+      "minTemperature": -2,
+      "baseTemperature": 4.5,
+      "maxTemperature": 30,
+      "gddRequired": 1000,
+      "source": "estimated",
+      "confidence": "medium"
+    }
   },
   {
     "commonName": "Cabbage",
@@ -106,8 +216,19 @@
     "cropGroup": "brassica",
     "daysToHarvest": 80,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["fertile", "moist", "clay loam"],
-    "thermal": { "tBase": 4.5, "tUpper": 30, "gddRequired": 1100, "source": "estimated", "confidence": "medium" }
+    "soilPreferences": [
+      "fertile",
+      "moist",
+      "clay loam"
+    ],
+    "thermal": {
+      "minTemperature": -5,
+      "baseTemperature": 4.5,
+      "maxTemperature": 30,
+      "gddRequired": 1100,
+      "source": "estimated",
+      "confidence": "medium"
+    }
   },
   {
     "commonName": "Brussels Sprouts",
@@ -116,8 +237,19 @@
     "cropGroup": "brassica",
     "daysToHarvest": 110,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["fertile", "moist", "clay loam"],
-    "thermal": { "tBase": 4.5, "tUpper": 30, "gddRequired": 1400, "source": "estimated", "confidence": "medium" }
+    "soilPreferences": [
+      "fertile",
+      "moist",
+      "clay loam"
+    ],
+    "thermal": {
+      "minTemperature": -8,
+      "baseTemperature": 4.5,
+      "maxTemperature": 30,
+      "gddRequired": 1400,
+      "source": "estimated",
+      "confidence": "medium"
+    }
   },
   {
     "commonName": "Turnip",
@@ -126,8 +258,19 @@
     "cropGroup": "root",
     "daysToHarvest": 55,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "fertile", "loamy"],
-    "thermal": { "tBase": 4, "tUpper": 35, "gddRequired": 850, "source": "estimated", "confidence": "medium" }
+    "soilPreferences": [
+      "well-drained",
+      "fertile",
+      "loamy"
+    ],
+    "thermal": {
+      "minTemperature": -3,
+      "baseTemperature": 4,
+      "maxTemperature": 35,
+      "gddRequired": 850,
+      "source": "estimated",
+      "confidence": "medium"
+    }
   },
   {
     "commonName": "Radish",
@@ -136,8 +279,19 @@
     "cropGroup": "root",
     "daysToHarvest": 30,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["loose", "well-drained", "sandy loam"],
-    "thermal": { "tBase": 4.5, "tUpper": 30, "gddRequired": 500, "source": "estimated", "confidence": "medium" }
+    "soilPreferences": [
+      "loose",
+      "well-drained",
+      "sandy loam"
+    ],
+    "thermal": {
+      "minTemperature": -2,
+      "baseTemperature": 4.5,
+      "maxTemperature": 30,
+      "gddRequired": 500,
+      "source": "estimated",
+      "confidence": "medium"
+    }
   },
   {
     "commonName": "Table Beet",
@@ -146,8 +300,19 @@
     "cropGroup": "root",
     "daysToHarvest": 60,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "fertile", "loamy"],
-    "thermal": { "tBase": 4.5, "tUpper": 30, "gddRequired": 900, "source": "estimated", "confidence": "medium" }
+    "soilPreferences": [
+      "well-drained",
+      "fertile",
+      "loamy"
+    ],
+    "thermal": {
+      "minTemperature": -2,
+      "baseTemperature": 4.5,
+      "maxTemperature": 30,
+      "gddRequired": 900,
+      "source": "estimated",
+      "confidence": "medium"
+    }
   },
   {
     "commonName": "Pea",
@@ -156,8 +321,19 @@
     "cropGroup": "legume",
     "daysToHarvest": 65,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "loamy", "slightly alkaline"],
-    "thermal": { "tBase": 5, "tUpper": 27, "gddRequired": 925, "source": "measured", "confidence": "high" }
+    "soilPreferences": [
+      "well-drained",
+      "loamy",
+      "slightly alkaline"
+    ],
+    "thermal": {
+      "minTemperature": -3,
+      "baseTemperature": 5,
+      "maxTemperature": 27,
+      "gddRequired": 925,
+      "source": "measured",
+      "confidence": "high"
+    }
   },
   {
     "commonName": "Bean (Green)",
@@ -166,8 +342,19 @@
     "cropGroup": "legume",
     "daysToHarvest": 55,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "loamy", "fertile"],
-    "thermal": { "tBase": 10, "tUpper": 32, "gddRequired": 960, "source": "measured", "confidence": "high" }
+    "soilPreferences": [
+      "well-drained",
+      "loamy",
+      "fertile"
+    ],
+    "thermal": {
+      "minTemperature": 10,
+      "baseTemperature": 10,
+      "maxTemperature": 32,
+      "gddRequired": 960,
+      "source": "measured",
+      "confidence": "high"
+    }
   },
   {
     "commonName": "Fava Bean",
@@ -176,8 +363,19 @@
     "cropGroup": "legume",
     "daysToHarvest": 85,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["fertile", "moist", "clay loam"],
-    "thermal": { "tBase": 5, "tUpper": 30, "gddRequired": 1200, "source": "estimated", "confidence": "medium" }
+    "soilPreferences": [
+      "fertile",
+      "moist",
+      "clay loam"
+    ],
+    "thermal": {
+      "minTemperature": -5,
+      "baseTemperature": 5,
+      "maxTemperature": 30,
+      "gddRequired": 1200,
+      "source": "estimated",
+      "confidence": "medium"
+    }
   },
   {
     "commonName": "Cucumber",
@@ -186,8 +384,19 @@
     "cropGroup": "vegetable",
     "daysToHarvest": 60,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "fertile", "loamy"],
-    "thermal": { "tBase": 10, "tUpper": 32, "gddRequired": 1200, "source": "estimated", "confidence": "medium" }
+    "soilPreferences": [
+      "well-drained",
+      "fertile",
+      "loamy"
+    ],
+    "thermal": {
+      "minTemperature": 10,
+      "baseTemperature": 10,
+      "maxTemperature": 32,
+      "gddRequired": 1200,
+      "source": "estimated",
+      "confidence": "medium"
+    }
   },
   {
     "commonName": "Zucchini",
@@ -196,8 +405,19 @@
     "cropGroup": "vegetable",
     "daysToHarvest": 55,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "fertile", "loamy"],
-    "thermal": { "tBase": 10, "tUpper": 32, "gddRequired": 1100, "source": "estimated", "confidence": "medium" }
+    "soilPreferences": [
+      "well-drained",
+      "fertile",
+      "loamy"
+    ],
+    "thermal": {
+      "minTemperature": 10,
+      "baseTemperature": 10,
+      "maxTemperature": 32,
+      "gddRequired": 1100,
+      "source": "estimated",
+      "confidence": "medium"
+    }
   },
   {
     "commonName": "Pumpkin",
@@ -206,8 +426,19 @@
     "cropGroup": "vegetable",
     "daysToHarvest": 100,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "fertile", "loamy"],
-    "thermal": { "tBase": 10, "tUpper": 32, "gddRequired": 1800, "source": "estimated", "confidence": "medium" }
+    "soilPreferences": [
+      "well-drained",
+      "fertile",
+      "loamy"
+    ],
+    "thermal": {
+      "minTemperature": 10,
+      "baseTemperature": 10,
+      "maxTemperature": 32,
+      "gddRequired": 1800,
+      "source": "estimated",
+      "confidence": "medium"
+    }
   },
   {
     "commonName": "Bell Pepper",
@@ -216,8 +447,19 @@
     "cropGroup": "vegetable",
     "daysToHarvest": 75,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "fertile", "loamy"],
-    "thermal": { "tBase": 10, "tUpper": 35, "gddRequired": 2415, "source": "measured", "confidence": "high" }
+    "soilPreferences": [
+      "well-drained",
+      "fertile",
+      "loamy"
+    ],
+    "thermal": {
+      "minTemperature": 10,
+      "baseTemperature": 10,
+      "maxTemperature": 35,
+      "gddRequired": 2415,
+      "source": "measured",
+      "confidence": "high"
+    }
   },
   {
     "commonName": "Chili Pepper",
@@ -226,8 +468,19 @@
     "cropGroup": "vegetable",
     "daysToHarvest": 80,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "fertile", "loamy"],
-    "thermal": { "tBase": 10, "tUpper": 35, "gddRequired": 2500, "source": "estimated", "confidence": "medium" }
+    "soilPreferences": [
+      "well-drained",
+      "fertile",
+      "loamy"
+    ],
+    "thermal": {
+      "minTemperature": 10,
+      "baseTemperature": 10,
+      "maxTemperature": 35,
+      "gddRequired": 2500,
+      "source": "estimated",
+      "confidence": "medium"
+    }
   },
   {
     "commonName": "Eggplant",
@@ -236,8 +489,19 @@
     "cropGroup": "vegetable",
     "daysToHarvest": 80,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "fertile", "loamy"],
-    "thermal": { "tBase": 10, "tUpper": 35, "gddRequired": 2200, "source": "estimated", "confidence": "medium" }
+    "soilPreferences": [
+      "well-drained",
+      "fertile",
+      "loamy"
+    ],
+    "thermal": {
+      "minTemperature": 12,
+      "baseTemperature": 10,
+      "maxTemperature": 35,
+      "gddRequired": 2200,
+      "source": "estimated",
+      "confidence": "medium"
+    }
   },
   {
     "commonName": "Celery",
@@ -246,8 +510,19 @@
     "cropGroup": "vegetable",
     "daysToHarvest": 85,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["moist", "fertile", "rich organic"],
-    "thermal": { "tBase": 4, "tUpper": 24, "gddRequired": 1200, "source": "estimated", "confidence": "medium" }
+    "soilPreferences": [
+      "moist",
+      "fertile",
+      "rich organic"
+    ],
+    "thermal": {
+      "minTemperature": -2,
+      "baseTemperature": 4,
+      "maxTemperature": 24,
+      "gddRequired": 1200,
+      "source": "estimated",
+      "confidence": "medium"
+    }
   },
   {
     "commonName": "Leek",
@@ -256,8 +531,19 @@
     "cropGroup": "root",
     "daysToHarvest": 100,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["fertile", "moist", "well-drained"],
-    "thermal": { "tBase": 4, "tUpper": 30, "gddRequired": 1400, "source": "estimated", "confidence": "medium" }
+    "soilPreferences": [
+      "fertile",
+      "moist",
+      "well-drained"
+    ],
+    "thermal": {
+      "minTemperature": -5,
+      "baseTemperature": 4,
+      "maxTemperature": 30,
+      "gddRequired": 1400,
+      "source": "estimated",
+      "confidence": "medium"
+    }
   },
   {
     "commonName": "Asparagus",
@@ -266,8 +552,19 @@
     "cropGroup": "vegetable",
     "daysToHarvest": 730,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "sandy loam", "slightly alkaline"],
-    "thermal": { "tBase": 4.5, "tUpper": 35, "gddRequired": null, "source": "measured", "confidence": "medium" }
+    "soilPreferences": [
+      "well-drained",
+      "sandy loam",
+      "slightly alkaline"
+    ],
+    "thermal": {
+      "minTemperature": -5,
+      "baseTemperature": 4.5,
+      "maxTemperature": 35,
+      "gddRequired": null,
+      "source": "measured",
+      "confidence": "medium"
+    }
   },
   {
     "commonName": "Rhubarb",
@@ -276,8 +573,19 @@
     "cropGroup": "vegetable",
     "daysToHarvest": 365,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["fertile", "moist", "well-drained"],
-    "thermal": { "tBase": 3, "tUpper": 28, "gddRequired": null, "source": "estimated", "confidence": "low" }
+    "soilPreferences": [
+      "fertile",
+      "moist",
+      "well-drained"
+    ],
+    "thermal": {
+      "minTemperature": -10,
+      "baseTemperature": 3,
+      "maxTemperature": 28,
+      "gddRequired": null,
+      "source": "estimated",
+      "confidence": "low"
+    }
   },
   {
     "commonName": "Sweet Corn",
@@ -286,8 +594,19 @@
     "cropGroup": "vegetable",
     "daysToHarvest": 75,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "fertile", "loamy"],
-    "thermal": { "tBase": 10, "tUpper": 32, "gddRequired": 985, "source": "measured", "confidence": "high" }
+    "soilPreferences": [
+      "well-drained",
+      "fertile",
+      "loamy"
+    ],
+    "thermal": {
+      "minTemperature": 10,
+      "baseTemperature": 10,
+      "maxTemperature": 32,
+      "gddRequired": 985,
+      "source": "measured",
+      "confidence": "high"
+    }
   },
   {
     "commonName": "Strawberry",
@@ -296,8 +615,19 @@
     "cropGroup": "berry",
     "daysToHarvest": 60,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "slightly acidic", "sandy loam"],
-    "thermal": { "tBase": 3, "tUpper": 30, "gddRequired": 1000, "source": "estimated", "confidence": "medium" }
+    "soilPreferences": [
+      "well-drained",
+      "slightly acidic",
+      "sandy loam"
+    ],
+    "thermal": {
+      "minTemperature": -5,
+      "baseTemperature": 3,
+      "maxTemperature": 30,
+      "gddRequired": 1000,
+      "source": "estimated",
+      "confidence": "medium"
+    }
   },
   {
     "commonName": "Raspberry",
@@ -306,8 +636,19 @@
     "cropGroup": "berry",
     "daysToHarvest": 365,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "slightly acidic", "loamy"],
-    "thermal": { "tBase": 5, "tUpper": 30, "gddRequired": null, "source": "estimated", "confidence": "low" }
+    "soilPreferences": [
+      "well-drained",
+      "slightly acidic",
+      "loamy"
+    ],
+    "thermal": {
+      "minTemperature": -15,
+      "baseTemperature": 5,
+      "maxTemperature": 30,
+      "gddRequired": null,
+      "source": "estimated",
+      "confidence": "low"
+    }
   },
   {
     "commonName": "Blueberry",
@@ -316,8 +657,19 @@
     "cropGroup": "berry",
     "daysToHarvest": 365,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["acidic", "well-drained", "peat-rich"],
-    "thermal": { "tBase": 6, "tUpper": 30, "gddRequired": null, "source": "measured", "confidence": "medium" }
+    "soilPreferences": [
+      "acidic",
+      "well-drained",
+      "peat-rich"
+    ],
+    "thermal": {
+      "minTemperature": -10,
+      "baseTemperature": 6,
+      "maxTemperature": 30,
+      "gddRequired": null,
+      "source": "measured",
+      "confidence": "medium"
+    }
   },
   {
     "commonName": "Blackcurrant",
@@ -326,8 +678,19 @@
     "cropGroup": "berry",
     "daysToHarvest": 365,
     "lightRequirement": "partial_shade",
-    "soilPreferences": ["moist", "fertile", "well-drained"],
-    "thermal": { "tBase": 4, "tUpper": 28, "gddRequired": null, "source": "estimated", "confidence": "low" }
+    "soilPreferences": [
+      "moist",
+      "fertile",
+      "well-drained"
+    ],
+    "thermal": {
+      "minTemperature": -15,
+      "baseTemperature": 4,
+      "maxTemperature": 28,
+      "gddRequired": null,
+      "source": "estimated",
+      "confidence": "low"
+    }
   },
   {
     "commonName": "Redcurrant",
@@ -336,8 +699,19 @@
     "cropGroup": "berry",
     "daysToHarvest": 365,
     "lightRequirement": "partial_shade",
-    "soilPreferences": ["moist", "fertile", "well-drained"],
-    "thermal": { "tBase": 4, "tUpper": 28, "gddRequired": null, "source": "estimated", "confidence": "low" }
+    "soilPreferences": [
+      "moist",
+      "fertile",
+      "well-drained"
+    ],
+    "thermal": {
+      "minTemperature": -15,
+      "baseTemperature": 4,
+      "maxTemperature": 28,
+      "gddRequired": null,
+      "source": "estimated",
+      "confidence": "low"
+    }
   },
   {
     "commonName": "Gooseberry",
@@ -346,8 +720,19 @@
     "cropGroup": "berry",
     "daysToHarvest": 365,
     "lightRequirement": "partial_shade",
-    "soilPreferences": ["moist", "fertile", "well-drained"],
-    "thermal": { "tBase": 4, "tUpper": 28, "gddRequired": null, "source": "estimated", "confidence": "low" }
+    "soilPreferences": [
+      "moist",
+      "fertile",
+      "well-drained"
+    ],
+    "thermal": {
+      "minTemperature": -15,
+      "baseTemperature": 4,
+      "maxTemperature": 28,
+      "gddRequired": null,
+      "source": "estimated",
+      "confidence": "low"
+    }
   },
   {
     "commonName": "Apple",
@@ -356,8 +741,19 @@
     "cropGroup": "fruit",
     "daysToHarvest": 365,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "loamy", "slightly acidic"],
-    "thermal": { "tBase": 4, "tUpper": 35, "gddRequired": null, "source": "measured", "confidence": "medium" }
+    "soilPreferences": [
+      "well-drained",
+      "loamy",
+      "slightly acidic"
+    ],
+    "thermal": {
+      "minTemperature": -20,
+      "baseTemperature": 4,
+      "maxTemperature": 35,
+      "gddRequired": null,
+      "source": "measured",
+      "confidence": "medium"
+    }
   },
   {
     "commonName": "Pear",
@@ -366,8 +762,19 @@
     "cropGroup": "fruit",
     "daysToHarvest": 365,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "loamy", "fertile"],
-    "thermal": { "tBase": 4, "tUpper": 35, "gddRequired": null, "source": "measured", "confidence": "medium" }
+    "soilPreferences": [
+      "well-drained",
+      "loamy",
+      "fertile"
+    ],
+    "thermal": {
+      "minTemperature": -15,
+      "baseTemperature": 4,
+      "maxTemperature": 35,
+      "gddRequired": null,
+      "source": "measured",
+      "confidence": "medium"
+    }
   },
   {
     "commonName": "Cherry",
@@ -376,8 +783,19 @@
     "cropGroup": "fruit",
     "daysToHarvest": 365,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "loamy", "slightly alkaline"],
-    "thermal": { "tBase": 4.5, "tUpper": 30, "gddRequired": null, "source": "measured", "confidence": "medium" }
+    "soilPreferences": [
+      "well-drained",
+      "loamy",
+      "slightly alkaline"
+    ],
+    "thermal": {
+      "minTemperature": -15,
+      "baseTemperature": 4.5,
+      "maxTemperature": 30,
+      "gddRequired": null,
+      "source": "measured",
+      "confidence": "medium"
+    }
   },
   {
     "commonName": "Plum",
@@ -386,8 +804,19 @@
     "cropGroup": "fruit",
     "daysToHarvest": 365,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "fertile", "loamy"],
-    "thermal": { "tBase": 4.5, "tUpper": 25, "gddRequired": null, "source": "measured", "confidence": "medium" }
+    "soilPreferences": [
+      "well-drained",
+      "fertile",
+      "loamy"
+    ],
+    "thermal": {
+      "minTemperature": -15,
+      "baseTemperature": 4.5,
+      "maxTemperature": 25,
+      "gddRequired": null,
+      "source": "measured",
+      "confidence": "medium"
+    }
   },
   {
     "commonName": "Dill",
@@ -396,8 +825,18 @@
     "cropGroup": "herb",
     "daysToHarvest": 45,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "loamy"],
-    "thermal": { "tBase": 4, "tUpper": 30, "gddRequired": 700, "source": "estimated", "confidence": "low" }
+    "soilPreferences": [
+      "well-drained",
+      "loamy"
+    ],
+    "thermal": {
+      "minTemperature": -2,
+      "baseTemperature": 4,
+      "maxTemperature": 30,
+      "gddRequired": 700,
+      "source": "estimated",
+      "confidence": "low"
+    }
   },
   {
     "commonName": "Parsley",
@@ -406,8 +845,19 @@
     "cropGroup": "herb",
     "daysToHarvest": 70,
     "lightRequirement": "partial_shade",
-    "soilPreferences": ["moist", "fertile", "well-drained"],
-    "thermal": { "tBase": 4, "tUpper": 27, "gddRequired": 900, "source": "measured", "confidence": "medium" }
+    "soilPreferences": [
+      "moist",
+      "fertile",
+      "well-drained"
+    ],
+    "thermal": {
+      "minTemperature": -5,
+      "baseTemperature": 4,
+      "maxTemperature": 27,
+      "gddRequired": 900,
+      "source": "measured",
+      "confidence": "medium"
+    }
   },
   {
     "commonName": "Basil",
@@ -416,8 +866,19 @@
     "cropGroup": "herb",
     "daysToHarvest": 50,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "fertile", "loamy"],
-    "thermal": { "tBase": 10, "tUpper": 30, "gddRequired": 800, "source": "measured", "confidence": "medium" }
+    "soilPreferences": [
+      "well-drained",
+      "fertile",
+      "loamy"
+    ],
+    "thermal": {
+      "minTemperature": 10,
+      "baseTemperature": 10,
+      "maxTemperature": 30,
+      "gddRequired": 800,
+      "source": "measured",
+      "confidence": "medium"
+    }
   },
   {
     "commonName": "Coriander",
@@ -426,8 +887,18 @@
     "cropGroup": "herb",
     "daysToHarvest": 45,
     "lightRequirement": "partial_shade",
-    "soilPreferences": ["well-drained", "loamy"],
-    "thermal": { "tBase": 4, "tUpper": 30, "gddRequired": 700, "source": "measured", "confidence": "medium" }
+    "soilPreferences": [
+      "well-drained",
+      "loamy"
+    ],
+    "thermal": {
+      "minTemperature": -3,
+      "baseTemperature": 4,
+      "maxTemperature": 30,
+      "gddRequired": 700,
+      "source": "measured",
+      "confidence": "medium"
+    }
   },
   {
     "commonName": "Mint",
@@ -436,8 +907,18 @@
     "cropGroup": "herb",
     "daysToHarvest": 60,
     "lightRequirement": "partial_shade",
-    "soilPreferences": ["moist", "fertile"],
-    "thermal": { "tBase": 0, "tUpper": 35, "gddRequired": null, "source": "measured", "confidence": "medium" }
+    "soilPreferences": [
+      "moist",
+      "fertile"
+    ],
+    "thermal": {
+      "minTemperature": -3,
+      "baseTemperature": 5,
+      "maxTemperature": 35,
+      "gddRequired": null,
+      "source": "estimated",
+      "confidence": "medium"
+    }
   },
   {
     "commonName": "Chives",
@@ -446,8 +927,19 @@
     "cropGroup": "herb",
     "daysToHarvest": 60,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["moist", "fertile", "well-drained"],
-    "thermal": { "tBase": 3, "tUpper": 30, "gddRequired": null, "source": "estimated", "confidence": "low" }
+    "soilPreferences": [
+      "moist",
+      "fertile",
+      "well-drained"
+    ],
+    "thermal": {
+      "minTemperature": -10,
+      "baseTemperature": 3,
+      "maxTemperature": 30,
+      "gddRequired": null,
+      "source": "estimated",
+      "confidence": "low"
+    }
   },
   {
     "commonName": "Oregano",
@@ -456,8 +948,19 @@
     "cropGroup": "herb",
     "daysToHarvest": 80,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "sandy", "slightly alkaline"],
-    "thermal": { "tBase": 5, "tUpper": 30, "gddRequired": null, "source": "measured", "confidence": "medium" }
+    "soilPreferences": [
+      "well-drained",
+      "sandy",
+      "slightly alkaline"
+    ],
+    "thermal": {
+      "minTemperature": -10,
+      "baseTemperature": 5,
+      "maxTemperature": 30,
+      "gddRequired": null,
+      "source": "measured",
+      "confidence": "medium"
+    }
   },
   {
     "commonName": "Thyme",
@@ -466,8 +969,19 @@
     "cropGroup": "herb",
     "daysToHarvest": 75,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "sandy", "slightly alkaline"],
-    "thermal": { "tBase": 5, "tUpper": 30, "gddRequired": null, "source": "estimated", "confidence": "low" }
+    "soilPreferences": [
+      "well-drained",
+      "sandy",
+      "slightly alkaline"
+    ],
+    "thermal": {
+      "minTemperature": -10,
+      "baseTemperature": 5,
+      "maxTemperature": 30,
+      "gddRequired": null,
+      "source": "estimated",
+      "confidence": "low"
+    }
   },
   {
     "commonName": "Lemon Balm",
@@ -476,8 +990,19 @@
     "cropGroup": "herb",
     "daysToHarvest": 70,
     "lightRequirement": "partial_shade",
-    "soilPreferences": ["moist", "well-drained", "loamy"],
-    "thermal": { "tBase": 5, "tUpper": 35, "gddRequired": null, "source": "measured", "confidence": "medium" }
+    "soilPreferences": [
+      "moist",
+      "well-drained",
+      "loamy"
+    ],
+    "thermal": {
+      "minTemperature": -10,
+      "baseTemperature": 5,
+      "maxTemperature": 35,
+      "gddRequired": null,
+      "source": "measured",
+      "confidence": "medium"
+    }
   },
   {
     "commonName": "Parsnip",
@@ -486,8 +1011,19 @@
     "cropGroup": "root",
     "daysToHarvest": 120,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["deep", "well-drained", "sandy loam"],
-    "thermal": { "tBase": 4, "tUpper": 30, "gddRequired": 1500, "source": "estimated", "confidence": "low" }
+    "soilPreferences": [
+      "deep",
+      "well-drained",
+      "sandy loam"
+    ],
+    "thermal": {
+      "minTemperature": -5,
+      "baseTemperature": 4,
+      "maxTemperature": 30,
+      "gddRequired": 1500,
+      "source": "estimated",
+      "confidence": "low"
+    }
   },
   {
     "commonName": "Celeriac",
@@ -496,8 +1032,19 @@
     "cropGroup": "root",
     "daysToHarvest": 120,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["moist", "fertile", "rich organic"],
-    "thermal": { "tBase": 4, "tUpper": 24, "gddRequired": 1400, "source": "estimated", "confidence": "low" }
+    "soilPreferences": [
+      "moist",
+      "fertile",
+      "rich organic"
+    ],
+    "thermal": {
+      "minTemperature": -2,
+      "baseTemperature": 4,
+      "maxTemperature": 24,
+      "gddRequired": 1400,
+      "source": "estimated",
+      "confidence": "low"
+    }
   },
   {
     "commonName": "Kohlrabi",
@@ -506,8 +1053,19 @@
     "cropGroup": "brassica",
     "daysToHarvest": 55,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["fertile", "moist", "well-drained"],
-    "thermal": { "tBase": 4.5, "tUpper": 30, "gddRequired": 700, "source": "estimated", "confidence": "medium" }
+    "soilPreferences": [
+      "fertile",
+      "moist",
+      "well-drained"
+    ],
+    "thermal": {
+      "minTemperature": -3,
+      "baseTemperature": 4.5,
+      "maxTemperature": 30,
+      "gddRequired": 700,
+      "source": "estimated",
+      "confidence": "medium"
+    }
   },
   {
     "commonName": "Pak Choi",
@@ -516,8 +1074,19 @@
     "cropGroup": "leafy_green",
     "daysToHarvest": 45,
     "lightRequirement": "partial_shade",
-    "soilPreferences": ["moist", "fertile", "well-drained"],
-    "thermal": { "tBase": 4, "tUpper": 30, "gddRequired": 600, "source": "estimated", "confidence": "low" }
+    "soilPreferences": [
+      "moist",
+      "fertile",
+      "well-drained"
+    ],
+    "thermal": {
+      "minTemperature": -2,
+      "baseTemperature": 4,
+      "maxTemperature": 30,
+      "gddRequired": 600,
+      "source": "estimated",
+      "confidence": "low"
+    }
   },
   {
     "commonName": "Swiss Chard",
@@ -526,8 +1095,19 @@
     "cropGroup": "leafy_green",
     "daysToHarvest": 55,
     "lightRequirement": "partial_shade",
-    "soilPreferences": ["moist", "fertile", "well-drained"],
-    "thermal": { "tBase": 4.5, "tUpper": 30, "gddRequired": 800, "source": "estimated", "confidence": "medium" }
+    "soilPreferences": [
+      "moist",
+      "fertile",
+      "well-drained"
+    ],
+    "thermal": {
+      "minTemperature": -3,
+      "baseTemperature": 4.5,
+      "maxTemperature": 30,
+      "gddRequired": 800,
+      "source": "estimated",
+      "confidence": "medium"
+    }
   },
   {
     "commonName": "Arugula",
@@ -536,8 +1116,18 @@
     "cropGroup": "leafy_green",
     "daysToHarvest": 30,
     "lightRequirement": "partial_shade",
-    "soilPreferences": ["well-drained", "fertile"],
-    "thermal": { "tBase": 4, "tUpper": 28, "gddRequired": 400, "source": "estimated", "confidence": "low" }
+    "soilPreferences": [
+      "well-drained",
+      "fertile"
+    ],
+    "thermal": {
+      "minTemperature": -3,
+      "baseTemperature": 4,
+      "maxTemperature": 28,
+      "gddRequired": 400,
+      "source": "estimated",
+      "confidence": "low"
+    }
   },
   {
     "commonName": "Spring Onion",
@@ -546,8 +1136,19 @@
     "cropGroup": "root",
     "daysToHarvest": 60,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "fertile", "loamy"],
-    "thermal": { "tBase": 4, "tUpper": 30, "gddRequired": 800, "source": "estimated", "confidence": "low" }
+    "soilPreferences": [
+      "well-drained",
+      "fertile",
+      "loamy"
+    ],
+    "thermal": {
+      "minTemperature": -3,
+      "baseTemperature": 4,
+      "maxTemperature": 30,
+      "gddRequired": 800,
+      "source": "estimated",
+      "confidence": "low"
+    }
   },
   {
     "commonName": "Sunflower",
@@ -556,8 +1157,19 @@
     "cropGroup": "vegetable",
     "daysToHarvest": 85,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "fertile", "loamy"],
-    "thermal": { "tBase": 8, "tUpper": 30, "gddRequired": 1790, "source": "measured", "confidence": "high" }
+    "soilPreferences": [
+      "well-drained",
+      "fertile",
+      "loamy"
+    ],
+    "thermal": {
+      "minTemperature": 8,
+      "baseTemperature": 8,
+      "maxTemperature": 30,
+      "gddRequired": 1790,
+      "source": "measured",
+      "confidence": "high"
+    }
   },
   {
     "commonName": "Melon",
@@ -566,8 +1178,19 @@
     "cropGroup": "vegetable",
     "daysToHarvest": 80,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "sandy loam", "fertile"],
-    "thermal": { "tBase": 10, "tUpper": 38, "gddRequired": 1175, "source": "measured", "confidence": "high" }
+    "soilPreferences": [
+      "well-drained",
+      "sandy loam",
+      "fertile"
+    ],
+    "thermal": {
+      "minTemperature": 12,
+      "baseTemperature": 10,
+      "maxTemperature": 38,
+      "gddRequired": 1175,
+      "source": "measured",
+      "confidence": "high"
+    }
   },
   {
     "commonName": "Artichoke",
@@ -576,8 +1199,19 @@
     "cropGroup": "vegetable",
     "daysToHarvest": 150,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "fertile", "loamy"],
-    "thermal": { "tBase": 5, "tUpper": 32, "gddRequired": 1800, "source": "estimated", "confidence": "low" }
+    "soilPreferences": [
+      "well-drained",
+      "fertile",
+      "loamy"
+    ],
+    "thermal": {
+      "minTemperature": -3,
+      "baseTemperature": 5,
+      "maxTemperature": 32,
+      "gddRequired": 1800,
+      "source": "estimated",
+      "confidence": "low"
+    }
   },
   {
     "commonName": "Fennel",
@@ -586,8 +1220,19 @@
     "cropGroup": "herb",
     "daysToHarvest": 80,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "fertile", "loamy"],
-    "thermal": { "tBase": 6, "tUpper": 30, "gddRequired": 1100, "source": "estimated", "confidence": "low" }
+    "soilPreferences": [
+      "well-drained",
+      "fertile",
+      "loamy"
+    ],
+    "thermal": {
+      "minTemperature": -2,
+      "baseTemperature": 6,
+      "maxTemperature": 30,
+      "gddRequired": 1100,
+      "source": "estimated",
+      "confidence": "low"
+    }
   },
   {
     "commonName": "Sugar Snap Pea",
@@ -596,8 +1241,19 @@
     "cropGroup": "legume",
     "daysToHarvest": 60,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "loamy", "slightly alkaline"],
-    "thermal": { "tBase": 5, "tUpper": 27, "gddRequired": 900, "source": "estimated", "confidence": "medium" }
+    "soilPreferences": [
+      "well-drained",
+      "loamy",
+      "slightly alkaline"
+    ],
+    "thermal": {
+      "minTemperature": -3,
+      "baseTemperature": 5,
+      "maxTemperature": 27,
+      "gddRequired": 900,
+      "source": "estimated",
+      "confidence": "medium"
+    }
   },
   {
     "commonName": "Runner Bean",
@@ -606,8 +1262,19 @@
     "cropGroup": "legume",
     "daysToHarvest": 65,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["moist", "fertile", "well-drained"],
-    "thermal": { "tBase": 10, "tUpper": 30, "gddRequired": 1000, "source": "estimated", "confidence": "low" }
+    "soilPreferences": [
+      "moist",
+      "fertile",
+      "well-drained"
+    ],
+    "thermal": {
+      "minTemperature": 10,
+      "baseTemperature": 10,
+      "maxTemperature": 30,
+      "gddRequired": 1000,
+      "source": "estimated",
+      "confidence": "low"
+    }
   },
   {
     "commonName": "Black Cumin",
@@ -616,8 +1283,18 @@
     "cropGroup": "herb",
     "daysToHarvest": 90,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "sandy loam"],
-    "thermal": { "tBase": 5, "tUpper": 30, "gddRequired": null, "source": "measured", "confidence": "medium" }
+    "soilPreferences": [
+      "well-drained",
+      "sandy loam"
+    ],
+    "thermal": {
+      "minTemperature": -2,
+      "baseTemperature": 5,
+      "maxTemperature": 30,
+      "gddRequired": null,
+      "source": "measured",
+      "confidence": "medium"
+    }
   },
   {
     "commonName": "Lentil",
@@ -626,8 +1303,18 @@
     "cropGroup": "legume",
     "daysToHarvest": 90,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "sandy loam"],
-    "thermal": { "tBase": 2, "tUpper": 35, "gddRequired": 1200, "source": "estimated", "confidence": "medium" }
+    "soilPreferences": [
+      "well-drained",
+      "sandy loam"
+    ],
+    "thermal": {
+      "minTemperature": -3,
+      "baseTemperature": 2,
+      "maxTemperature": 35,
+      "gddRequired": 1200,
+      "source": "estimated",
+      "confidence": "medium"
+    }
   },
   {
     "commonName": "Barley",
@@ -636,8 +1323,19 @@
     "cropGroup": "vegetable",
     "daysToHarvest": 90,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "fertile", "loamy"],
-    "thermal": { "tBase": 0, "tUpper": 30, "gddRequired": 1450, "source": "measured", "confidence": "high" }
+    "soilPreferences": [
+      "well-drained",
+      "fertile",
+      "loamy"
+    ],
+    "thermal": {
+      "minTemperature": -8,
+      "baseTemperature": 0,
+      "maxTemperature": 30,
+      "gddRequired": 1450,
+      "source": "measured",
+      "confidence": "high"
+    }
   },
   {
     "commonName": "Oats",
@@ -646,7 +1344,18 @@
     "cropGroup": "vegetable",
     "daysToHarvest": 100,
     "lightRequirement": "full_sun",
-    "soilPreferences": ["well-drained", "loamy", "slightly acidic"],
-    "thermal": { "tBase": 0, "tUpper": 30, "gddRequired": 1850, "source": "measured", "confidence": "high" }
+    "soilPreferences": [
+      "well-drained",
+      "loamy",
+      "slightly acidic"
+    ],
+    "thermal": {
+      "minTemperature": -5,
+      "baseTemperature": 0,
+      "maxTemperature": 30,
+      "gddRequired": 1850,
+      "source": "measured",
+      "confidence": "high"
+    }
   }
 ]

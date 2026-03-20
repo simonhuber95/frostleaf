@@ -1,14 +1,20 @@
 <script lang="ts">
   import { untrack, onMount } from 'svelte';
+  import { page } from '$app/stores';
+  import { resolve } from '$app/paths';
   import { searchPlants, type Plant } from '$lib/api/plants';
   import { getViability, type ViabilityReport, type ViabilityResult } from '$lib/api/viability';
   import { locationStore } from '$lib/stores/location.svelte';
+  import { gardenStore } from '$lib/stores/garden.svelte';
   import Search from '@lucide/svelte/icons/search';
   import Leaf from '@lucide/svelte/icons/leaf';
   import Snowflake from '@lucide/svelte/icons/snowflake';
   import Thermometer from '@lucide/svelte/icons/thermometer';
   import Calendar from '@lucide/svelte/icons/calendar';
   import Loader from '@lucide/svelte/icons/loader';
+  import Plus from '@lucide/svelte/icons/plus';
+  import Check from '@lucide/svelte/icons/check';
+  import X from '@lucide/svelte/icons/x';
 
   // Search state
   let query = $state('');
@@ -20,7 +26,7 @@
   // Viability state
   let report = $state<ViabilityReport | null>(null);
   let viabilityLoading = $state(false);
-  let viabilityFilter = $state<'all' | 'viable' | 'marginal'>('all');
+  let viabilityFilter = $state<'all' | 'viable' | 'maybe' | 'unviable'>('all');
   let cropFilter = $state('');
 
   let hasLocation = $derived(!!locationStore.current);
@@ -31,12 +37,17 @@
   );
   let viabilityPlants = $derived(report?.plants ?? []);
   let cropGroups = $derived([...new Set(viabilityPlants.map((p) => p.cropGroup))].sort());
-  let viableCount = $derived(viabilityPlants.filter((p) => p.isViable).length);
+  let cropFiltered = $derived(cropFilter ? viabilityPlants.filter((p) => p.cropGroup === cropFilter) : viabilityPlants);
+  let allCount = $derived(cropFiltered.length);
+  let viableCount = $derived(cropFiltered.filter((p) => p.viabilityScore >= 0.6).length);
+  let maybeCount = $derived(cropFiltered.filter((p) => p.viabilityScore >= 0.25 && p.viabilityScore < 0.6).length);
+  let unviableCount = $derived(cropFiltered.filter((p) => p.viabilityScore < 0.25).length);
 
   let filteredViabilityPlants = $derived(() => {
     let plants = viabilityPlants;
-    if (viabilityFilter === 'viable') plants = plants.filter((p) => p.isViable);
-    if (viabilityFilter === 'marginal') plants = plants.filter((p) => !p.isViable && p.viabilityScore >= 0.4);
+    if (viabilityFilter === 'viable') plants = plants.filter((p) => p.viabilityScore >= 0.6);
+    if (viabilityFilter === 'maybe') plants = plants.filter((p) => p.viabilityScore >= 0.25 && p.viabilityScore < 0.6);
+    if (viabilityFilter === 'unviable') plants = plants.filter((p) => p.viabilityScore < 0.25);
     if (cropFilter) plants = plants.filter((p) => p.cropGroup === cropFilter);
     return plants;
   });
@@ -81,6 +92,16 @@
 
   // Show search results or viability plants
   let showingSearch = $derived(searched && searchResults.length > 0);
+
+  // Add to garden mode
+  let addToGardenId = $derived($page.url.searchParams.get('addToGarden'));
+  let addToGarden = $derived(addToGardenId ? gardenStore.getGarden(addToGardenId) : null);
+  let gardenPlantIds = $derived(new Set(addToGarden?.plants.map((p) => p.plantId) ?? []));
+
+  function handleAddToGarden(plantId: string, commonName: string) {
+    if (!addToGardenId) return;
+    gardenStore.addPlant(addToGardenId, plantId, commonName);
+  }
 </script>
 
 <div class="space-y-6">
@@ -94,6 +115,21 @@
       {/if}
     </p>
   </div>
+
+  <!-- Add to garden banner -->
+  {#if addToGarden}
+    <div class="flex items-center justify-between rounded-lg border border-primary/30 bg-primary/5 p-3">
+      <p class="text-sm">
+        <strong>Adding to:</strong> {addToGarden.name} &middot; Click plants to add them
+      </p>
+      <a
+        href={resolve('/garden/[id]', { id: addToGardenId! })}
+        class="rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+      >
+        Done ({addToGarden.plants.length} plants)
+      </a>
+    </div>
+  {/if}
 
   <!-- Climate stats banner (only with location) -->
   {#if report}
@@ -181,7 +217,7 @@
           : 'bg-secondary text-secondary-foreground hover:bg-accent'}"
         onclick={() => (viabilityFilter = 'all')}
       >
-        All ({viabilityPlants.length})
+        All ({allCount})
       </button>
       <button
         class="rounded-md px-3 py-1.5 text-sm transition-colors {viabilityFilter === 'viable'
@@ -192,12 +228,20 @@
         Viable ({viableCount})
       </button>
       <button
-        class="rounded-md px-3 py-1.5 text-sm transition-colors {viabilityFilter === 'marginal'
+        class="rounded-md px-3 py-1.5 text-sm transition-colors {viabilityFilter === 'maybe'
           ? 'bg-primary text-primary-foreground'
           : 'bg-secondary text-secondary-foreground hover:bg-accent'}"
-        onclick={() => (viabilityFilter = 'marginal')}
+        onclick={() => (viabilityFilter = 'maybe')}
       >
-        Marginal
+        Maybe viable ({maybeCount})
+      </button>
+      <button
+        class="rounded-md px-3 py-1.5 text-sm transition-colors {viabilityFilter === 'unviable'
+          ? 'bg-primary text-primary-foreground'
+          : 'bg-secondary text-secondary-foreground hover:bg-accent'}"
+        onclick={() => (viabilityFilter = 'unviable')}
+      >
+        Not viable ({unviableCount})
       </button>
 
       <select
@@ -205,8 +249,8 @@
         class="rounded-md border bg-background px-3 py-1.5 text-sm"
       >
         <option value="">All crops</option>
-        {#each cropGroups as group}
-          <option value={group}>{group}</option>
+        {#each cropGroups as group (group)}
+          <option value={group}>{group.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}</option>
         {/each}
       </select>
     </div>
@@ -219,10 +263,10 @@
       <p class="text-center text-muted-foreground py-8">No plants found for "{query}"</p>
     {/if}
     <div class="grid gap-3">
-      {#each searchResults as plant}
+      {#each searchResults as plant (plant.id)}
         {@const viability = viabilityMap.get(plant.id)}
         <a
-          href="/plants/{plant.id}"
+          href={resolve('/plants/[id]', { id: plant.id })}
           class="flex items-center justify-between rounded-lg border p-4 transition-colors hover:bg-accent"
         >
           <div class="flex items-center gap-4">
@@ -247,14 +291,33 @@
             </div>
             {#if viability}
               <div
-                class="flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold {viability.isViable
+                class="flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold {viability.viabilityScore >= 0.6
                   ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                  : viability.viabilityScore >= 0.4
+                  : viability.viabilityScore >= 0.25
                     ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
                     : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'}"
               >
                 {Math.round(viability.viabilityScore * 100)}
               </div>
+            {/if}
+            {#if addToGarden}
+              {#if gardenPlantIds.has(plant.id)}
+                <button
+                  onclick={(e) => { e.preventDefault(); gardenStore.removePlant(addToGardenId!, plant.id); }}
+                  class="rounded-md p-2 text-green-600 dark:text-green-400 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                  title="Remove from garden"
+                >
+                  <Check class="h-5 w-5" />
+                </button>
+              {:else}
+                <button
+                  onclick={(e) => { e.preventDefault(); handleAddToGarden(plant.id, plant.commonName); }}
+                  class="rounded-md bg-primary/10 p-2 text-primary hover:bg-primary/20"
+                  title="Add to garden"
+                >
+                  <Plus class="h-4 w-4" />
+                </button>
+              {/if}
             {/if}
           </div>
         </a>
@@ -263,9 +326,9 @@
   {:else if report}
     <!-- Viability plant list -->
     <div class="grid gap-3">
-      {#each filteredViabilityPlants() as plant}
+      {#each filteredViabilityPlants() as plant (plant.plantId)}
         <a
-          href="/plants/{plant.plantId}"
+          href={resolve('/plants/[id]', { id: plant.plantId })}
           class="flex items-center justify-between rounded-lg border p-4 transition-colors hover:bg-accent"
         >
           <div class="flex items-center gap-4">
@@ -289,14 +352,34 @@
               <p class="text-xs text-muted-foreground">{plant.cropGroup}</p>
             </div>
             <div
-              class="flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold {plant.isViable
+              class="flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold {plant.viabilityScore >= 0.6
                 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                : plant.viabilityScore >= 0.4
+                : plant.viabilityScore >= 0.25
                   ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
                   : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'}"
             >
               {Math.round(plant.viabilityScore * 100)}
             </div>
+            {#if addToGarden}
+              {#if gardenPlantIds.has(plant.plantId)}
+                <button
+                  onclick={(e) => { e.preventDefault(); gardenStore.removePlant(addToGardenId!, plant.plantId); }}
+                  class="group/rm cursor-pointer rounded-md p-2 text-green-600 dark:text-green-400 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                  title="Remove from garden"
+                >
+                  <Check class="h-5 w-5 group-hover/rm:hidden" />
+                  <X class="h-5 w-5 hidden group-hover/rm:block" />
+                </button>
+              {:else}
+                <button
+                  onclick={(e) => { e.preventDefault(); handleAddToGarden(plant.plantId, plant.commonName); }}
+                  class="rounded-md bg-primary/10 p-2 text-primary hover:bg-primary/20"
+                  title="Add to garden"
+                >
+                  <Plus class="h-4 w-4" />
+                </button>
+              {/if}
+            {/if}
           </div>
         </a>
       {/each}

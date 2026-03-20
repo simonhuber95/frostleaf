@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, real, integer, date, timestamp, pgEnum, uniqueIndex } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, text, real, integer, date, timestamp, pgEnum, uniqueIndex, boolean } from 'drizzle-orm/pg-core';
 
 // --- Enums ---
 
@@ -22,6 +22,58 @@ export const confidenceLevelEnum = pgEnum('confidence_level', ['high', 'medium',
 export const plantSourceEnum = pgEnum('plant_source', ['seed', 'trefle', 'manual']);
 
 export const durationEnum = pgEnum('duration', ['annual', 'biennial', 'perennial']);
+
+// --- BetterAuth Tables ---
+
+export const authUsers = pgTable('auth_users', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  email: text('email').notNull().unique(),
+  emailVerified: boolean('email_verified').notNull().default(false),
+  image: text('image'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+export const authSessions = pgTable('auth_sessions', {
+  id: text('id').primaryKey(),
+  expiresAt: timestamp('expires_at').notNull(),
+  token: text('token').notNull().unique(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+  ipAddress: text('ip_address'),
+  userAgent: text('user_agent'),
+  userId: text('user_id')
+    .notNull()
+    .references(() => authUsers.id, { onDelete: 'cascade' }),
+});
+
+export const authAccounts = pgTable('auth_accounts', {
+  id: text('id').primaryKey(),
+  accountId: text('account_id').notNull(),
+  providerId: text('provider_id').notNull(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => authUsers.id, { onDelete: 'cascade' }),
+  accessToken: text('access_token'),
+  refreshToken: text('refresh_token'),
+  idToken: text('id_token'),
+  accessTokenExpiresAt: timestamp('access_token_expires_at'),
+  refreshTokenExpiresAt: timestamp('refresh_token_expires_at'),
+  scope: text('scope'),
+  password: text('password'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+export const authVerifications = pgTable('auth_verifications', {
+  id: text('id').primaryKey(),
+  identifier: text('identifier').notNull(),
+  value: text('value').notNull(),
+  expiresAt: timestamp('expires_at').notNull(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
 
 // --- Tables ---
 
@@ -55,13 +107,10 @@ export const plantProperties = pgTable('plant_properties', {
   bloomMonths: text('bloom_months').array().notNull().default([]),
   growthMonths: text('growth_months').array().notNull().default([]),
 
-  // Temperature tolerance (from Trefle or other sources)
-  minTemperature: real('min_temperature'),
-  maxTemperature: real('max_temperature'),
-
-  // Thermal properties (from GDD paper / curated data)
-  tBase: real('t_base'),
-  tUpper: real('t_upper'),
+  // Thermal properties
+  minTemperature: real('min_temperature'),   // survival minimum (sowing threshold)
+  baseTemperature: real('base_temperature'), // growth starts (GDD base)
+  maxTemperature: real('max_temperature'),   // upper GDD cap / survival max
   gddRequired: integer('gdd_required'),
   thermalSource: thermalDataSourceEnum('thermal_source'),
   thermalConfidence: confidenceLevelEnum('thermal_confidence'),
@@ -76,38 +125,29 @@ export const weatherStations = pgTable('weather_stations', {
   name: text('name').notNull(),
   latitude: real('latitude').notNull(),
   longitude: real('longitude').notNull(),
-  availableObservations: text('available_observations').array().notNull().default([]),
+  dataYearsFrom: integer('data_years_from'),
+  dataYearsTo: integer('data_years_to'),
+  lastFetchedAt: timestamp('last_fetched_at'),
+  // Pre-computed averaged metrics across all fetched years
+  avgGdd: real('avg_gdd'),
+  avgFrostFreeDays: integer('avg_frost_free_days'),
+  lastFrostSpring: text('last_frost_spring'), // MM-DD
+  firstFrostAutumn: text('first_frost_autumn'), // MM-DD
 });
 
-export const climateData = pgTable(
-  'climate_data',
+export const climateDailyAverages = pgTable(
+  'climate_daily_averages',
   {
     id: uuid('id').primaryKey().defaultRandom(),
     stationId: uuid('station_id')
       .notNull()
       .references(() => weatherStations.id, { onDelete: 'cascade' }),
-    date: date('date').notNull(),
-    tempMin: real('temp_min').notNull(),
-    tempMax: real('temp_max').notNull(),
-    fetchedAt: timestamp('fetched_at').notNull().defaultNow(),
+    dayOfYear: integer('day_of_year').notNull(), // 1-366
+    avgMin: real('avg_min').notNull(),
+    avgMax: real('avg_max').notNull(),
+    avgMean: real('avg_mean').notNull(),
   },
-  (table) => [uniqueIndex('climate_data_station_date_idx').on(table.stationId, table.date)],
-);
-
-export const derivedMetrics = pgTable(
-  'derived_metrics',
-  {
-    id: uuid('id').primaryKey().defaultRandom(),
-    stationId: uuid('station_id')
-      .notNull()
-      .references(() => weatherStations.id, { onDelete: 'cascade' }),
-    year: integer('year').notNull(),
-    gddAccumulated: real('gdd_accumulated').notNull(),
-    lastFrostSpring: date('last_frost_spring'),
-    firstFrostAutumn: date('first_frost_autumn'),
-    frostFreeDays: integer('frost_free_days').notNull(),
-  },
-  (table) => [uniqueIndex('derived_metrics_station_year_idx').on(table.stationId, table.year)],
+  (table) => [uniqueIndex('climate_daily_avg_station_doy_idx').on(table.stationId, table.dayOfYear)],
 );
 
 export const locations = pgTable('locations', {
@@ -121,7 +161,7 @@ export const locations = pgTable('locations', {
 
 export const gardens = pgTable('gardens', {
   id: uuid('id').primaryKey().defaultRandom(),
-  userId: text('user_id'),
+  userId: text('user_id').references(() => authUsers.id, { onDelete: 'cascade' }),
   name: text('name').notNull(),
   locationId: uuid('location_id')
     .notNull()
