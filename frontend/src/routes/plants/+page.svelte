@@ -14,6 +14,7 @@
   import Loader from '@lucide/svelte/icons/loader';
   import Plus from '@lucide/svelte/icons/plus';
   import Check from '@lucide/svelte/icons/check';
+  import X from '@lucide/svelte/icons/x';
 
   // Search state
   let query = $state('');
@@ -90,14 +91,11 @@
   // Add to garden mode
   let addToGardenId = $derived($page.url.searchParams.get('addToGarden'));
   let addToGarden = $derived(addToGardenId ? gardenStore.getGarden(addToGardenId) : null);
-  let recentlyAdded = $state<Set<string>>(new Set());
+  let gardenPlantIds = $derived(new Set(addToGarden?.plants.map((p) => p.plantId) ?? []));
 
   function handleAddToGarden(plantId: string, commonName: string) {
     if (!addToGardenId) return;
-    const added = gardenStore.addPlant(addToGardenId, plantId, commonName);
-    if (added) {
-      recentlyAdded = new Set([...recentlyAdded, plantId]);
-    }
+    gardenStore.addPlant(addToGardenId, plantId, commonName);
   }
 </script>
 
@@ -290,8 +288,14 @@
               </div>
             {/if}
             {#if addToGarden}
-              {#if recentlyAdded.has(plant.id)}
-                <Check class="h-5 w-5 text-green-600 dark:text-green-400" />
+              {#if gardenPlantIds.has(plant.id)}
+                <button
+                  onclick={(e) => { e.preventDefault(); gardenStore.removePlant(addToGardenId!, plant.id); }}
+                  class="rounded-md p-2 text-green-600 dark:text-green-400 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                  title="Remove from garden"
+                >
+                  <Check class="h-5 w-5" />
+                </button>
               {:else}
                 <button
                   onclick={(e) => { e.preventDefault(); handleAddToGarden(plant.id, plant.commonName); }}
@@ -344,8 +348,15 @@
               {Math.round(plant.viabilityScore * 100)}
             </div>
             {#if addToGarden}
-              {#if recentlyAdded.has(plant.plantId)}
-                <Check class="h-5 w-5 text-green-600 dark:text-green-400" />
+              {#if gardenPlantIds.has(plant.plantId)}
+                <button
+                  onclick={(e) => { e.preventDefault(); gardenStore.removePlant(addToGardenId!, plant.plantId); }}
+                  class="group/rm cursor-pointer rounded-md p-2 text-green-600 dark:text-green-400 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                  title="Remove from garden"
+                >
+                  <Check class="h-5 w-5 group-hover/rm:hidden" />
+                  <X class="h-5 w-5 hidden group-hover/rm:block" />
+                </button>
               {:else}
                 <button
                   onclick={(e) => { e.preventDefault(); handleAddToGarden(plant.plantId, plant.commonName); }}
