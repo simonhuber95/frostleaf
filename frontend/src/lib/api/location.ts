@@ -40,3 +40,21 @@ export function resolveLocation(latitude: number, longitude: number, stationId: 
 export function getLocation(id: string) {
   return api.get<LocationResult>(`/api/location/${id}`);
 }
+
+export type DailyClimateAverage = {
+  dayOfYear: number;
+  avgMin: number;
+  avgMax: number;
+  avgMean: number;
+};
+
+export type LocationClimate = {
+  stationName: string;
+  lastFrostSpring: string | null;
+  firstFrostAutumn: string | null;
+  dailyAverages: DailyClimateAverage[];
+};
+
+export function getLocationClimate(locationId: string) {
+  return api.get<LocationClimate>(`/api/location/${locationId}/climate`);
+}

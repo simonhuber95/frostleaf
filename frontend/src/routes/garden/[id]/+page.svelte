@@ -6,6 +6,8 @@
   import { locationStore } from '$lib/stores/location.svelte';
   import { getPlant, type Plant } from '$lib/api/plants';
   import { getViability, type ViabilityResult } from '$lib/api/viability';
+  import { getLocationClimate, type LocationClimate } from '$lib/api/location';
+  import TemperatureChart from '$lib/components/TemperatureChart.svelte';
   import GardenTimeline from '$lib/components/GardenTimeline.svelte';
   import GardenTable, { type GardenTablePlant } from '$lib/components/GardenTable.svelte';
   import type { GardenTimelinePlant } from '$lib/components/GardenTimeline.svelte';
@@ -28,23 +30,25 @@
   // Plant details for timeline/table
   let plantDetails = $state<Map<string, Plant>>(new Map());
   let viabilityMap = $state<Map<string, ViabilityResult>>(new Map());
+  let climateData = $state<LocationClimate | null>(null);
   let loadingDetails = $state(false);
 
   // View mode
   let viewMode = $state<'timeline' | 'table'>('timeline');
 
-  // Fetch plant details + viability data for timeline/table
+  // Fetch plant details + viability + climate data
   onMount(async () => {
     if (!garden || garden.plants.length === 0) return;
     loadingDetails = true;
+    const locationId = locationStore.current?.locationId;
     try {
-      // Fetch plant details and viability in parallel
-      const [plantResults, viabilityReport] = await Promise.all([
+      const [plantResults, viabilityReport, climate] = await Promise.all([
         Promise.all(garden.plants.map((p) => getPlant(p.plantId).catch(() => null))),
-        locationStore.current?.locationId
-          ? getViability(locationStore.current.locationId).catch(() => null)
-          : null,
+        locationId ? getViability(locationId).catch(() => null) : null,
+        locationId ? getLocationClimate(locationId).catch(() => null) : null,
       ]);
+
+      climateData = climate;
 
       const pMap = new Map<string, Plant>();
       for (const plant of plantResults) {
@@ -382,6 +386,18 @@
         {:else}
           <GardenTable gardenName={garden.name} plants={tablePlants} />
         {/if}
+      </div>
+    {/if}
+
+    <!-- Temperature chart -->
+    {#if climateData}
+      <div class="rounded-lg border bg-card p-5">
+        <h2 class="mb-3 text-lg font-semibold">Temperature</h2>
+        <TemperatureChart
+          dailyAverages={climateData.dailyAverages}
+          lastFrostSpring={climateData.lastFrostSpring}
+          firstFrostAutumn={climateData.firstFrostAutumn}
+        />
       </div>
     {/if}
 

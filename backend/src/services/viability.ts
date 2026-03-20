@@ -48,16 +48,14 @@ export async function calculateViability(locationId: string): Promise<ViabilityR
     if (growStart) {
       const growStartDay = dayjs(`2024-${growStart}`);
 
-      // Sowing phase: from tMin threshold to day before growth starts
-      // When tMin === tBase or no sowing data, show a 5-day sowing window before growth
+      // Sowing phase: ends the day before growth starts
+      // Sowing must start before growth — if threshold gives a later date, fall back to 5 days before
       let sowingStart: string;
-      let sowingEnd: string;
-      if (sowStart && sowStart !== growStart) {
+      const sowingEnd: string = growStartDay.subtract(1, 'day').format('MM-DD');
+      if (sowStart && dayjs(`2024-${sowStart}`).isBefore(growStartDay)) {
         sowingStart = sowStart;
-        sowingEnd = growStartDay.subtract(1, 'day').format('MM-DD');
       } else {
         sowingStart = growStartDay.subtract(5, 'day').format('MM-DD');
-        sowingEnd = growStartDay.subtract(1, 'day').format('MM-DD');
       }
 
       // Growth phase: from tBase threshold to harvest start

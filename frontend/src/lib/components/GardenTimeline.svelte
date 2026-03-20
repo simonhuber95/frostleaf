@@ -21,11 +21,11 @@
 
   const boundaries = monthBoundaryPercents();
 
-  let frostBar = $derived(
+  let frostBars = $derived(
     frostFreeStart && frostFreeEnd
       ? {
-          left: doyToPercent(dateToDoy(frostFreeStart)),
-          width: doyWidthPercent(dateToDoy(frostFreeStart), dateToDoy(frostFreeEnd)),
+          spring: { left: 0, width: doyToPercent(dateToDoy(frostFreeStart)) },
+          autumn: { left: doyToPercent(dateToDoy(frostFreeEnd)), width: 100 - doyToPercent(dateToDoy(frostFreeEnd)) },
         }
       : null,
   );
@@ -91,16 +91,21 @@
       </div>
     </div>
 
-    <!-- Frost-free zone indicator -->
-    {#if frostBar}
+    <!-- Frost zone indicator -->
+    {#if frostBars}
       <div class="flex items-center">
-        <div class="w-32 shrink-0 text-[10px] text-muted-foreground truncate">Frost-free</div>
+        <div class="w-32 shrink-0 text-[10px] text-muted-foreground truncate">Frost risk</div>
         <div class="relative flex-1 h-3">
-          <div class="absolute inset-0 rounded-sm bg-muted/50"></div>
+          <div class="absolute inset-0 rounded-sm bg-muted/30"></div>
           <div
-            class="absolute top-0 h-full rounded-sm bg-sky-200/60 dark:bg-sky-800/40"
-            style="left: {frostBar.left}%; width: {frostBar.width}%;"
-            title="Frost-free: {frostFreeStart ? formatDate(frostFreeStart) : ''} – {frostFreeEnd ? formatDate(frostFreeEnd) : ''}"
+            class="absolute top-0 h-full rounded-r-sm bg-blue-300/40 dark:bg-blue-700/30"
+            style="left: {frostBars.spring.left}%; width: {frostBars.spring.width}%;"
+            title="Spring frost until {frostFreeStart ? formatDate(frostFreeStart) : ''}"
+          ></div>
+          <div
+            class="absolute top-0 h-full rounded-l-sm bg-blue-300/40 dark:bg-blue-700/30"
+            style="left: {frostBars.autumn.left}%; width: {frostBars.autumn.width}%;"
+            title="Autumn frost from {frostFreeEnd ? formatDate(frostFreeEnd) : ''}"
           ></div>
           {#each boundaries as pct, bi (bi)}
             <div class="absolute top-0 h-full w-px bg-border/30" style="left: {pct}%"></div>

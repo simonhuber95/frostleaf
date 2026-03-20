@@ -60,6 +60,21 @@ locationRouter.post('/resolve', async (req, res) => {
   }
 });
 
+// GET /api/location/:id/climate — daily temperature averages for charting
+locationRouter.get('/:id/climate', async (req, res) => {
+  try {
+    const result = await locationService.getLocationClimate(req.params.id);
+    if (!result) {
+      res.status(404).json({ error: 'Location not found or no climate data' });
+      return;
+    }
+    res.json(result);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    res.status(500).json({ error: message });
+  }
+});
+
 // GET /api/location/:id
 locationRouter.get('/:id', async (req, res) => {
   const result = await locationService.getLocation(req.params.id);

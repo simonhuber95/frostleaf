@@ -120,7 +120,7 @@
         <strong>Adding to:</strong> {addToGarden.name} &middot; Click plants to add them
       </p>
       <a
-        href={resolve('/garden/[id]', { id: addToGardenId })}
+        href={resolve('/garden/[id]', { id: addToGardenId! })}
         class="rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:bg-primary/90"
       >
         Done ({addToGarden.plants.length} plants)

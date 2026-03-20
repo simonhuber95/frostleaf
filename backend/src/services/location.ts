@@ -59,6 +59,24 @@ export async function getLocation(id: string) {
   return { location, climate: station };
 }
 
+export async function getLocationClimate(locationId: string) {
+  const location = await db.findLocationById(locationId);
+  if (!location) return null;
+
+  const station = await db.findStationById(location.nearestStationId);
+  if (!station) return null;
+
+  const dailyAverages = await db.findDailyAveragesByStation(station.id);
+  if (dailyAverages.length === 0) return null;
+
+  return {
+    stationName: station.name,
+    lastFrostSpring: station.lastFrostSpring,
+    firstFrostAutumn: station.firstFrostAutumn,
+    dailyAverages,
+  };
+}
+
 async function resolveCoordinates(input: LocationInput) {
   if (input.type === 'coordinates') {
     return { latitude: input.latitude, longitude: input.longitude, displayName: `${input.latitude}, ${input.longitude}` };
