@@ -1,8 +1,15 @@
 export type PlantTimeline = {
-  sowingStart: string;   // MM-DD
-  sowingEnd: string;     // MM-DD
+  sowingMethod: 'indoor' | 'direct' | 'both' | null;
+  // Indoor path (non-overlapping: indoorSowStart..indoorSowEnd → transplantDate → growthStart)
+  indoorSowStart: string | null;   // MM-DD
+  indoorSowEnd: string | null;     // MM-DD — day before transplant
+  transplantDate: string | null;    // MM-DD
+  // Direct path
+  directSowStart: string | null;   // MM-DD
+  directSowEnd: string | null;     // MM-DD — day before growth
+  // Phases (all non-overlapping)
   growthStart: string;   // MM-DD
-  growthEnd: string;     // MM-DD
+  growthEnd: string;     // MM-DD — day before harvest
   harvestStart: string;  // MM-DD
   harvestEnd: string;    // MM-DD
 };

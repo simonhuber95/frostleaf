@@ -13,11 +13,14 @@ export type GardenPlant = {
   notes: string;
 };
 
+export type SowingChoice = 'indoor' | 'direct';
+
 export type LocalGardenPlant = {
   plantId: string;
   commonName: string;
   plantedDate: string | null;
   notes: string;
+  sowingChoice: SowingChoice | null; // user's choice: indoor start or direct sow
 };
 
 export type LocalGarden = {

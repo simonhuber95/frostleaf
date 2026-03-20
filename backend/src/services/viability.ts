@@ -33,32 +33,59 @@ export async function calculateViability(locationId: string): Promise<ViabilityR
     const confidence = props?.thermalConfidence ?? null;
     const minTemp = props?.minTemperature ?? null;
     const daysToHarvest = props?.daysToHarvest ?? null;
+    const sowingMethod = props?.sowingMethod ?? null;
+    const transplantLeadWeeks = props?.transplantLeadWeeks ?? null;
 
     const { isViable, score } = computeScore(averageGdd, requiredGdd, baseTemp, avgFrostFreeDays, daysToHarvest);
 
-    // Sowing: hardy crops (minTemp < 0) can sow when avgMin >= 0 (frost-free)
-    //         tender crops (minTemp >= 0) sow when avgMin >= baseTemp
+    // Direct sow threshold: hardy crops (minTemp < 0) when avgMin >= 0 (frost-free)
+    //                        tender crops (minTemp >= 0) when avgMin >= baseTemp
     const sowThreshold = minTemp !== null && minTemp < 0 ? 0 : (baseTemp ?? 0);
     const sowStart = findThresholdDate(dailyAverages, sowThreshold, 'avgMin');
-    // Growth: when avg mean temp >= plant's base growth temp (avgMean)
+    // Growth: when avg mean temp >= plant's base growth temp
     const growStart = baseTemp !== null ? findThresholdDate(dailyAverages, baseTemp, 'avgMean') : null;
 
-    let timeline: { sowingStart: string; sowingEnd: string; growthStart: string; growthEnd: string; harvestStart: string; harvestEnd: string } | null = null;
+    let timeline: ViabilityResult['timeline'] = null;
 
     if (growStart) {
       const growStartDay = dayjs(`2024-${growStart}`);
 
-      // Sowing phase: ends the day before growth starts
-      // Sowing must start before growth — if threshold gives a later date, fall back to 5 days before
-      let sowingStart: string;
-      const sowingEnd: string = growStartDay.subtract(1, 'day').format('MM-DD');
-      if (sowStart && dayjs(`2024-${sowStart}`).isBefore(growStartDay)) {
-        sowingStart = sowStart;
-      } else {
-        sowingStart = growStartDay.subtract(5, 'day').format('MM-DD');
+      // Transplant date: tender crops wait until after last frost + 1 week safety margin
+      // Hardy crops can transplant when soil is workable (growStart)
+      const isTender = minTemp !== null && minTemp >= 0;
+      let transplantDate: string | null = null;
+      let indoorSowStart: string | null = null;
+      let indoorSowEnd: string | null = null;
+      let directSowStart: string | null = null;
+      let directSowEnd: string | null = null;
+
+      if (sowingMethod === 'indoor' || sowingMethod === 'both') {
+        if (isTender && lastFrostSpring) {
+          transplantDate = dayjs(`2024-${lastFrostSpring}`).add(7, 'day').format('MM-DD');
+        } else {
+          transplantDate = growStart;
+        }
+
+        if (transplantLeadWeeks && transplantDate) {
+          indoorSowStart = dayjs(`2024-${transplantDate}`)
+            .subtract(transplantLeadWeeks, 'week')
+            .format('MM-DD');
+          // Indoor sow ends the day before transplant (no overlap)
+          indoorSowEnd = dayjs(`2024-${transplantDate}`).subtract(1, 'day').format('MM-DD');
+        }
       }
 
-      // Growth phase: from tBase threshold to harvest start
+      if (sowingMethod === 'direct' || sowingMethod === 'both') {
+        if (sowStart && dayjs(`2024-${sowStart}`).isBefore(growStartDay)) {
+          directSowStart = sowStart;
+        } else {
+          directSowStart = growStartDay.subtract(5, 'day').format('MM-DD');
+        }
+        // Direct sow ends the day before growth (no overlap)
+        directSowEnd = growStartDay.subtract(1, 'day').format('MM-DD');
+      }
+
+      // Harvest calculation
       let harvestStart: string | null = null;
       let harvestEnd: string | null = null;
       let growthEnd: string;
@@ -66,6 +93,7 @@ export async function calculateViability(locationId: string): Promise<ViabilityR
       if (daysToHarvest) {
         const harvestDay = growStartDay.add(daysToHarvest, 'day');
         if (harvestDay.year() === 2024) {
+          // Harvest starts the day after growth ends (no overlap)
           harvestStart = harvestDay.format('MM-DD');
           harvestEnd = harvestDay.add(14, 'day').format('MM-DD');
           growthEnd = harvestDay.subtract(1, 'day').format('MM-DD');
@@ -77,8 +105,12 @@ export async function calculateViability(locationId: string): Promise<ViabilityR
       }
 
       timeline = {
-        sowingStart,
-        sowingEnd,
+        sowingMethod,
+        indoorSowStart,
+        indoorSowEnd,
+        transplantDate,
+        directSowStart,
+        directSowEnd,
         growthStart: growStart,
         growthEnd,
         harvestStart: harvestStart ?? growthEnd,

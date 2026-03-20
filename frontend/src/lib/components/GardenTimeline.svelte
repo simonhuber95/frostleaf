@@ -9,6 +9,7 @@
     plantId: string;
     commonName: string;
     timeline: PlantTimeline;
+    sowingChoice: 'indoor' | 'direct' | null;
   };
 
   type Props = {
@@ -49,12 +50,18 @@
     plants.map((p) => {
       const t = p.timeline;
       const stages: DayStage[] = [];
+      const choice = p.sowingChoice;
 
-      // Sowing phase
-      stages.push(makeStage('Sowing', t.sowingStart, t.sowingEnd, stageColors.Sowing));
+      // Sowing phase based on user's choice — dates are non-overlapping from backend
+      if (choice === 'indoor' && t.indoorSowStart && t.indoorSowEnd && t.transplantDate) {
+        stages.push(makeStage('Indoor Sow', t.indoorSowStart, t.indoorSowEnd, stageColors['Indoor Sow']));
+      } else if (choice === 'direct' && t.directSowStart && t.directSowEnd) {
+        stages.push(makeStage('Direct Sow', t.directSowStart, t.directSowEnd, stageColors['Direct Sow']));
+      }
 
-      // Growth phase
-      stages.push(makeStage('Growth', t.growthStart, t.growthEnd, stageColors.Growth));
+      // Growth — starts at transplant for indoor, at temp threshold for direct
+      const growthStart = (choice === 'indoor' && t.transplantDate) ? t.transplantDate : t.growthStart;
+      stages.push(makeStage('Growth', growthStart, t.growthEnd, stageColors.Growth));
 
       // Harvest phase
       stages.push(makeStage('Harvest', t.harvestStart, t.harvestEnd, stageColors.Harvest));
@@ -67,11 +74,18 @@
     }),
   );
 
-  const legendItems = [
+  // Only show legend items that appear in at least one row
+  let activeLegendLabels = $derived(new Set(rows.flatMap((r) => r.stages.map((s) => s.label))));
+
+  const allLegendItems = [
+    { label: 'Indoor Sow', color: stageColors['Indoor Sow'] },
+    { label: 'Direct Sow', color: stageColors['Direct Sow'] },
     { label: 'Sowing', color: stageColors.Sowing },
     { label: 'Growth', color: stageColors.Growth },
     { label: 'Harvest', color: stageColors.Harvest },
   ];
+
+  let legendItems = $derived(allLegendItems.filter((item) => activeLegendLabels.has(item.label)));
 </script>
 
 {#if rows.length > 0}
@@ -128,7 +142,7 @@
           {#each row.stages as stage (stage.label)}
             <div
               class="absolute top-1 h-4 rounded-sm {stage.color} opacity-80"
-              style="left: {doyToPercent(stage.startDoy)}%; width: {doyWidthPercent(stage.startDoy, stage.endDoy)}%;"
+              style="left: {doyToPercent(stage.startDoy)}%; width: {Math.max(doyWidthPercent(stage.startDoy, stage.endDoy), 0.4)}%;"
               title={stage.tooltip}
             ></div>
           {/each}

@@ -144,8 +144,8 @@
     "cropGroup": "leafy_green",
     "daysToHarvest": 45,
     "lightRequirement": "partial_shade",
-    "sowingMethod": "direct",
-    "transplantLeadWeeks": null,
+    "sowingMethod": "both",
+    "transplantLeadWeeks": 3,
     "soilPreferences": [
       "moist",
       "fertile",
@@ -190,7 +190,7 @@
     "cropGroup": "brassica",
     "daysToHarvest": 70,
     "lightRequirement": "full_sun",
-    "sowingMethod": "indoor",
+    "sowingMethod": "both",
     "transplantLeadWeeks": 6,
     "soilPreferences": [
       "fertile",
@@ -213,7 +213,7 @@
     "cropGroup": "brassica",
     "daysToHarvest": 80,
     "lightRequirement": "full_sun",
-    "sowingMethod": "indoor",
+    "sowingMethod": "both",
     "transplantLeadWeeks": 6,
     "soilPreferences": [
       "fertile",
@@ -236,7 +236,7 @@
     "cropGroup": "brassica",
     "daysToHarvest": 80,
     "lightRequirement": "full_sun",
-    "sowingMethod": "indoor",
+    "sowingMethod": "both",
     "transplantLeadWeeks": 6,
     "soilPreferences": [
       "fertile",
@@ -259,7 +259,7 @@
     "cropGroup": "brassica",
     "daysToHarvest": 110,
     "lightRequirement": "full_sun",
-    "sowingMethod": "indoor",
+    "sowingMethod": "both",
     "transplantLeadWeeks": 6,
     "soilPreferences": [
       "fertile",
@@ -328,8 +328,8 @@
     "cropGroup": "root",
     "daysToHarvest": 60,
     "lightRequirement": "full_sun",
-    "sowingMethod": "direct",
-    "transplantLeadWeeks": null,
+    "sowingMethod": "both",
+    "transplantLeadWeeks": 4,
     "soilPreferences": [
       "well-drained",
       "fertile",
@@ -351,8 +351,8 @@
     "cropGroup": "legume",
     "daysToHarvest": 65,
     "lightRequirement": "full_sun",
-    "sowingMethod": "direct",
-    "transplantLeadWeeks": null,
+    "sowingMethod": "both",
+    "transplantLeadWeeks": 3,
     "soilPreferences": [
       "well-drained",
       "loamy",
@@ -374,8 +374,8 @@
     "cropGroup": "legume",
     "daysToHarvest": 55,
     "lightRequirement": "full_sun",
-    "sowingMethod": "direct",
-    "transplantLeadWeeks": null,
+    "sowingMethod": "both",
+    "transplantLeadWeeks": 3,
     "soilPreferences": [
       "well-drained",
       "loamy",
@@ -397,8 +397,8 @@
     "cropGroup": "legume",
     "daysToHarvest": 85,
     "lightRequirement": "full_sun",
-    "sowingMethod": "direct",
-    "transplantLeadWeeks": null,
+    "sowingMethod": "both",
+    "transplantLeadWeeks": 3,
     "soilPreferences": [
       "fertile",
       "moist",
@@ -420,7 +420,7 @@
     "cropGroup": "vegetable",
     "daysToHarvest": 60,
     "lightRequirement": "full_sun",
-    "sowingMethod": "indoor",
+    "sowingMethod": "both",
     "transplantLeadWeeks": 4,
     "soilPreferences": [
       "well-drained",
@@ -443,7 +443,7 @@
     "cropGroup": "vegetable",
     "daysToHarvest": 55,
     "lightRequirement": "full_sun",
-    "sowingMethod": "indoor",
+    "sowingMethod": "both",
     "transplantLeadWeeks": 4,
     "soilPreferences": [
       "well-drained",
@@ -466,7 +466,7 @@
     "cropGroup": "vegetable",
     "daysToHarvest": 100,
     "lightRequirement": "full_sun",
-    "sowingMethod": "indoor",
+    "sowingMethod": "both",
     "transplantLeadWeeks": 4,
     "soilPreferences": [
       "well-drained",
@@ -581,7 +581,7 @@
     "cropGroup": "root",
     "daysToHarvest": 100,
     "lightRequirement": "full_sun",
-    "sowingMethod": "indoor",
+    "sowingMethod": "both",
     "transplantLeadWeeks": 8,
     "soilPreferences": [
       "fertile",
@@ -903,8 +903,8 @@
     "cropGroup": "herb",
     "daysToHarvest": 45,
     "lightRequirement": "full_sun",
-    "sowingMethod": "direct",
-    "transplantLeadWeeks": null,
+    "sowingMethod": "both",
+    "transplantLeadWeeks": 3,
     "soilPreferences": [
       "well-drained",
       "loamy"
@@ -948,7 +948,7 @@
     "cropGroup": "herb",
     "daysToHarvest": 50,
     "lightRequirement": "full_sun",
-    "sowingMethod": "indoor",
+    "sowingMethod": "both",
     "transplantLeadWeeks": 6,
     "soilPreferences": [
       "well-drained",
@@ -971,8 +971,8 @@
     "cropGroup": "herb",
     "daysToHarvest": 45,
     "lightRequirement": "partial_shade",
-    "sowingMethod": "direct",
-    "transplantLeadWeeks": null,
+    "sowingMethod": "both",
+    "transplantLeadWeeks": 3,
     "soilPreferences": [
       "well-drained",
       "loamy"
@@ -993,8 +993,8 @@
     "cropGroup": "herb",
     "daysToHarvest": 60,
     "lightRequirement": "partial_shade",
-    "sowingMethod": "direct",
-    "transplantLeadWeeks": null,
+    "sowingMethod": "both",
+    "transplantLeadWeeks": 4,
     "soilPreferences": [
       "moist",
       "fertile"
@@ -1038,7 +1038,7 @@
     "cropGroup": "herb",
     "daysToHarvest": 80,
     "lightRequirement": "full_sun",
-    "sowingMethod": "indoor",
+    "sowingMethod": "both",
     "transplantLeadWeeks": 6,
     "soilPreferences": [
       "well-drained",
@@ -1061,7 +1061,7 @@
     "cropGroup": "herb",
     "daysToHarvest": 75,
     "lightRequirement": "full_sun",
-    "sowingMethod": "indoor",
+    "sowingMethod": "both",
     "transplantLeadWeeks": 6,
     "soilPreferences": [
       "well-drained",
@@ -1084,7 +1084,7 @@
     "cropGroup": "herb",
     "daysToHarvest": 70,
     "lightRequirement": "partial_shade",
-    "sowingMethod": "indoor",
+    "sowingMethod": "both",
     "transplantLeadWeeks": 6,
     "soilPreferences": [
       "moist",
@@ -1222,8 +1222,8 @@
     "cropGroup": "leafy_green",
     "daysToHarvest": 30,
     "lightRequirement": "partial_shade",
-    "sowingMethod": "direct",
-    "transplantLeadWeeks": null,
+    "sowingMethod": "both",
+    "transplantLeadWeeks": 3,
     "soilPreferences": [
       "well-drained",
       "fertile"
@@ -1244,8 +1244,8 @@
     "cropGroup": "root",
     "daysToHarvest": 60,
     "lightRequirement": "full_sun",
-    "sowingMethod": "direct",
-    "transplantLeadWeeks": null,
+    "sowingMethod": "both",
+    "transplantLeadWeeks": 4,
     "soilPreferences": [
       "well-drained",
       "fertile",
@@ -1290,7 +1290,7 @@
     "cropGroup": "vegetable",
     "daysToHarvest": 80,
     "lightRequirement": "full_sun",
-    "sowingMethod": "indoor",
+    "sowingMethod": "both",
     "transplantLeadWeeks": 4,
     "soilPreferences": [
       "well-drained",
@@ -1359,8 +1359,8 @@
     "cropGroup": "legume",
     "daysToHarvest": 60,
     "lightRequirement": "full_sun",
-    "sowingMethod": "direct",
-    "transplantLeadWeeks": null,
+    "sowingMethod": "both",
+    "transplantLeadWeeks": 3,
     "soilPreferences": [
       "well-drained",
       "loamy",
@@ -1382,8 +1382,8 @@
     "cropGroup": "legume",
     "daysToHarvest": 65,
     "lightRequirement": "full_sun",
-    "sowingMethod": "direct",
-    "transplantLeadWeeks": null,
+    "sowingMethod": "both",
+    "transplantLeadWeeks": 3,
     "soilPreferences": [
       "moist",
       "fertile",
@@ -1405,8 +1405,8 @@
     "cropGroup": "herb",
     "daysToHarvest": 90,
     "lightRequirement": "full_sun",
-    "sowingMethod": "direct",
-    "transplantLeadWeeks": null,
+    "sowingMethod": "both",
+    "transplantLeadWeeks": 4,
     "soilPreferences": [
       "well-drained",
       "sandy loam"

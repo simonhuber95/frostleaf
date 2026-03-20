@@ -24,6 +24,9 @@ export const monthLabels = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N
 
 export const stageColors = {
   Sowing: 'bg-amber-500',
+  'Indoor Sow': 'bg-violet-500',
+  Transplant: 'bg-sky-500',
+  'Direct Sow': 'bg-amber-500',
   Growth: 'bg-emerald-500',
   Bloom: 'bg-pink-400',
   Harvest: 'bg-orange-500',
@@ -77,6 +80,19 @@ export function doyToPercent(doy: number): number {
 /** Width in percent between two day-of-year values */
 export function doyWidthPercent(startDoy: number, endDoy: number): number {
   return ((endDoy - startDoy + 1) / 365) * 100;
+}
+
+/** Convert day-of-year (1-365) back to MM-DD string */
+export function doyToMmdd(doy: number): string {
+  const monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  let remaining = doy;
+  for (let m = 0; m < 12; m++) {
+    if (remaining <= monthDays[m]) {
+      return `${String(m + 1).padStart(2, '0')}-${String(remaining).padStart(2, '0')}`;
+    }
+    remaining -= monthDays[m];
+  }
+  return '12-31';
 }
 
 /** Format MM-DD to human-readable "15 Mar" */

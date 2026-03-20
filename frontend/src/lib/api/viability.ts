@@ -1,8 +1,12 @@
 import { api } from './client';
 
 export type PlantTimeline = {
-  sowingStart: string;
-  sowingEnd: string;
+  sowingMethod: string | null;
+  indoorSowStart: string | null;
+  indoorSowEnd: string | null;
+  transplantDate: string | null;
+  directSowStart: string | null;
+  directSowEnd: string | null;
   growthStart: string;
   growthEnd: string;
   harvestStart: string;

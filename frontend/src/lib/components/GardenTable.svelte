@@ -5,6 +5,7 @@
   export type GardenTablePlant = {
     commonName: string;
     cropGroup: string;
+    sowingMethod: string | null;
     sowingMonths: string;
     daysToHarvest: number | null;
     notes: string;
@@ -22,6 +23,7 @@
     const rows = plants.map((p) => ({
       'Plant Name': p.commonName,
       'Crop Group': p.cropGroup,
+      'Sowing Method': p.sowingMethod ?? '',
       'Sowing Months': p.sowingMonths,
       'Days to Harvest': p.daysToHarvest,
       Notes: p.notes,
@@ -49,6 +51,7 @@
         <tr class="border-b bg-muted/50">
           <th class="px-3 py-2 text-left font-medium">Plant</th>
           <th class="px-3 py-2 text-left font-medium">Group</th>
+          <th class="px-3 py-2 text-left font-medium">Method</th>
           <th class="px-3 py-2 text-left font-medium">Sowing</th>
           <th class="px-3 py-2 text-left font-medium">Harvest</th>
           <th class="px-3 py-2 text-left font-medium">Notes</th>
@@ -60,6 +63,17 @@
           <tr class="border-b last:border-0 hover:bg-muted/30">
             <td class="px-3 py-2 font-medium">{plant.commonName}</td>
             <td class="px-3 py-2 text-muted-foreground">{plant.cropGroup}</td>
+            <td class="px-3 py-2 text-muted-foreground">
+              {#if plant.sowingMethod === 'indoor'}
+                <span class="inline-flex items-center rounded-full bg-violet-100 px-2 py-0.5 text-xs font-medium text-violet-700 dark:bg-violet-900/30 dark:text-violet-300">Indoor</span>
+              {:else if plant.sowingMethod === 'direct'}
+                <span class="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">Direct</span>
+              {:else if plant.sowingMethod === 'both'}
+                <span class="inline-flex items-center rounded-full bg-sky-100 px-2 py-0.5 text-xs font-medium text-sky-700 dark:bg-sky-900/30 dark:text-sky-300">Both</span>
+              {:else}
+                —
+              {/if}
+            </td>
             <td class="px-3 py-2 text-muted-foreground">{plant.sowingMonths || '—'}</td>
             <td class="px-3 py-2 text-muted-foreground">{plant.daysToHarvest ?? '—'}{plant.daysToHarvest ? 'd' : ''}</td>
             <td class="px-3 py-2 text-muted-foreground max-w-48 truncate">{plant.notes || '—'}</td>

@@ -57,11 +57,11 @@ export const gardenStore = {
     persist();
   },
 
-  addPlant(gardenId: string, plantId: string, commonName: string): boolean {
+  addPlant(gardenId: string, plantId: string, commonName: string, sowingChoice: 'indoor' | 'direct' | null = null): boolean {
     const garden = gardens.find((g) => g.id === gardenId);
     if (!garden) return false;
     if (garden.plants.some((p) => p.plantId === plantId)) return false;
-    garden.plants.push({ plantId, commonName, plantedDate: null, notes: '' });
+    garden.plants.push({ plantId, commonName, plantedDate: null, notes: '', sowingChoice });
     persist();
     return true;
   },
@@ -73,7 +73,7 @@ export const gardenStore = {
     persist();
   },
 
-  updatePlant(gardenId: string, plantId: string, patch: Partial<Pick<LocalGardenPlant, 'notes' | 'plantedDate'>>) {
+  updatePlant(gardenId: string, plantId: string, patch: Partial<Pick<LocalGardenPlant, 'notes' | 'plantedDate' | 'sowingChoice'>>) {
     const garden = gardens.find((g) => g.id === gardenId);
     if (!garden) return;
     const plant = garden.plants.find((p) => p.plantId === plantId);
@@ -145,6 +145,7 @@ export const gardenStore = {
               commonName: p.commonName,
               plantedDate: p.plantedDate,
               notes: p.notes,
+              sowingChoice: null,
             })),
             createdAt: full.createdAt,
           });

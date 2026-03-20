@@ -11,6 +11,7 @@
   import GardenTimeline from '$lib/components/GardenTimeline.svelte';
   import GardenTable, { type GardenTablePlant } from '$lib/components/GardenTable.svelte';
   import type { GardenTimelinePlant } from '$lib/components/GardenTimeline.svelte';
+  import type { SowingChoice, LocalGardenPlant } from '@frostleaf/shared';
   import ArrowLeft from '@lucide/svelte/icons/arrow-left';
   import Trash2 from '@lucide/svelte/icons/trash-2';
   import Pencil from '@lucide/svelte/icons/pencil';
@@ -84,6 +85,7 @@
           plantId: gp.plantId,
           commonName: gp.commonName,
           timeline: viability.timeline,
+          sowingChoice: effectiveSowingChoice(gp),
         };
       })
       .filter((p): p is GardenTimelinePlant => p !== null) ?? [],
@@ -96,6 +98,7 @@
       return {
         commonName: gp.commonName,
         cropGroup: detail?.cropGroup ?? '',
+        sowingMethod: props?.sowingMethod ?? null,
         sowingMonths: props?.growthMonths?.slice(0, 2).join(', ') ?? '',
         daysToHarvest: props?.daysToHarvest ?? null,
         notes: gp.notes,
@@ -103,6 +106,23 @@
       };
     }) ?? [],
   );
+
+  /** Resolve effective sowing choice: user pick > default from plant data */
+  function effectiveSowingChoice(plant: LocalGardenPlant): SowingChoice | null {
+    if (plant.sowingChoice) return plant.sowingChoice;
+    const method = plantDetails.get(plant.plantId)?.properties?.sowingMethod ?? null;
+    if (method === 'indoor' || method === 'both') return 'indoor';
+    if (method === 'direct') return 'direct';
+    return null;
+  }
+
+  function toggleSowingChoice(plantId: string) {
+    const gp = garden?.plants.find((p) => p.plantId === plantId);
+    if (!gp || !garden) return;
+    const current = effectiveSowingChoice(gp);
+    const next: SowingChoice = current === 'indoor' ? 'direct' : 'indoor';
+    gardenStore.updatePlant(garden.id, plantId, { sowingChoice: next });
+  }
 
   // Editing garden name
   let editingName = $state(false);
@@ -261,42 +281,75 @@
     {#snippet plantCard(plant: typeof garden.plants[0])}
       {@const detail = plantDetails.get(plant.plantId)}
       {@const viability = viabilityMap.get(plant.plantId)}
-      <a
-        href={resolve('/plants/[id]', { id: plant.plantId }) + `?from=${garden.id}`}
-        class="group relative flex items-center gap-3 rounded-lg border p-3 transition-colors hover:bg-accent"
-      >
-        {#if viability}
-          <div
-            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold {viability.viabilityScore >= 0.6
-              ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-              : viability.viabilityScore >= 0.25
-                ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-                : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'}"
-          >
-            {Math.round(viability.viabilityScore * 100)}
+      {@const method = detail?.properties?.sowingMethod ?? null}
+      {@const choice = effectiveSowingChoice(plant)}
+      <div class="group relative rounded-lg border transition-colors hover:bg-accent">
+        <a
+          href={resolve('/plants/[id]', { id: plant.plantId }) + `?from=${garden.id}`}
+          class="flex items-center gap-3 p-3 pb-1.5"
+        >
+          {#if viability}
+            <div
+              class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold {viability.viabilityScore >= 0.6
+                ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                : viability.viabilityScore >= 0.25
+                  ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                  : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'}"
+            >
+              {Math.round(viability.viabilityScore * 100)}
+            </div>
+          {:else}
+            <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10">
+              <Leaf class="h-4 w-4 text-primary" />
+            </div>
+          {/if}
+          <div class="min-w-0 flex-1">
+            <p class="truncate text-sm font-medium">{plant.commonName}</p>
+            <p class="truncate text-xs text-muted-foreground">
+              {detail?.scientificName ?? ''}{detail ? ' · ' + detail.cropGroup.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) : ''}
+            </p>
+            {#if viability?.requiredGdd}
+              <p class="text-xs text-muted-foreground">GDD: {viability.requiredGdd}</p>
+            {/if}
           </div>
-        {:else}
-          <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10">
-            <Leaf class="h-4 w-4 text-primary" />
+        </a>
+        <!-- Sowing method control -->
+        {#if method}
+          <div class="px-3 pb-2.5 pt-0.5 pl-15">
+            {#if method === 'both'}
+              <div class="inline-flex items-center rounded-md bg-muted p-0.5 text-[11px]">
+                <button
+                  onclick={() => gardenStore.updatePlant(garden.id, plant.plantId, { sowingChoice: 'indoor' })}
+                  class="rounded px-2 py-0.5 font-medium transition-colors {choice === 'indoor'
+                    ? 'bg-violet-500 text-white shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground'}"
+                >
+                  Indoor
+                </button>
+                <button
+                  onclick={() => gardenStore.updatePlant(garden.id, plant.plantId, { sowingChoice: 'direct' })}
+                  class="rounded px-2 py-0.5 font-medium transition-colors {choice === 'direct'
+                    ? 'bg-amber-500 text-white shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground'}"
+                >
+                  Direct
+                </button>
+              </div>
+            {:else if method === 'indoor'}
+              <span class="inline-flex items-center rounded-full bg-violet-100 px-2 py-0.5 text-[10px] font-medium text-violet-700 dark:bg-violet-900/30 dark:text-violet-300">Indoor start</span>
+            {:else}
+              <span class="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">Direct sow</span>
+            {/if}
           </div>
         {/if}
-        <div class="min-w-0 flex-1">
-          <p class="truncate text-sm font-medium">{plant.commonName}</p>
-          <p class="truncate text-xs text-muted-foreground">
-            {detail?.scientificName ?? ''}{detail ? ' · ' + detail.cropGroup.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) : ''}
-          </p>
-          {#if viability?.requiredGdd}
-            <p class="text-xs text-muted-foreground">GDD: {viability.requiredGdd}</p>
-          {/if}
-        </div>
         <button
-          onclick={(e) => { e.preventDefault(); gardenStore.removePlant(garden.id, plant.plantId); }}
+          onclick={() => gardenStore.removePlant(garden.id, plant.plantId)}
           class="absolute top-1.5 right-1.5 rounded-md p-1 text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-destructive hover:bg-destructive/10 transition-all"
           title="Remove plant"
         >
           <X class="h-3.5 w-3.5" />
         </button>
-      </a>
+      </div>
     {/snippet}
 
     {#if garden.plants.length > 0}
