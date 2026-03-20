@@ -26,7 +26,7 @@
   // Viability state
   let report = $state<ViabilityReport | null>(null);
   let viabilityLoading = $state(false);
-  let viabilityFilter = $state<'all' | 'viable' | 'marginal'>('all');
+  let viabilityFilter = $state<'all' | 'viable' | 'maybe' | 'unviable'>('all');
   let cropFilter = $state('');
 
   let hasLocation = $derived(!!locationStore.current);
@@ -37,12 +37,17 @@
   );
   let viabilityPlants = $derived(report?.plants ?? []);
   let cropGroups = $derived([...new Set(viabilityPlants.map((p) => p.cropGroup))].sort());
-  let viableCount = $derived(viabilityPlants.filter((p) => p.isViable).length);
+  let cropFiltered = $derived(cropFilter ? viabilityPlants.filter((p) => p.cropGroup === cropFilter) : viabilityPlants);
+  let allCount = $derived(cropFiltered.length);
+  let viableCount = $derived(cropFiltered.filter((p) => p.viabilityScore >= 0.6).length);
+  let maybeCount = $derived(cropFiltered.filter((p) => p.viabilityScore >= 0.25 && p.viabilityScore < 0.6).length);
+  let unviableCount = $derived(cropFiltered.filter((p) => p.viabilityScore < 0.25).length);
 
   let filteredViabilityPlants = $derived(() => {
     let plants = viabilityPlants;
-    if (viabilityFilter === 'viable') plants = plants.filter((p) => p.isViable);
-    if (viabilityFilter === 'marginal') plants = plants.filter((p) => !p.isViable && p.viabilityScore >= 0.4);
+    if (viabilityFilter === 'viable') plants = plants.filter((p) => p.viabilityScore >= 0.6);
+    if (viabilityFilter === 'maybe') plants = plants.filter((p) => p.viabilityScore >= 0.25 && p.viabilityScore < 0.6);
+    if (viabilityFilter === 'unviable') plants = plants.filter((p) => p.viabilityScore < 0.25);
     if (cropFilter) plants = plants.filter((p) => p.cropGroup === cropFilter);
     return plants;
   });
@@ -212,7 +217,7 @@
           : 'bg-secondary text-secondary-foreground hover:bg-accent'}"
         onclick={() => (viabilityFilter = 'all')}
       >
-        All ({viabilityPlants.length})
+        All ({allCount})
       </button>
       <button
         class="rounded-md px-3 py-1.5 text-sm transition-colors {viabilityFilter === 'viable'
@@ -223,12 +228,20 @@
         Viable ({viableCount})
       </button>
       <button
-        class="rounded-md px-3 py-1.5 text-sm transition-colors {viabilityFilter === 'marginal'
+        class="rounded-md px-3 py-1.5 text-sm transition-colors {viabilityFilter === 'maybe'
           ? 'bg-primary text-primary-foreground'
           : 'bg-secondary text-secondary-foreground hover:bg-accent'}"
-        onclick={() => (viabilityFilter = 'marginal')}
+        onclick={() => (viabilityFilter = 'maybe')}
       >
-        Marginal
+        Maybe viable ({maybeCount})
+      </button>
+      <button
+        class="rounded-md px-3 py-1.5 text-sm transition-colors {viabilityFilter === 'unviable'
+          ? 'bg-primary text-primary-foreground'
+          : 'bg-secondary text-secondary-foreground hover:bg-accent'}"
+        onclick={() => (viabilityFilter = 'unviable')}
+      >
+        Not viable ({unviableCount})
       </button>
 
       <select
@@ -237,7 +250,7 @@
       >
         <option value="">All crops</option>
         {#each cropGroups as group (group)}
-          <option value={group}>{group}</option>
+          <option value={group}>{group.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}</option>
         {/each}
       </select>
     </div>
@@ -278,9 +291,9 @@
             </div>
             {#if viability}
               <div
-                class="flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold {viability.isViable
+                class="flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold {viability.viabilityScore >= 0.6
                   ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                  : viability.viabilityScore >= 0.4
+                  : viability.viabilityScore >= 0.25
                     ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
                     : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'}"
               >
@@ -339,9 +352,9 @@
               <p class="text-xs text-muted-foreground">{plant.cropGroup}</p>
             </div>
             <div
-              class="flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold {plant.isViable
+              class="flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold {plant.viabilityScore >= 0.6
                 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                : plant.viabilityScore >= 0.4
+                : plant.viabilityScore >= 0.25
                   ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
                   : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'}"
             >
