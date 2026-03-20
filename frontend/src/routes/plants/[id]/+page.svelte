@@ -15,7 +15,6 @@
   import Sprout from '@lucide/svelte/icons/sprout';
   import ArrowLeft from '@lucide/svelte/icons/arrow-left';
   import Plus from '@lucide/svelte/icons/plus';
-  import Check from '@lucide/svelte/icons/check';
 
   let { data }: { data: { plant: Plant } } = $props();
   let plant: Plant = $derived(data.plant);
@@ -64,67 +63,64 @@
 
   let fromGardenId = $derived($page.url.searchParams.get('from'));
   let fromGarden = $derived(fromGardenId ? gardenStore.getGarden(fromGardenId) : null);
-  let backHref = $derived(fromGarden && fromGardenId ? resolve('/garden/[id]', { id: fromGardenId }) : '/plants');
+  let backHref = $derived(fromGarden && fromGardenId ? resolve('/garden/[id]', { id: fromGardenId }) : resolve('/plants'));
   let backLabel = $derived(fromGarden ? `Back to ${fromGarden.name}` : 'Back to plants');
 
   // Add to garden
   let showGardenPicker = $state(false);
-  let addedToGarden = $state<string | null>(null);
+  let gardensWithPlant = $derived(gardenStore.gardens.filter((g) => g.plants.some((p) => p.plantId === plant.id)));
+  let gardensWithoutPlant = $derived(gardenStore.gardens.filter((g) => !g.plants.some((p) => p.plantId === plant.id)));
+  let inAllGardens = $derived(gardenStore.gardens.length > 0 && gardensWithoutPlant.length === 0);
 
   function addToGarden(gardenId: string) {
-    const added = gardenStore.addPlant(gardenId, plant.id, plant.commonName);
-    if (added) {
-      addedToGarden = gardenId;
-      showGardenPicker = false;
-      setTimeout(() => (addedToGarden = null), 2000);
-    }
+    gardenStore.addPlant(gardenId, plant.id, plant.commonName);
+    showGardenPicker = false;
   }
 </script>
 
 <div class="space-y-8">
+  <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- backHref already uses resolve() -->
   <a href={backHref} class="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
     <ArrowLeft class="h-4 w-4" />
     {backLabel}
   </a>
 
-  <div class="flex gap-6">
-    {#if plant.imageUrl}
-      <img src={plant.imageUrl} alt={plant.commonName} class="h-32 w-32 rounded-lg object-cover shadow-md" />
-    {:else}
-      <div class="flex h-32 w-32 items-center justify-center rounded-lg bg-muted shadow-md">
-        <Leaf class="h-10 w-10 text-muted-foreground" />
-      </div>
-    {/if}
-    <div>
-      <h1 class="text-3xl font-bold tracking-tight">{plant.commonName}</h1>
-      <p class="mt-1 text-lg text-muted-foreground italic">{plant.scientificName}</p>
-      <div class="mt-2 flex flex-wrap gap-2">
-        <span class="rounded-md bg-primary/10 px-2.5 py-0.5 text-sm text-primary font-medium">{plant.family}</span>
-        <span class="rounded-md bg-secondary px-2.5 py-0.5 text-sm">{plant.cropGroup}</span>
-        {#if plant.source !== 'seed'}
-          <span class="rounded-md bg-muted px-2.5 py-0.5 text-xs text-muted-foreground">{plant.source}</span>
-        {/if}
-      </div>
-      <!-- Add to garden -->
-      {#if gardenStore.gardens.length > 0}
-        <div class="mt-3 relative">
-          {#if addedToGarden}
-            <span class="inline-flex items-center gap-1 text-sm text-green-600 dark:text-green-400">
-              <Check class="h-4 w-4" />
-              Added to garden
-            </span>
-          {:else}
-            <button
-              onclick={() => (showGardenPicker = !showGardenPicker)}
-              class="inline-flex items-center gap-1.5 rounded-md bg-primary/10 px-3 py-1.5 text-sm font-medium text-primary hover:bg-primary/20"
-            >
-              <Plus class="h-3.5 w-3.5" />
-              Add to Garden
-            </button>
+  <div class="flex items-start justify-between gap-6">
+    <div class="flex gap-6 min-w-0">
+      {#if plant.imageUrl}
+        <img src={plant.imageUrl} alt={plant.commonName} class="h-32 w-32 rounded-lg object-cover shadow-md shrink-0" />
+      {:else}
+        <div class="flex h-32 w-32 items-center justify-center rounded-lg bg-muted shadow-md shrink-0">
+          <Leaf class="h-10 w-10 text-muted-foreground" />
+        </div>
+      {/if}
+      <div>
+        <h1 class="text-3xl font-bold tracking-tight">{plant.commonName}</h1>
+        <p class="mt-1 text-lg text-muted-foreground italic">{plant.scientificName}</p>
+        <div class="mt-2 flex flex-wrap gap-2">
+          <span class="rounded-md bg-primary/10 px-2.5 py-0.5 text-sm text-primary font-medium">{plant.family}</span>
+          <span class="rounded-md bg-primary/10 px-2.5 py-0.5 text-sm text-primary font-medium">{plant.cropGroup}</span>
+          {#if plant.source !== 'seed'}
+            <span class="rounded-md bg-muted px-2.5 py-0.5 text-xs text-muted-foreground">{plant.source}</span>
           {/if}
+        </div>
+      </div>
+    </div>
+    <!-- Garden actions -->
+    {#if gardenStore.gardens.length > 0}
+      <div class="flex flex-col items-end gap-2 shrink-0">
+        <div class="relative">
+          <button
+            onclick={() => { if (!inAllGardens) showGardenPicker = !showGardenPicker; }}
+            disabled={inAllGardens}
+            class="inline-flex items-center gap-1.5 rounded-md bg-primary/10 px-3 py-1.5 text-sm font-medium text-primary hover:bg-primary/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary/10"
+          >
+            <Plus class="h-3.5 w-3.5" />
+            Add to Garden
+          </button>
           {#if showGardenPicker}
-            <div class="absolute top-full left-0 mt-1 z-10 rounded-md border bg-card shadow-md py-1 min-w-48">
-              {#each gardenStore.gardens as g (g.id)}
+            <div class="absolute top-full right-0 mt-1 z-10 rounded-md border bg-card shadow-md py-1 min-w-48">
+              {#each gardensWithoutPlant as g (g.id)}
                 <button
                   onclick={() => addToGarden(g.id)}
                   class="w-full text-left px-3 py-2 text-sm hover:bg-accent transition-colors"
@@ -136,8 +132,20 @@
             </div>
           {/if}
         </div>
-      {/if}
-    </div>
+        {#if gardensWithPlant.length > 0}
+          <div class="flex items-center gap-2 flex-wrap justify-end">
+            {#each gardensWithPlant as g (g.id)}
+              <a
+                href={resolve('/garden/[id]', { id: g.id })}
+                class="inline-flex items-center rounded-md bg-primary/10 px-3 py-1.5 text-sm font-medium text-primary hover:bg-primary/20 transition-colors"
+              >
+                {g.name}
+              </a>
+            {/each}
+          </div>
+        {/if}
+      </div>
+    {/if}
   </div>
 
   {#if plantProps}
@@ -195,7 +203,7 @@
           </div>
         {/if}
         {#if viability && viability.photoperiodWarnings.length > 0}
-          {#each viability.photoperiodWarnings as warning}
+          {#each viability.photoperiodWarnings as warning (warning.type)}
             <div class="flex items-start gap-3 rounded-md p-3 {warning.severity === 'warning'
               ? 'bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800'
               : 'bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800'}">
