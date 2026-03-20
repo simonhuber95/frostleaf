@@ -207,7 +207,7 @@
 {/snippet}
 
 {#if garden.plants.length > 0}
-  <div class="flex items-center gap-2">
+  <div class="flex items-center gap-2 flex-wrap">
     <span class="text-xs text-muted-foreground">Group by</span>
     <div class="inline-flex items-center rounded-md bg-muted p-0.5 text-xs">
       {#each [
@@ -227,6 +227,13 @@
         </button>
       {/each}
     </div>
+    <a
+      href="{resolve('/plants')}?addToGarden={garden.id}"
+      class="inline-flex items-center gap-1.5 rounded-md bg-primary/10 px-3 py-1.5 text-sm font-medium text-primary hover:bg-primary/20 ml-auto"
+    >
+      <Plus class="h-3.5 w-3.5" />
+      Add Plants
+    </a>
   </div>
 
   <div class="space-y-4">

@@ -2,6 +2,7 @@
   import { goto } from '$app/navigation';
   import { untrack } from 'svelte';
   import { authStore } from '$lib/stores/auth.svelte';
+  import { gardenStore } from '$lib/stores/garden.svelte';
   import Loader from '@lucide/svelte/icons/loader';
 
   let email = $state('');
@@ -23,6 +24,7 @@
 
     try {
       await authStore.signIn(email.trim(), password);
+      await gardenStore.loadFromServer();
       await goto('/garden');
     } catch (err) {
       error = err instanceof Error ? err.message : 'Sign in failed';

@@ -14,11 +14,14 @@
 
   let { children } = $props();
 
-  onMount(() => {
+  onMount(async () => {
     theme.init();
     locationStore.init();
     gardenStore.init();
-    authStore.init();
+    await authStore.init();
+    if (authStore.isAuthenticated) {
+      await gardenStore.loadFromServer();
+    }
   });
 </script>
 

@@ -40,9 +40,9 @@
     {#if gardenStore.gardens.length > 0}
       <button
         onclick={() => (showForm = !showForm)}
-        class="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+        class="inline-flex items-center gap-2 rounded-md bg-primary/10 px-3 py-1.5 text-sm font-medium text-primary hover:bg-primary/20"
       >
-        <Plus class="h-4 w-4" />
+        <Plus class="h-3.5 w-3.5" />
         New Garden
       </button>
     {/if}

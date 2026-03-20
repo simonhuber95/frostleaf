@@ -12,7 +12,6 @@
   import GardenDiary from '$lib/components/GardenDiary.svelte';
   import GardenSettings from '$lib/components/GardenSettings.svelte';
   import ArrowLeft from '@lucide/svelte/icons/arrow-left';
-  import Plus from '@lucide/svelte/icons/plus';
   import Leaf from '@lucide/svelte/icons/leaf';
   import BookOpen from '@lucide/svelte/icons/book-open';
   import Settings from '@lucide/svelte/icons/settings';
@@ -74,14 +73,14 @@
 {#if garden}
   <div class="space-y-6">
     <!-- Header + Tabs -->
-    <div class="flex items-center gap-4">
-      <div class="flex items-center gap-3 min-w-0 shrink-0">
+    <div class="grid grid-cols-3 items-center">
+      <div class="flex items-center gap-3 min-w-0">
         <a href={resolve('/garden')} class="text-muted-foreground hover:text-foreground transition-colors shrink-0" title="Back to gardens">
           <ArrowLeft class="h-4 w-4" />
         </a>
         <h1 class="text-xl font-bold tracking-tight truncate">{garden.name}</h1>
       </div>
-      <div class="flex-1 flex justify-center">
+      <div class="flex justify-center">
         <div class="flex items-center gap-1 rounded-md bg-muted p-0.5">
           {#each [
             { value: 'overview', label: 'Overview', icon: Leaf },
@@ -100,13 +99,7 @@
           {/each}
         </div>
       </div>
-      <a
-        href="{resolve('/plants')}?addToGarden={garden.id}"
-        class="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90 shrink-0"
-      >
-        <Plus class="h-3.5 w-3.5" />
-        Add Plants
-      </a>
+      <div></div>
     </div>
 
     <!-- Tab content -->
