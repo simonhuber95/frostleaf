@@ -1,5 +1,6 @@
 <script lang="ts">
   import { page } from '$app/stores';
+  import { resolve } from '$app/paths';
   import type { Plant } from '$lib/api/plants';
   import { locationStore } from '$lib/stores/location.svelte';
   import { gardenStore } from '$lib/stores/garden.svelte';
@@ -47,7 +48,7 @@
 
   let fromGardenId = $derived($page.url.searchParams.get('from'));
   let fromGarden = $derived(fromGardenId ? gardenStore.getGarden(fromGardenId) : null);
-  let backHref = $derived(fromGarden ? `/garden/${fromGardenId}` : '/plants');
+  let backHref = $derived(fromGarden && fromGardenId ? resolve('/garden/[id]', { id: fromGardenId }) : '/plants');
   let backLabel = $derived(fromGarden ? `Back to ${fromGarden.name}` : 'Back to plants');
 
   // Add to garden

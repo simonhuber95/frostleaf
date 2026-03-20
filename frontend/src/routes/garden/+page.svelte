@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from '$app/paths';
   import { gardenStore } from '$lib/stores/garden.svelte';
   import { locationStore } from '$lib/stores/location.svelte';
   import Plus from '@lucide/svelte/icons/plus';
@@ -93,7 +94,7 @@
     <div class="grid gap-3">
       {#each gardenStore.gardens as garden (garden.id)}
         <a
-          href="/garden/{garden.id}"
+          href={resolve('/garden/[id]', { id: garden.id })}
           class="flex items-center justify-between rounded-lg border p-4 transition-colors hover:bg-accent"
         >
           <div class="flex items-center gap-4">

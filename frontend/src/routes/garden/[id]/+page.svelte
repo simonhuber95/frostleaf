@@ -1,5 +1,6 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
+  import { resolve } from '$app/paths';
   import { onMount } from 'svelte';
   import { gardenStore } from '$lib/stores/garden.svelte';
   import { locationStore } from '$lib/stores/location.svelte';
@@ -257,7 +258,7 @@
       {@const detail = plantDetails.get(plant.plantId)}
       {@const viability = viabilityMap.get(plant.plantId)}
       <a
-        href="/plants/{plant.plantId}?from={garden.id}"
+        href={resolve('/plants/[id]', { id: plant.plantId }) + `?from=${garden.id}`}
         class="group relative flex items-center gap-3 rounded-lg border p-3 transition-colors hover:bg-accent"
       >
         {#if viability}

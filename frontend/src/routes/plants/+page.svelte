@@ -1,6 +1,7 @@
 <script lang="ts">
   import { untrack, onMount } from 'svelte';
   import { page } from '$app/stores';
+  import { resolve } from '$app/paths';
   import { searchPlants, type Plant } from '$lib/api/plants';
   import { getViability, type ViabilityReport, type ViabilityResult } from '$lib/api/viability';
   import { locationStore } from '$lib/stores/location.svelte';
@@ -119,7 +120,7 @@
         <strong>Adding to:</strong> {addToGarden.name} &middot; Click plants to add them
       </p>
       <a
-        href="/garden/{addToGardenId}"
+        href={resolve('/garden/[id]', { id: addToGardenId })}
         class="rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:bg-primary/90"
       >
         Done ({addToGarden.plants.length} plants)
@@ -254,7 +255,7 @@
       {#each searchResults as plant (plant.id)}
         {@const viability = viabilityMap.get(plant.id)}
         <a
-          href="/plants/{plant.id}"
+          href={resolve('/plants/[id]', { id: plant.id })}
           class="flex items-center justify-between rounded-lg border p-4 transition-colors hover:bg-accent"
         >
           <div class="flex items-center gap-4">
@@ -310,7 +311,7 @@
     <div class="grid gap-3">
       {#each filteredViabilityPlants() as plant (plant.plantId)}
         <a
-          href="/plants/{plant.plantId}"
+          href={resolve('/plants/[id]', { id: plant.plantId })}
           class="flex items-center justify-between rounded-lg border p-4 transition-colors hover:bg-accent"
         >
           <div class="flex items-center gap-4">
