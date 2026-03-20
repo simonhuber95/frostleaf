@@ -36,8 +36,10 @@ export async function calculateViability(locationId: string): Promise<ViabilityR
 
     const { isViable, score } = computeScore(averageGdd, requiredGdd, baseTemp, avgFrostFreeDays, daysToHarvest);
 
-    // Sowing: when avg minimum temp >= plant's survival threshold (avgMin)
-    const sowStart = minTemp !== null ? findThresholdDate(dailyAverages, minTemp, 'avgMin') : null;
+    // Sowing: hardy crops (minTemp < 0) can sow when avgMin >= 0 (frost-free)
+    //         tender crops (minTemp >= 0) sow when avgMin >= baseTemp
+    const sowThreshold = minTemp !== null && minTemp < 0 ? 0 : (baseTemp ?? 0);
+    const sowStart = findThresholdDate(dailyAverages, sowThreshold, 'avgMin');
     // Growth: when avg mean temp >= plant's base growth temp (avgMean)
     const growStart = baseTemp !== null ? findThresholdDate(dailyAverages, baseTemp, 'avgMean') : null;
 

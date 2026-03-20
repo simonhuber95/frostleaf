@@ -3,28 +3,29 @@ import dayOfYear from 'dayjs/plugin/dayOfYear';
 import * as db from '../clients/db';
 import * as frostClient from '../clients/frost';
 import type { TemperatureRecord, DailyClimateAverage } from '../types/weather';
-import { detectFrostDates, averageFrostDates, calculateSeasonalGdd } from './gdd';
+import { calculateDailyGdd } from './gdd';
 
 dayjs.extend(dayOfYear);
 
 const DATA_YEARS = 5;
 
-export async function findNearestStation(lat: number, lon: number) {
-  const cached = await db.findAllStations();
+export type NearbyStation = {
+  id: string;
+  frostApiId: string;
+  name: string;
+  latitude: number;
+  longitude: number;
+  distanceKm: number;
+};
 
-  if (cached.length > 0) {
-    const nearest = findNearestByDistance(cached, lat, lon);
-    const distKm = haversineKm(lat, lon, nearest.latitude, nearest.longitude);
-    if (distKm < 50) return nearest;
-  }
-
+export async function findNearbyStations(lat: number, lon: number): Promise<NearbyStation[]> {
   const response = await frostClient.fetchNearbyStations(lat, lon);
 
   if (!response.data || response.data.length === 0) {
     throw new Error('No weather stations found near this location');
   }
 
-  const stations = [];
+  const stations: NearbyStation[] = [];
   for (const source of response.data) {
     const [stationLon, stationLat] = source.geometry.coordinates;
 
@@ -35,10 +36,13 @@ export async function findNearestStation(lat: number, lon: number) {
       longitude: stationLon,
     });
 
-    stations.push(station);
+    stations.push({
+      ...station,
+      distanceKm: Math.round(haversineKm(lat, lon, stationLat, stationLon) * 10) / 10,
+    });
   }
 
-  return findNearestByDistance(stations, lat, lon);
+  return stations.sort((a, b) => a.distanceKm - b.distanceKm);
 }
 
 /**
@@ -104,38 +108,65 @@ export async function getStationClimate(
   await db.deleteDailyAveragesByStation(stationDbId);
   await db.insertDailyAverages(stationDbId, averages);
 
-  // Compute per-year frost dates and GDD, then average
-  const years = [...new Set(records.map((r) => dayjs(r.date).year()))].sort();
-  const frostByYear = years.map((year) => {
-    const yearRecords = records.filter((r) => r.date.startsWith(String(year)));
-    return detectFrostDates(yearRecords, year);
-  });
-  const avgFrost = averageFrostDates(frostByYear);
+  // Derive frost dates from smoothed averages (last spring day with avgMin < 0, first autumn day)
+  const frost = deriveFrostDatesFromAverages(averages);
 
-  // Compute average GDD across years (using frost-free period per year)
-  const gddByYear = years.map((year) => {
-    const yearRecords = records.filter((r) => r.date.startsWith(String(year)));
-    const frost = detectFrostDates(yearRecords, year);
-    const growingRecords = yearRecords.filter((r) => {
-      if (frost.lastFrostSpring && r.date <= frost.lastFrostSpring) return false;
-      if (frost.firstFrostAutumn && r.date >= frost.firstFrostAutumn) return false;
-      return true;
-    });
-    return calculateSeasonalGdd(growingRecords);
-  });
-  const avgGdd = Math.round(gddByYear.reduce((a, b) => a + b, 0) / gddByYear.length);
+  // Compute GDD from averages (sum of avgMean - tBase during frost-free period)
+  const tBase = 5;
+  const tUpper = 30;
+  let avgGdd = 0;
+  for (const avg of averages) {
+    if (frost.lastFrostDoy && avg.dayOfYear <= frost.lastFrostDoy) continue;
+    if (frost.firstFrostDoy && avg.dayOfYear >= frost.firstFrostDoy) continue;
+    avgGdd += calculateDailyGdd(avg.avgMean, tBase, tUpper);
+  }
+  avgGdd = Math.round(avgGdd);
+
+  const years = [...new Set(records.map((r) => dayjs(r.date).year()))].sort();
 
   // Store station-level metrics
   await db.updateStationClimate(stationDbId, {
     dataYearsFrom: years[0],
     dataYearsTo: years[years.length - 1],
     avgGdd,
-    avgFrostFreeDays: avgFrost.frostFreeDays,
-    lastFrostSpring: avgFrost.lastFrostSpring,
-    firstFrostAutumn: avgFrost.firstFrostAutumn,
+    avgFrostFreeDays: frost.frostFreeDays,
+    lastFrostSpring: frost.lastFrostSpring,
+    firstFrostAutumn: frost.firstFrostAutumn,
   });
 
   return averages;
+}
+
+/**
+ * Derive frost dates from smoothed daily averages.
+ * Last spring frost = last DOY in first half where avgMin < 0.
+ * First autumn frost = first DOY in second half where avgMin < 0.
+ */
+function deriveFrostDatesFromAverages(averages: DailyClimateAverage[]) {
+  let lastFrostDoy: number | null = null;
+  let firstFrostDoy: number | null = null;
+
+  for (const avg of averages) {
+    if (avg.avgMin < 0) {
+      if (avg.dayOfYear <= 182) {
+        lastFrostDoy = avg.dayOfYear;
+      } else if (firstFrostDoy === null) {
+        firstFrostDoy = avg.dayOfYear;
+      }
+    }
+  }
+
+  const lastFrostSpring = lastFrostDoy !== null
+    ? dayjs('2024-01-01').dayOfYear(lastFrostDoy).format('MM-DD')
+    : null;
+  const firstFrostAutumn = firstFrostDoy !== null
+    ? dayjs('2024-01-01').dayOfYear(firstFrostDoy).format('MM-DD')
+    : null;
+  const frostFreeDays = lastFrostDoy !== null && firstFrostDoy !== null
+    ? firstFrostDoy - lastFrostDoy
+    : 0;
+
+  return { lastFrostDoy, firstFrostDoy, lastFrostSpring, firstFrostAutumn, frostFreeDays };
 }
 
 /**
@@ -202,23 +233,4 @@ function haversineKm(lat1: number, lon1: number, lat2: number, lon2: number): nu
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-}
-
-function findNearestByDistance<T extends { latitude: number; longitude: number }>(
-  stations: T[],
-  lat: number,
-  lon: number,
-): T {
-  let nearest = stations[0];
-  let minDist = Infinity;
-
-  for (const s of stations) {
-    const d = haversineKm(lat, lon, s.latitude, s.longitude);
-    if (d < minDist) {
-      minDist = d;
-      nearest = s;
-    }
-  }
-
-  return nearest;
 }

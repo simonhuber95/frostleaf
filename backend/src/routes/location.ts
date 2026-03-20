@@ -4,10 +4,9 @@ import type { LocationInput } from '../types/location';
 
 export const locationRouter: RouterType = Router();
 
-// GET /api/location/resolve?type=coordinates&latitude=59.9&longitude=10.7
-// GET /api/location/resolve?type=address&query=Karl+Johans+gate
-// GET /api/location/resolve?type=municipality&query=Oslo
-locationRouter.get('/resolve', async (req, res) => {
+// GET /api/location/nearby?type=municipality&query=Salangen
+// Returns nearby stations for user to pick from
+locationRouter.get('/nearby', async (req, res) => {
   const { type, latitude, longitude, query } = req.query;
 
   if (!type || !['coordinates', 'address', 'municipality'].includes(type as string)) {
@@ -34,7 +33,26 @@ locationRouter.get('/resolve', async (req, res) => {
   }
 
   try {
-    const result = await locationService.resolveLocation(input);
+    const result = await locationService.findNearbyStations(input);
+    res.json(result);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    res.status(500).json({ error: message });
+  }
+});
+
+// POST /api/location/resolve
+// Creates a location with a user-chosen station
+locationRouter.post('/resolve', async (req, res) => {
+  const { latitude, longitude, stationId, displayName } = req.body;
+
+  if (!latitude || !longitude || !stationId || !displayName) {
+    res.status(400).json({ error: 'latitude, longitude, stationId, and displayName are required' });
+    return;
+  }
+
+  try {
+    const result = await locationService.resolveLocation(latitude, longitude, stationId, displayName);
     res.json(result);
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';

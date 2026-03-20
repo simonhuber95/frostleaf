@@ -1,21 +1,32 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
-  import { resolveLocation } from '$lib/api/location';
+  import { findNearbyStations, resolveLocation, type NearbyStation } from '$lib/api/location';
   import { locationStore } from '$lib/stores/location.svelte';
   import Search from '@lucide/svelte/icons/search';
   import MapPin from '@lucide/svelte/icons/map-pin';
   import Loader from '@lucide/svelte/icons/loader';
+  import Radio from '@lucide/svelte/icons/radio';
 
   let query = $state('');
   let locationType = $state<'address' | 'municipality' | 'coordinates'>('municipality');
   let loading = $state(false);
+  let confirming = $state(false);
   let error = $state('');
 
-  async function handleSubmit() {
+  // Station picker state
+  let stations = $state<NearbyStation[]>([]);
+  let displayName = $state('');
+  let resolvedLat = $state(0);
+  let resolvedLon = $state(0);
+  let selectedStationId = $state<string | null>(null);
+
+  async function handleSearch() {
     if (!query.trim()) return;
 
     loading = true;
     error = '';
+    stations = [];
+    selectedStationId = null;
 
     try {
       let params: Record<string, string | number>;
@@ -32,22 +43,40 @@
         params = { query: query.trim() };
       }
 
-      const result = await resolveLocation(locationType, params);
-      // Set partial location state — viability page will fill in the rest
+      const result = await findNearbyStations(locationType, params);
+      stations = result.stations;
+      displayName = result.displayName;
+      resolvedLat = result.latitude;
+      resolvedLon = result.longitude;
+    } catch (err) {
+      error = err instanceof Error ? err.message : 'Something went wrong';
+    } finally {
+      loading = false;
+    }
+  }
+
+  async function handleConfirm() {
+    if (!selectedStationId) return;
+
+    confirming = true;
+    error = '';
+
+    try {
+      const result = await resolveLocation(resolvedLat, resolvedLon, selectedStationId, displayName);
       locationStore.set({
         locationId: result.location.id,
         displayName: result.displayName,
         stationName: result.station.name,
-        averageGdd: 0,
-        frostFreeDays: 0,
-        lastFrostSpring: null,
-        firstFrostAutumn: null,
+        averageGdd: result.climate?.avgGdd ?? 0,
+        frostFreeDays: result.climate?.avgFrostFreeDays ?? 0,
+        lastFrostSpring: result.climate?.lastFrostSpring ?? null,
+        firstFrostAutumn: result.climate?.firstFrostAutumn ?? null,
       });
       await goto('/plants');
     } catch (err) {
       error = err instanceof Error ? err.message : 'Something went wrong';
     } finally {
-      loading = false;
+      confirming = false;
     }
   }
 </script>
@@ -60,7 +89,7 @@
     </p>
   </div>
 
-  <form onsubmit={handleSubmit} class="w-full max-w-lg space-y-4">
+  <form onsubmit={handleSearch} class="w-full max-w-lg space-y-4">
     <div class="flex gap-2">
       <button
         type="button"
@@ -122,8 +151,51 @@
     {/if}
   </form>
 
-  <p class="max-w-md text-center text-sm text-muted-foreground">
-    Enter your location to see which plants are viable based on local climate data and Growing Degree Days (GDD)
-    analysis.
-  </p>
+  <!-- Station picker -->
+  {#if stations.length > 0}
+    <div class="w-full max-w-lg space-y-3">
+      <h2 class="text-sm font-medium text-muted-foreground">
+        Select a weather station for {displayName}
+      </h2>
+      <div class="space-y-1.5">
+        {#each stations as station (station.id)}
+          <button
+            type="button"
+            onclick={() => (selectedStationId = station.id)}
+            class="flex w-full items-center gap-3 rounded-lg border px-4 py-3 text-left text-sm transition-colors
+              {selectedStationId === station.id
+                ? 'border-primary bg-primary/5'
+                : 'border-border hover:bg-accent/50'}"
+          >
+            <Radio class="h-4 w-4 shrink-0 {selectedStationId === station.id ? 'text-primary' : 'text-muted-foreground'}" />
+            <div class="flex-1 min-w-0">
+              <div class="font-medium">{station.name}</div>
+              <div class="text-xs text-muted-foreground">
+                {station.distanceKm} km away &middot; {station.latitude.toFixed(2)}°N, {station.longitude.toFixed(2)}°E
+              </div>
+            </div>
+          </button>
+        {/each}
+      </div>
+
+      <button
+        type="button"
+        onclick={handleConfirm}
+        disabled={!selectedStationId || confirming}
+        class="w-full rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+      >
+        {#if confirming}
+          <Loader class="mr-2 inline h-4 w-4 animate-spin" />
+          Loading climate data...
+        {:else}
+          Use this station
+        {/if}
+      </button>
+    </div>
+  {:else if !loading}
+    <p class="max-w-md text-center text-sm text-muted-foreground">
+      Enter your location to see which plants are viable based on local climate data and Growing Degree Days (GDD)
+      analysis.
+    </p>
+  {/if}
 </div>

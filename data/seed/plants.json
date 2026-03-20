@@ -912,11 +912,11 @@
       "fertile"
     ],
     "thermal": {
-      "minTemperature": -10,
-      "baseTemperature": 0,
+      "minTemperature": -3,
+      "baseTemperature": 5,
       "maxTemperature": 35,
       "gddRequired": null,
-      "source": "measured",
+      "source": "estimated",
       "confidence": "medium"
     }
   },

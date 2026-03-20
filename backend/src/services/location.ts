@@ -3,34 +3,49 @@ import * as kartverket from '../clients/kartverket';
 import * as weatherService from './weather';
 import type { LocationInput } from '../types/location';
 
-export async function resolveLocation(input: LocationInput) {
+export async function findNearbyStations(input: LocationInput) {
   const coords = await resolveCoordinates(input);
-  const station = await weatherService.findNearestStation(coords.latitude, coords.longitude);
+  const stations = await weatherService.findNearbyStations(coords.latitude, coords.longitude);
+
+  return {
+    displayName: coords.displayName,
+    latitude: coords.latitude,
+    longitude: coords.longitude,
+    stations,
+  };
+}
+
+export async function resolveLocation(
+  latitude: number,
+  longitude: number,
+  stationId: string,
+  displayName: string,
+) {
+  const station = await db.findStationById(stationId);
+  if (!station) throw new Error('Station not found');
 
   // Return existing location if we already have one for this station
   const existingLocation = await db.findLocationByStation(station.id);
   if (existingLocation) {
-    // Ensure climate data is computed/cached
     await weatherService.getStationClimate(station.frostApiId, station.id);
     const updatedStation = await db.findStationById(station.id);
 
     return {
       location: existingLocation,
-      displayName: coords.displayName,
+      displayName,
       station: { id: station.id, name: station.name },
       climate: updatedStation,
     };
   }
 
-  const location = await db.insertLocation(coords.latitude, coords.longitude, station.id);
+  const location = await db.insertLocation(latitude, longitude, station.id);
 
-  // Fetch and compute climate averages (handles caching internally)
   await weatherService.getStationClimate(station.frostApiId, station.id);
   const updatedStation = await db.findStationById(station.id);
 
   return {
     location,
-    displayName: coords.displayName,
+    displayName,
     station: { id: station.id, name: station.name },
     climate: updatedStation,
   };

@@ -60,6 +60,10 @@
       stages.push(makeStage('Harvest', t.harvestStart, t.harvestEnd, stageColors.Harvest));
 
       return { commonName: p.commonName, stages };
+    }).sort((a, b) => {
+      const aGrowth = a.stages.find((s) => s.label === 'Growth');
+      const bGrowth = b.stages.find((s) => s.label === 'Growth');
+      return (aGrowth?.startDoy ?? 999) - (bGrowth?.startDoy ?? 999);
     }),
   );
 
@@ -106,7 +110,7 @@
     {/if}
 
     <!-- Plant rows -->
-    {#each rows as row (row.label)}
+    {#each rows as row (row.commonName)}
       <div class="flex items-center">
         <div class="w-32 shrink-0 text-xs font-medium text-foreground truncate pr-2" title={row.commonName}>
           {row.commonName}
