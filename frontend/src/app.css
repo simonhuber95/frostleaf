@@ -3,39 +3,40 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Base fallback values — overridden at runtime by theme.svelte.ts applyTheme() */
 :root {
-  --color-background: oklch(1 0 0);
-  --color-foreground: oklch(0.145 0 0);
-  --color-card: oklch(1 0 0);
-  --color-card-foreground: oklch(0.145 0 0);
-  --color-popover: oklch(1 0 0);
-  --color-popover-foreground: oklch(0.145 0 0);
-  --color-primary: oklch(0.205 0 0);
-  --color-primary-foreground: oklch(0.985 0 0);
-  --color-secondary: oklch(0.97 0 0);
-  --color-secondary-foreground: oklch(0.205 0 0);
-  --color-muted: oklch(0.97 0 0);
-  --color-muted-foreground: oklch(0.556 0 0);
-  --color-accent: oklch(0.97 0 0);
-  --color-accent-foreground: oklch(0.205 0 0);
-  --color-destructive: oklch(0.577 0.245 27.325);
-  --color-destructive-foreground: oklch(0.577 0.245 27.325);
-  --color-border: oklch(0.922 0 0);
-  --color-input: oklch(0.922 0 0);
-  --color-ring: oklch(0.708 0 0);
+  --color-background: oklch(96.5% 0.008 160);
+  --color-foreground: oklch(20% 0.02 160);
+  --color-card: oklch(99.5% 0 0);
+  --color-card-foreground: oklch(20% 0.02 160);
+  --color-popover: oklch(99.5% 0 0);
+  --color-popover-foreground: oklch(20% 0.02 160);
+  --color-primary: oklch(38.1% 0.079 154.1);
+  --color-primary-foreground: oklch(99% 0 0);
+  --color-secondary: oklch(94% 0.015 155);
+  --color-secondary-foreground: oklch(28% 0.04 155);
+  --color-muted: oklch(94% 0.01 155);
+  --color-muted-foreground: oklch(45% 0.02 155);
+  --color-accent: oklch(92% 0.02 155);
+  --color-accent-foreground: oklch(25% 0.03 155);
+  --color-destructive: oklch(55% 0.22 27);
+  --color-destructive-foreground: oklch(99% 0 0);
+  --color-border: oklch(90% 0.015 155);
+  --color-input: oklch(90% 0.015 155);
+  --color-ring: oklch(52.7% 0.105 147.7);
   --color-chart-1: oklch(0.646 0.222 41.116);
   --color-chart-2: oklch(0.6 0.118 184.714);
   --color-chart-3: oklch(0.398 0.07 227.392);
   --color-chart-4: oklch(0.828 0.189 84.429);
   --color-chart-5: oklch(0.769 0.188 70.08);
-  --color-sidebar: oklch(0.985 0 0);
-  --color-sidebar-foreground: oklch(0.556 0 0);
-  --color-sidebar-primary: oklch(0.205 0 0);
-  --color-sidebar-primary-foreground: oklch(0.985 0 0);
-  --color-sidebar-accent: oklch(0.97 0 0);
-  --color-sidebar-accent-foreground: oklch(0.205 0 0);
-  --color-sidebar-border: oklch(0.922 0 0);
-  --color-sidebar-ring: oklch(0.708 0 0);
+  --color-sidebar: oklch(96.5% 0.008 160);
+  --color-sidebar-foreground: oklch(45% 0.02 155);
+  --color-sidebar-primary: oklch(38.1% 0.079 154.1);
+  --color-sidebar-primary-foreground: oklch(99% 0 0);
+  --color-sidebar-accent: oklch(94% 0.015 155);
+  --color-sidebar-accent-foreground: oklch(28% 0.04 155);
+  --color-sidebar-border: oklch(90% 0.015 155);
+  --color-sidebar-ring: oklch(52.7% 0.105 147.7);
 }
 
 @theme inline {
