@@ -69,7 +69,7 @@
     </nav>
   </header>
 
-  <main class="container mx-auto flex-1 px-4 py-8">
+  <main class="container mx-auto flex-1 px-4 sm:px-6 lg:px-16 py-8">
     {@render children()}
   </main>
 
