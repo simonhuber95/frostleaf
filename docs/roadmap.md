@@ -136,11 +136,23 @@
 
 **Goal:** Cleaner garden page, better content management, richer plant data.
 
-- [ ] Garden page layout cleanup (organize sections, reduce clutter)
-- [ ] Aggregate soil requirements summary for garden plants
-- [ ] Garden-level notes with diary-style timestamped entries
-  - [ ] Reference plants in notes
-  - [ ] Planting times and update log
+- [x] Garden page layout cleanup
+  - [x] Tabbed layout (Overview / Diary / Settings)
+  - [x] Extracted components (GardenOverview, GardenDiary, GardenSettings)
+  - [x] Plant grouping (viability, crop, soil, light, sowing) with collapsible buckets
+  - [x] Compact header with centered tabs
+  - [x] Light theme color refresh (sage green tones)
+- [x] Aggregate soil/light requirements (via group-by views)
+- [x] Garden-level notes with diary-style timestamped entries
+  - [x] Timeline-style diary UI with add/delete
+  - [x] Reference plants in notes (plant tag selector + filter)
+  - [x] Sort by newest/oldest, filter by plant
+- [x] Server sync improvements
+  - [x] Gardens created on server immediately when logged in
+  - [x] Plants synced to server on add/remove
+  - [x] Rename synced to server
+  - [x] Delete synced to server
+  - [x] Gardens loaded from server on login
 - [ ] Plant property editing (admin UI)
   - [ ] Edit plant properties from the plant detail page
   - [ ] Role-based access (admin for now, community later)
