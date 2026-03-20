@@ -283,7 +283,7 @@
         <div class="min-w-0 flex-1">
           <p class="truncate text-sm font-medium">{plant.commonName}</p>
           <p class="truncate text-xs text-muted-foreground">
-            {detail?.scientificName ?? ''}{detail ? ' · ' + detail.cropGroup : ''}
+            {detail?.scientificName ?? ''}{detail ? ' · ' + detail.cropGroup.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) : ''}
           </p>
           {#if viability?.requiredGdd}
             <p class="text-xs text-muted-foreground">GDD: {viability.requiredGdd}</p>
