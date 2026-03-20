@@ -17,6 +17,8 @@ type SeedPlant = {
   cropGroup: 'vegetable' | 'herb' | 'fruit' | 'berry' | 'legume' | 'root' | 'brassica' | 'leafy_green';
   daysToHarvest: number;
   lightRequirement: 'full_sun' | 'partial_shade' | 'full_shade';
+  sowingMethod: 'indoor' | 'direct' | 'both' | null;
+  transplantLeadWeeks: number | null;
   soilPreferences: string[];
   thermal: {
     minTemperature: number | null;
@@ -54,6 +56,8 @@ async function seed() {
       plantId: inserted.id,
       daysToHarvest: plant.daysToHarvest,
       lightRequirement: plant.lightRequirement,
+      sowingMethod: plant.sowingMethod,
+      transplantLeadWeeks: plant.transplantLeadWeeks,
       soilPreferences: plant.soilPreferences,
       minTemperature: plant.thermal.minTemperature,
       baseTemperature: plant.thermal.baseTemperature,

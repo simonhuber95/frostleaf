@@ -115,13 +115,23 @@
 **Goal:** Turn the garden list into a real planning tool.
 
 - [ ] Planting calendar based on frost dates + GDD
-  - [ ] Indoor sowing dates
-  - [ ] Transplant dates
-  - [ ] Direct sow dates
+  - [x] Basic sowing/growth/harvest timeline (viability service + GardenTimeline component)
+  - [ ] Sowing method field (`indoor` / `direct` / `both`) on plant schema
+  - [ ] Indoor sowing date calculation (weeks before transplant)
+  - [ ] Transplant date calculation (after last frost + hardiness)
+  - [ ] Direct sow date calculation
 - [ ] Succession planting suggestions
 - [ ] Companion planting data
 - [ ] Harvest window estimates
-- [ ] Seasonal overview / timeline visualization
+  - [x] Basic harvest start/end from daysToHarvest + frost dates
+  - [ ] Multi-harvest crop support (continuous harvest windows)
+- [x] Seasonal overview / timeline visualization (GardenTimeline + TemperatureChart)
+  - [ ] Seasonal grouping (spring/summer/fall crops)
+- [ ] Photoperiod / daylight awareness (simple version)
+  - [ ] Calculate daylight hours from latitude + date (sunrise equation, no API)
+  - [ ] Add `photoperiod_class` field to plant schema (`long-day` / `short-day` / `day-neutral`)
+  - [ ] Enrich seed data with photoperiod classification for existing plants
+  - [ ] Show daylight-related warnings on viability results (e.g. bolting risk for long-day plants at high latitudes)
 
 ---
 
@@ -142,7 +152,7 @@
 
 **Goal:** Production readiness and broader use.
 
-- [ ] Photoperiod sensitivity modeling
+- ~~[ ] Photoperiod sensitivity modeling~~ → Moved to Phase 5
 - [ ] Soil temperature modeling
 - [ ] Cultivar-level data (e.g., early vs late tomato varieties)
 - [ ] User feedback loop (report actual harvest dates to refine model)

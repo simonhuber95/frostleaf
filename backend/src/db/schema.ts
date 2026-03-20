@@ -23,6 +23,8 @@ export const plantSourceEnum = pgEnum('plant_source', ['seed', 'trefle', 'manual
 
 export const durationEnum = pgEnum('duration', ['annual', 'biennial', 'perennial']);
 
+export const sowingMethodEnum = pgEnum('sowing_method', ['indoor', 'direct', 'both']);
+
 // --- BetterAuth Tables ---
 
 export const authUsers = pgTable('auth_users', {
@@ -103,6 +105,8 @@ export const plantProperties = pgTable('plant_properties', {
   duration: durationEnum('duration'),
   edibleParts: text('edible_parts').array().notNull().default([]),
   description: text('description'),
+  sowingMethod: sowingMethodEnum('sowing_method'),
+  transplantLeadWeeks: integer('transplant_lead_weeks'), // weeks to start indoors before transplant date
   sowingInfo: text('sowing_info'),
   bloomMonths: text('bloom_months').array().notNull().default([]),
   growthMonths: text('growth_months').array().notNull().default([]),

@@ -10,6 +10,8 @@ export type Plant = {
   createdAt: string;
 };
 
+export type SowingMethod = 'indoor' | 'direct' | 'both';
+
 export type PlantProperties = {
   plantId: string;
   daysToHarvest: number | null;
@@ -18,6 +20,8 @@ export type PlantProperties = {
   duration: Duration | null;
   edibleParts: string[];
   description: string | null;
+  sowingMethod: SowingMethod | null;
+  transplantLeadWeeks: number | null;
   sowingInfo: string | null;
   bloomMonths: string[];
   growthMonths: string[];

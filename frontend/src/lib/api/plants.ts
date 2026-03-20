@@ -19,6 +19,8 @@ export type PlantProperties = {
   duration: string | null;
   edibleParts: string[];
   description: string | null;
+  sowingMethod: string | null;
+  transplantLeadWeeks: number | null;
   sowingInfo: string | null;
   bloomMonths: string[];
   growthMonths: string[];
