@@ -3,7 +3,7 @@
   import { resolve } from '$app/paths';
   import { gardenStore } from '$lib/stores/garden.svelte';
   import { locationStore } from '$lib/stores/location.svelte';
-  import { deleteGarden as deleteServerGarden } from '$lib/api/gardens';
+  import { deleteGarden as deleteServerGarden, updateGarden as updateServerGarden } from '$lib/api/gardens';
   import type { LocalGarden } from '@frostleaf/shared';
   import Pencil from '@lucide/svelte/icons/pencil';
   import Download from '@lucide/svelte/icons/download';
@@ -27,8 +27,11 @@
 
   function saveName() {
     if (!editNameValue.trim()) return;
-    gardenStore.updateGarden(garden.id, { name: editNameValue.trim() });
+    const name = editNameValue.trim();
+    gardenStore.updateGarden(garden.id, { name });
     editingName = false;
+    // Sync to server
+    updateServerGarden(garden.id, { name }).catch(() => {});
   }
 
   // Export
@@ -95,7 +98,7 @@
   }
 </script>
 
-<div class="space-y-6 max-w-lg">
+<div class="space-y-6 max-w-lg mx-auto">
   <!-- Rename -->
   <div class="rounded-lg border bg-card p-5 space-y-3">
     <h2 class="text-sm font-semibold">Garden Name</h2>

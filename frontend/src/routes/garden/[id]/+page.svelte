@@ -72,17 +72,16 @@
 
 {#if garden}
   <div class="space-y-6">
-    <!-- Header -->
-    <div class="flex items-center gap-3 min-w-0">
-      <a href={resolve('/garden')} class="text-muted-foreground hover:text-foreground transition-colors shrink-0" title="Back to gardens">
-        <ArrowLeft class="h-4 w-4" />
-      </a>
-      <h1 class="text-xl font-bold tracking-tight truncate">{garden.name}</h1>
-      <span class="text-sm text-muted-foreground shrink-0">{garden.plants.length} plant{garden.plants.length !== 1 ? 's' : ''}</span>
-    </div>
-
-    <!-- Tabs -->
-    <div class="flex items-center gap-1 rounded-md bg-muted p-0.5 w-fit">
+    <!-- Header + Tabs -->
+    <div class="flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3 min-w-0">
+        <a href={resolve('/garden')} class="text-muted-foreground hover:text-foreground transition-colors shrink-0" title="Back to gardens">
+          <ArrowLeft class="h-4 w-4" />
+        </a>
+        <h1 class="text-xl font-bold tracking-tight truncate">{garden.name}</h1>
+        <span class="text-sm text-muted-foreground shrink-0">{garden.plants.length} plant{garden.plants.length !== 1 ? 's' : ''}</span>
+      </div>
+      <div class="flex items-center gap-1 rounded-md bg-muted p-0.5 shrink-0">
       {#each [
         { value: 'overview', label: 'Overview', icon: Leaf },
         ...(serverGardenId ? [{ value: 'diary', label: 'Diary', icon: BookOpen }] : []),
@@ -98,6 +97,7 @@
           {tab.label}
         </button>
       {/each}
+      </div>
     </div>
 
     <!-- Tab content -->
