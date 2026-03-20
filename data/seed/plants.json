@@ -20,7 +20,8 @@
       "gddRequired": 1600,
       "source": "measured",
       "confidence": "high"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Tomato",
@@ -43,7 +44,8 @@
       "gddRequired": 1900,
       "source": "measured",
       "confidence": "high"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Carrot",
@@ -66,7 +68,8 @@
       "gddRequired": 1575,
       "source": "measured",
       "confidence": "high"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Onion",
@@ -89,7 +92,8 @@
       "gddRequired": 2290,
       "source": "measured",
       "confidence": "high"
-    }
+    },
+    "photoperiodClass": "long_day"
   },
   {
     "commonName": "Garlic",
@@ -112,7 +116,8 @@
       "gddRequired": 1140,
       "source": "measured",
       "confidence": "high"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Lettuce",
@@ -135,7 +140,8 @@
       "gddRequired": 985,
       "source": "measured",
       "confidence": "high"
-    }
+    },
+    "photoperiodClass": "long_day"
   },
   {
     "commonName": "Spinach",
@@ -158,7 +164,8 @@
       "gddRequired": 800,
       "source": "estimated",
       "confidence": "medium"
-    }
+    },
+    "photoperiodClass": "long_day"
   },
   {
     "commonName": "Kale",
@@ -181,7 +188,8 @@
       "gddRequired": 900,
       "source": "estimated",
       "confidence": "medium"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Broccoli",
@@ -204,7 +212,8 @@
       "gddRequired": 755,
       "source": "measured",
       "confidence": "high"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Cauliflower",
@@ -227,7 +236,8 @@
       "gddRequired": 1000,
       "source": "estimated",
       "confidence": "medium"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Cabbage",
@@ -250,7 +260,8 @@
       "gddRequired": 1100,
       "source": "estimated",
       "confidence": "medium"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Brussels Sprouts",
@@ -273,7 +284,8 @@
       "gddRequired": 1400,
       "source": "estimated",
       "confidence": "medium"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Turnip",
@@ -296,7 +308,8 @@
       "gddRequired": 850,
       "source": "estimated",
       "confidence": "medium"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Radish",
@@ -319,7 +332,8 @@
       "gddRequired": 500,
       "source": "estimated",
       "confidence": "medium"
-    }
+    },
+    "photoperiodClass": "long_day"
   },
   {
     "commonName": "Table Beet",
@@ -342,7 +356,8 @@
       "gddRequired": 900,
       "source": "estimated",
       "confidence": "medium"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Pea",
@@ -365,7 +380,8 @@
       "gddRequired": 925,
       "source": "measured",
       "confidence": "high"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Bean (Green)",
@@ -388,7 +404,8 @@
       "gddRequired": 960,
       "source": "measured",
       "confidence": "high"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Fava Bean",
@@ -411,7 +428,8 @@
       "gddRequired": 1200,
       "source": "estimated",
       "confidence": "medium"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Cucumber",
@@ -434,7 +452,8 @@
       "gddRequired": 1200,
       "source": "estimated",
       "confidence": "medium"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Zucchini",
@@ -457,7 +476,8 @@
       "gddRequired": 1100,
       "source": "estimated",
       "confidence": "medium"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Pumpkin",
@@ -480,7 +500,8 @@
       "gddRequired": 1800,
       "source": "estimated",
       "confidence": "medium"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Bell Pepper",
@@ -503,7 +524,8 @@
       "gddRequired": 2415,
       "source": "measured",
       "confidence": "high"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Chili Pepper",
@@ -526,7 +548,8 @@
       "gddRequired": 2500,
       "source": "estimated",
       "confidence": "medium"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Eggplant",
@@ -549,7 +572,8 @@
       "gddRequired": 2200,
       "source": "estimated",
       "confidence": "medium"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Celery",
@@ -572,7 +596,8 @@
       "gddRequired": 1200,
       "source": "estimated",
       "confidence": "medium"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Leek",
@@ -595,7 +620,8 @@
       "gddRequired": 1400,
       "source": "estimated",
       "confidence": "medium"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Asparagus",
@@ -618,7 +644,8 @@
       "gddRequired": null,
       "source": "measured",
       "confidence": "medium"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Rhubarb",
@@ -641,7 +668,8 @@
       "gddRequired": null,
       "source": "estimated",
       "confidence": "low"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Sweet Corn",
@@ -664,7 +692,8 @@
       "gddRequired": 985,
       "source": "measured",
       "confidence": "high"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Strawberry",
@@ -687,7 +716,8 @@
       "gddRequired": 1000,
       "source": "estimated",
       "confidence": "medium"
-    }
+    },
+    "photoperiodClass": "short_day"
   },
   {
     "commonName": "Raspberry",
@@ -710,7 +740,8 @@
       "gddRequired": null,
       "source": "estimated",
       "confidence": "low"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Blueberry",
@@ -733,7 +764,8 @@
       "gddRequired": null,
       "source": "measured",
       "confidence": "medium"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Blackcurrant",
@@ -756,7 +788,8 @@
       "gddRequired": null,
       "source": "estimated",
       "confidence": "low"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Redcurrant",
@@ -779,7 +812,8 @@
       "gddRequired": null,
       "source": "estimated",
       "confidence": "low"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Gooseberry",
@@ -802,7 +836,8 @@
       "gddRequired": null,
       "source": "estimated",
       "confidence": "low"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Apple",
@@ -825,7 +860,8 @@
       "gddRequired": null,
       "source": "measured",
       "confidence": "medium"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Pear",
@@ -848,7 +884,8 @@
       "gddRequired": null,
       "source": "measured",
       "confidence": "medium"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Cherry",
@@ -871,7 +908,8 @@
       "gddRequired": null,
       "source": "measured",
       "confidence": "medium"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Plum",
@@ -894,7 +932,8 @@
       "gddRequired": null,
       "source": "measured",
       "confidence": "medium"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Dill",
@@ -916,7 +955,8 @@
       "gddRequired": 700,
       "source": "estimated",
       "confidence": "low"
-    }
+    },
+    "photoperiodClass": "long_day"
   },
   {
     "commonName": "Parsley",
@@ -939,7 +979,8 @@
       "gddRequired": 900,
       "source": "measured",
       "confidence": "medium"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Basil",
@@ -962,7 +1003,8 @@
       "gddRequired": 800,
       "source": "measured",
       "confidence": "medium"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Coriander",
@@ -984,7 +1026,8 @@
       "gddRequired": 700,
       "source": "measured",
       "confidence": "medium"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Mint",
@@ -1006,7 +1049,8 @@
       "gddRequired": null,
       "source": "estimated",
       "confidence": "medium"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Chives",
@@ -1029,7 +1073,8 @@
       "gddRequired": null,
       "source": "estimated",
       "confidence": "low"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Oregano",
@@ -1052,7 +1097,8 @@
       "gddRequired": null,
       "source": "measured",
       "confidence": "medium"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Thyme",
@@ -1075,7 +1121,8 @@
       "gddRequired": null,
       "source": "estimated",
       "confidence": "low"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Lemon Balm",
@@ -1098,7 +1145,8 @@
       "gddRequired": null,
       "source": "measured",
       "confidence": "medium"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Parsnip",
@@ -1121,7 +1169,8 @@
       "gddRequired": 1500,
       "source": "estimated",
       "confidence": "low"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Celeriac",
@@ -1144,7 +1193,8 @@
       "gddRequired": 1400,
       "source": "estimated",
       "confidence": "low"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Kohlrabi",
@@ -1167,7 +1217,8 @@
       "gddRequired": 700,
       "source": "estimated",
       "confidence": "medium"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Pak Choi",
@@ -1190,7 +1241,8 @@
       "gddRequired": 600,
       "source": "estimated",
       "confidence": "low"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Swiss Chard",
@@ -1213,7 +1265,8 @@
       "gddRequired": 800,
       "source": "estimated",
       "confidence": "medium"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Arugula",
@@ -1235,7 +1288,8 @@
       "gddRequired": 400,
       "source": "estimated",
       "confidence": "low"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Spring Onion",
@@ -1258,7 +1312,8 @@
       "gddRequired": 800,
       "source": "estimated",
       "confidence": "low"
-    }
+    },
+    "photoperiodClass": "long_day"
   },
   {
     "commonName": "Sunflower",
@@ -1281,7 +1336,8 @@
       "gddRequired": 1790,
       "source": "measured",
       "confidence": "high"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Melon",
@@ -1304,7 +1360,8 @@
       "gddRequired": 1175,
       "source": "measured",
       "confidence": "high"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Artichoke",
@@ -1327,7 +1384,8 @@
       "gddRequired": 1800,
       "source": "estimated",
       "confidence": "low"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Fennel",
@@ -1350,7 +1408,8 @@
       "gddRequired": 1100,
       "source": "estimated",
       "confidence": "low"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Sugar Snap Pea",
@@ -1373,7 +1432,8 @@
       "gddRequired": 900,
       "source": "estimated",
       "confidence": "medium"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Runner Bean",
@@ -1396,7 +1456,8 @@
       "gddRequired": 1000,
       "source": "estimated",
       "confidence": "low"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Black Cumin",
@@ -1418,7 +1479,8 @@
       "gddRequired": null,
       "source": "measured",
       "confidence": "medium"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Lentil",
@@ -1440,7 +1502,8 @@
       "gddRequired": 1200,
       "source": "estimated",
       "confidence": "medium"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Barley",
@@ -1463,7 +1526,8 @@
       "gddRequired": 1450,
       "source": "measured",
       "confidence": "high"
-    }
+    },
+    "photoperiodClass": null
   },
   {
     "commonName": "Oats",
@@ -1486,6 +1550,7 @@
       "gddRequired": 1850,
       "source": "measured",
       "confidence": "high"
-    }
+    },
+    "photoperiodClass": null
   }
 ]

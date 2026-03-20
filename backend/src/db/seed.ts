@@ -19,6 +19,7 @@ type SeedPlant = {
   lightRequirement: 'full_sun' | 'partial_shade' | 'full_shade';
   sowingMethod: 'indoor' | 'direct' | 'both' | null;
   transplantLeadWeeks: number | null;
+  photoperiodClass: 'long_day' | 'short_day' | 'day_neutral' | null;
   soilPreferences: string[];
   thermal: {
     minTemperature: number | null;
@@ -58,6 +59,7 @@ async function seed() {
       lightRequirement: plant.lightRequirement,
       sowingMethod: plant.sowingMethod,
       transplantLeadWeeks: plant.transplantLeadWeeks,
+      photoperiodClass: plant.photoperiodClass,
       soilPreferences: plant.soilPreferences,
       minTemperature: plant.thermal.minTemperature,
       baseTemperature: plant.thermal.baseTemperature,

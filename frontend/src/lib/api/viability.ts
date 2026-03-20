@@ -13,6 +13,12 @@ export type PlantTimeline = {
   harvestEnd: string;
 };
 
+export type PhotoperiodWarning = {
+  type: string;
+  severity: 'info' | 'warning';
+  message: string;
+};
+
 export type ViabilityResult = {
   plantId: string;
   commonName: string;
@@ -24,6 +30,8 @@ export type ViabilityResult = {
   locationGdd: number;
   requiredGdd: number | null;
   confidence: string | null;
+  photoperiodClass: string | null;
+  photoperiodWarnings: PhotoperiodWarning[];
   timeline: PlantTimeline | null;
 };
 
@@ -34,6 +42,7 @@ export type ViabilityReport = {
   frostFreeDays: number;
   lastFrostSpring: string | null;
   firstFrostAutumn: string | null;
+  peakDaylightHours: number;
   monthlyAverages: number[];
   plants: ViabilityResult[];
 };

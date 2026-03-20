@@ -114,12 +114,13 @@
 
 **Goal:** Turn the garden list into a real planning tool.
 
-- [ ] Planting calendar based on frost dates + GDD
+- [x] Planting calendar based on frost dates + GDD
   - [x] Basic sowing/growth/harvest timeline (viability service + GardenTimeline component)
-  - [ ] Sowing method field (`indoor` / `direct` / `both`) on plant schema
-  - [ ] Indoor sowing date calculation (weeks before transplant)
-  - [ ] Transplant date calculation (after last frost + hardiness)
-  - [ ] Direct sow date calculation
+  - [x] Sowing method field (`indoor` / `direct` / `both`) on plant schema
+  - [x] Indoor sowing date calculation (weeks before transplant)
+  - [x] Transplant date calculation (after last frost + hardiness)
+  - [x] Direct sow date calculation
+  - [x] Per-plant sowing choice toggle in garden (indoor/direct for `both` plants)
 - [ ] Succession planting suggestions
 - [ ] Companion planting data
 - [ ] Harvest window estimates
@@ -127,11 +128,12 @@
   - [ ] Multi-harvest crop support (continuous harvest windows)
 - [x] Seasonal overview / timeline visualization (GardenTimeline + TemperatureChart)
   - [ ] Seasonal grouping (spring/summer/fall crops)
-- [ ] Photoperiod / daylight awareness (simple version)
-  - [ ] Calculate daylight hours from latitude + date (sunrise equation, no API)
-  - [ ] Add `photoperiod_class` field to plant schema (`long-day` / `short-day` / `day-neutral`)
-  - [ ] Enrich seed data with photoperiod classification for existing plants
-  - [ ] Show daylight-related warnings on viability results (e.g. bolting risk for long-day plants at high latitudes)
+- [x] Photoperiod / daylight awareness (simple version)
+  - [x] Calculate daylight hours from latitude + date (sunrise equation, no API)
+  - [x] Add `photoperiod_class` field to plant schema (`long-day` / `short-day` / `day-neutral`)
+  - [x] Enrich seed data with photoperiod classification (conservative: 7 well-known plants)
+  - [x] Show daylight-related warnings on viability results (bolting risk, flowering unlikely)
+  - [x] Peak daylight hours in climate summary banner
 
 ---
 
@@ -152,7 +154,7 @@
 
 **Goal:** Production readiness and broader use.
 
-- ~~[ ] Photoperiod sensitivity modeling~~ → Moved to Phase 5
+- ~~[ ] Photoperiod sensitivity modeling~~ → Done in Phase 5 (simple version)
 - [ ] Soil temperature modeling
 - [ ] Cultivar-level data (e.g., early vs late tomato varieties)
 - [ ] User feedback loop (report actual harvest dates to refine model)

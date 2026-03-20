@@ -25,6 +25,8 @@ export const durationEnum = pgEnum('duration', ['annual', 'biennial', 'perennial
 
 export const sowingMethodEnum = pgEnum('sowing_method', ['indoor', 'direct', 'both']);
 
+export const photoperiodClassEnum = pgEnum('photoperiod_class', ['long_day', 'short_day', 'day_neutral']);
+
 // --- BetterAuth Tables ---
 
 export const authUsers = pgTable('auth_users', {
@@ -110,6 +112,9 @@ export const plantProperties = pgTable('plant_properties', {
   sowingInfo: text('sowing_info'),
   bloomMonths: text('bloom_months').array().notNull().default([]),
   growthMonths: text('growth_months').array().notNull().default([]),
+
+  // Photoperiod
+  photoperiodClass: photoperiodClassEnum('photoperiod_class'),
 
   // Thermal properties
   minTemperature: real('min_temperature'),   // survival minimum (sowing threshold)

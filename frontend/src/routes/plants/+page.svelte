@@ -15,6 +15,7 @@
   import Plus from '@lucide/svelte/icons/plus';
   import Check from '@lucide/svelte/icons/check';
   import X from '@lucide/svelte/icons/x';
+  import Sun from '@lucide/svelte/icons/sun';
 
   // Search state
   let query = $state('');
@@ -133,7 +134,7 @@
 
   <!-- Climate stats banner (only with location) -->
   {#if report}
-    <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+    <div class="grid grid-cols-2 gap-3 sm:grid-cols-5">
       <div class="rounded-lg border bg-card p-3">
         <div class="flex items-center gap-2 text-xs text-muted-foreground">
           <Thermometer class="h-3.5 w-3.5" />
@@ -154,6 +155,13 @@
           Last frost
         </div>
         <p class="mt-1 text-xl font-semibold">{report.lastFrostSpring ?? '—'}</p>
+      </div>
+      <div class="rounded-lg border bg-card p-3">
+        <div class="flex items-center gap-2 text-xs text-muted-foreground">
+          <Sun class="h-3.5 w-3.5" />
+          Peak daylight
+        </div>
+        <p class="mt-1 text-xl font-semibold">{report.peakDaylightHours}h</p>
       </div>
       <div class="rounded-lg border bg-card p-3">
         <div class="flex items-center gap-2 text-xs text-muted-foreground">
@@ -340,7 +348,18 @@
               </div>
             {/if}
             <div>
-              <p class="font-medium">{plant.commonName}</p>
+              <div class="flex items-center gap-1.5">
+                <p class="font-medium">{plant.commonName}</p>
+                {#if plant.photoperiodWarnings?.length > 0}
+                  {@const topWarning = plant.photoperiodWarnings[0]}
+                  <span
+                    class="{topWarning.severity === 'warning' ? 'text-amber-500' : 'text-blue-400'}"
+                    title={topWarning.message}
+                  >
+                    <Sun class="h-3.5 w-3.5" />
+                  </span>
+                {/if}
+              </div>
               <p class="text-sm text-muted-foreground">{plant.scientificName}</p>
             </div>
           </div>

@@ -1,8 +1,9 @@
 import dayjs from 'dayjs';
 import * as db from '../clients/db';
 import { computeMonthlyAverages, findThresholdDate } from './gdd';
+import { calculatePeakDaylightHours } from './daylight';
 import { getStationClimate } from './weather';
-import type { ViabilityReport, ViabilityResult } from '../types/viability';
+import type { PhotoperiodWarning, ViabilityReport, ViabilityResult } from '../types/viability';
 
 export async function calculateViability(locationId: string): Promise<ViabilityReport | null> {
   const location = await db.findLocationById(locationId);
@@ -10,6 +11,8 @@ export async function calculateViability(locationId: string): Promise<ViabilityR
 
   const station = await db.findStationById(location.nearestStationId);
   if (!station) return null;
+
+  const peakDaylightHours = calculatePeakDaylightHours(location.latitude);
 
   // Get pre-computed daily averages (fetches + caches if needed)
   const dailyAverages = await getStationClimate(station.frostApiId, station.id);
@@ -118,6 +121,9 @@ export async function calculateViability(locationId: string): Promise<ViabilityR
       };
     }
 
+    const photoperiodClass = props?.photoperiodClass ?? null;
+    const photoperiodWarnings = computePhotoperiodWarnings(photoperiodClass, peakDaylightHours);
+
     return {
       plantId: plant.id,
       commonName: plant.commonName,
@@ -129,6 +135,8 @@ export async function calculateViability(locationId: string): Promise<ViabilityR
       locationGdd: Math.round(averageGdd),
       requiredGdd,
       confidence,
+      photoperiodClass,
+      photoperiodWarnings,
       timeline,
     };
   });
@@ -142,6 +150,7 @@ export async function calculateViability(locationId: string): Promise<ViabilityR
     frostFreeDays: avgFrostFreeDays,
     lastFrostSpring,
     firstFrostAutumn,
+    peakDaylightHours,
     monthlyAverages,
     plants,
   };
@@ -171,4 +180,47 @@ function computeScore(
   if (ratio >= 0.8) return { isViable: false, score: 0.4 + (ratio - 0.8) * 2.0 };
 
   return { isViable: false, score: Math.max(0, ratio * 0.5) };
+}
+
+function computePhotoperiodWarnings(
+  photoperiodClass: string | null,
+  peakDaylightHours: number,
+): PhotoperiodWarning[] {
+  if (!photoperiodClass) return [];
+
+  const warnings: PhotoperiodWarning[] = [];
+
+  if (photoperiodClass === 'long_day') {
+    if (peakDaylightHours >= 20) {
+      warnings.push({
+        type: 'bolting_risk',
+        severity: 'warning',
+        message: 'Bolting risk — 20+ hours of summer daylight may cause early bolting in this long-day plant.',
+      });
+    } else if (peakDaylightHours >= 18) {
+      warnings.push({
+        type: 'extended_daylight',
+        severity: 'info',
+        message: 'Extended daylight (18+ hours) — leafy long-day crops may bolt earlier than expected.',
+      });
+    }
+  }
+
+  if (photoperiodClass === 'short_day') {
+    if (peakDaylightHours >= 20) {
+      warnings.push({
+        type: 'flowering_unlikely',
+        severity: 'warning',
+        message: 'Flowering unlikely — midnight sun conditions prevent the short nights needed to trigger flowering.',
+      });
+    } else if (peakDaylightHours >= 18) {
+      warnings.push({
+        type: 'flowering_unlikely',
+        severity: 'info',
+        message: 'Long summer days (18+ hours) may delay or prevent flowering in this short-day plant.',
+      });
+    }
+  }
+
+  return warnings;
 }

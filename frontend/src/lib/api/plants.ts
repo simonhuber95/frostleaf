@@ -21,6 +21,7 @@ export type PlantProperties = {
   description: string | null;
   sowingMethod: string | null;
   transplantLeadWeeks: number | null;
+  photoperiodClass: string | null;
   sowingInfo: string | null;
   bloomMonths: string[];
   growthMonths: string[];

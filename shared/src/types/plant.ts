@@ -12,6 +12,8 @@ export type Plant = {
 
 export type SowingMethod = 'indoor' | 'direct' | 'both';
 
+export type PhotoperiodClass = 'long_day' | 'short_day' | 'day_neutral';
+
 export type PlantProperties = {
   plantId: string;
   daysToHarvest: number | null;
@@ -22,6 +24,7 @@ export type PlantProperties = {
   description: string | null;
   sowingMethod: SowingMethod | null;
   transplantLeadWeeks: number | null;
+  photoperiodClass: PhotoperiodClass | null;
   sowingInfo: string | null;
   bloomMonths: string[];
   growthMonths: string[];

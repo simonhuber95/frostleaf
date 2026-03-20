@@ -14,6 +14,12 @@ export type PlantTimeline = {
   harvestEnd: string;    // MM-DD
 };
 
+export type PhotoperiodWarning = {
+  type: 'bolting_risk' | 'flowering_unlikely' | 'extended_daylight';
+  severity: 'info' | 'warning';
+  message: string;
+};
+
 export type ViabilityResult = {
   plantId: string;
   commonName: string;
@@ -25,6 +31,8 @@ export type ViabilityResult = {
   locationGdd: number;
   requiredGdd: number | null;
   confidence: 'high' | 'medium' | 'low' | null;
+  photoperiodClass: 'long_day' | 'short_day' | 'day_neutral' | null;
+  photoperiodWarnings: PhotoperiodWarning[];
   timeline: PlantTimeline | null;
 };
 
@@ -35,6 +43,7 @@ export type ViabilityReport = {
   frostFreeDays: number;
   lastFrostSpring: string | null; // MM-DD (averaged across years)
   firstFrostAutumn: string | null; // MM-DD (averaged across years)
+  peakDaylightHours: number;
   monthlyAverages: number[]; // 12 entries, avg temp per month
   plants: ViabilityResult[];
 };
