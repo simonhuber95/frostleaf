@@ -17,7 +17,7 @@ export async function fetchNearbyStations(lat: number, lon: number, maxCount = 1
   const params = new URLSearchParams({
     geometry: `nearest(POINT(${lon} ${lat}))`,
     nearestmaxcount: String(maxCount),
-    elements: 'min(air_temperature P1D),max(air_temperature P1D)',
+    elements: 'min(air_temperature P1D),max(air_temperature P1D),mean(air_temperature P1D)',
   });
 
   const res = await fetch(`${FROST_API_BASE}/sources/v0.jsonld?${params}`, {
@@ -38,7 +38,7 @@ export async function fetchObservations(
 ): Promise<FrostObservationsResponse> {
   const params = new URLSearchParams({
     sources: stationId,
-    elements: 'min(air_temperature P1D),max(air_temperature P1D)',
+    elements: 'min(air_temperature P1D),max(air_temperature P1D),mean(air_temperature P1D)',
     referencetime: `${fromDate}/${toDate}`,
   });
 
