@@ -212,3 +212,95 @@ gardensRouter.get('/:id/export', async (req, res) => {
     res.status(500).json({ error: message });
   }
 });
+
+// --- Diary ---
+
+// GET /api/gardens/:id/diary — list diary entries
+gardensRouter.get('/:id/diary', async (req, res) => {
+  const userId = req.userId!;
+  const { id } = req.params;
+
+  try {
+    const garden = await gardenService.getGardenWithPlants(id);
+    if (!garden) { res.status(404).json({ error: 'Garden not found' }); return; }
+    if (garden.userId !== userId) { res.status(403).json({ error: 'Not authorized' }); return; }
+
+    const entries = await gardenService.getDiaryEntries(id);
+    res.json(entries);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    res.status(500).json({ error: message });
+  }
+});
+
+// POST /api/gardens/:id/diary — add diary entry
+gardensRouter.post('/:id/diary', async (req, res) => {
+  const userId = req.userId!;
+  const { id } = req.params;
+  const { content, plantIds } = req.body;
+
+  if (!content || typeof content !== 'string' || !content.trim()) {
+    res.status(400).json({ error: 'content is required' });
+    return;
+  }
+
+  try {
+    const garden = await gardenService.getGardenWithPlants(id);
+    if (!garden) { res.status(404).json({ error: 'Garden not found' }); return; }
+    if (garden.userId !== userId) { res.status(403).json({ error: 'Not authorized' }); return; }
+
+    const entry = await gardenService.addDiaryEntry(id, content.trim(), plantIds ?? []);
+    res.status(201).json(entry);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    res.status(500).json({ error: message });
+  }
+});
+
+// PATCH /api/gardens/:id/diary/:entryId — update diary entry
+gardensRouter.patch('/:id/diary/:entryId', async (req, res) => {
+  const userId = req.userId!;
+  const { id, entryId } = req.params;
+  const { content, plantIds } = req.body;
+
+  if (!content || typeof content !== 'string' || !content.trim()) {
+    res.status(400).json({ error: 'content is required' });
+    return;
+  }
+
+  try {
+    const garden = await gardenService.getGardenWithPlants(id);
+    if (!garden) { res.status(404).json({ error: 'Garden not found' }); return; }
+    if (garden.userId !== userId) { res.status(403).json({ error: 'Not authorized' }); return; }
+
+    const entry = await gardenService.findDiaryEntry(entryId);
+    if (!entry || entry.gardenId !== id) { res.status(404).json({ error: 'Entry not found' }); return; }
+
+    const updated = await gardenService.updateDiaryEntry(entryId, content.trim(), plantIds ?? []);
+    res.json(updated);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    res.status(500).json({ error: message });
+  }
+});
+
+// DELETE /api/gardens/:id/diary/:entryId — delete diary entry
+gardensRouter.delete('/:id/diary/:entryId', async (req, res) => {
+  const userId = req.userId!;
+  const { id, entryId } = req.params;
+
+  try {
+    const garden = await gardenService.getGardenWithPlants(id);
+    if (!garden) { res.status(404).json({ error: 'Garden not found' }); return; }
+    if (garden.userId !== userId) { res.status(403).json({ error: 'Not authorized' }); return; }
+
+    const entry = await gardenService.findDiaryEntry(entryId);
+    if (!entry || entry.gardenId !== id) { res.status(404).json({ error: 'Entry not found' }); return; }
+
+    await gardenService.deleteDiaryEntry(entryId);
+    res.json({ ok: true });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    res.status(500).json({ error: message });
+  }
+});

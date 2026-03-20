@@ -1,6 +1,6 @@
 import { db } from '../db/index';
-import { plants, plantProperties, weatherStations, climateDailyAverages, locations, gardens, gardenPlants } from '../db/schema';
-import { eq, and, ilike, or } from 'drizzle-orm';
+import { plants, plantProperties, weatherStations, climateDailyAverages, locations, gardens, gardenPlants, gardenDiaryEntries, gardenDiaryPlantTags } from '../db/schema';
+import { eq, and, ilike, or, desc } from 'drizzle-orm';
 import type { DailyClimateAverage } from '../types/weather';
 
 // --- Plants ---
@@ -242,4 +242,83 @@ export async function updateGardenPlant(gardenId: string, plantId: string, data:
     .where(and(eq(gardenPlants.gardenId, gardenId), eq(gardenPlants.plantId, plantId)))
     .returning();
   return updated ?? null;
+}
+
+// --- Garden Diary ---
+
+export async function findDiaryEntries(gardenId: string) {
+  const entries = await db
+    .select()
+    .from(gardenDiaryEntries)
+    .where(eq(gardenDiaryEntries.gardenId, gardenId))
+    .orderBy(desc(gardenDiaryEntries.createdAt));
+
+  const entryIds = entries.map((e) => e.id);
+  if (entryIds.length === 0) return [];
+
+  const tags = await db
+    .select({
+      diaryEntryId: gardenDiaryPlantTags.diaryEntryId,
+      plantId: gardenDiaryPlantTags.plantId,
+      commonName: plants.commonName,
+    })
+    .from(gardenDiaryPlantTags)
+    .leftJoin(plants, eq(plants.id, gardenDiaryPlantTags.plantId))
+    .where(or(...entryIds.map((id) => eq(gardenDiaryPlantTags.diaryEntryId, id))));
+
+  const tagsByEntry = new Map<string, { plantId: string; commonName: string }[]>();
+  for (const tag of tags) {
+    const list = tagsByEntry.get(tag.diaryEntryId) ?? [];
+    list.push({ plantId: tag.plantId, commonName: tag.commonName ?? '' });
+    tagsByEntry.set(tag.diaryEntryId, list);
+  }
+
+  return entries.map((e) => ({
+    ...e,
+    plantTags: tagsByEntry.get(e.id) ?? [],
+  }));
+}
+
+export async function insertDiaryEntry(gardenId: string, content: string, plantIds: string[]) {
+  const [entry] = await db
+    .insert(gardenDiaryEntries)
+    .values({ gardenId, content })
+    .returning();
+
+  if (plantIds.length > 0) {
+    await db.insert(gardenDiaryPlantTags).values(
+      plantIds.map((plantId) => ({ diaryEntryId: entry.id, plantId })),
+    );
+  }
+
+  return entry;
+}
+
+export async function updateDiaryEntry(entryId: string, content: string, plantIds: string[]) {
+  const [updated] = await db
+    .update(gardenDiaryEntries)
+    .set({ content, updatedAt: new Date() })
+    .where(eq(gardenDiaryEntries.id, entryId))
+    .returning();
+
+  if (!updated) return null;
+
+  // Replace tags: delete all, re-insert
+  await db.delete(gardenDiaryPlantTags).where(eq(gardenDiaryPlantTags.diaryEntryId, entryId));
+  if (plantIds.length > 0) {
+    await db.insert(gardenDiaryPlantTags).values(
+      plantIds.map((plantId) => ({ diaryEntryId: entryId, plantId })),
+    );
+  }
+
+  return updated;
+}
+
+export async function deleteDiaryEntry(entryId: string) {
+  await db.delete(gardenDiaryEntries).where(eq(gardenDiaryEntries.id, entryId));
+}
+
+export async function findDiaryEntryById(entryId: string) {
+  const result = await db.select().from(gardenDiaryEntries).where(eq(gardenDiaryEntries.id, entryId));
+  return result.length > 0 ? result[0] : null;
 }

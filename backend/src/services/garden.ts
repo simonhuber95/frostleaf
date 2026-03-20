@@ -43,6 +43,28 @@ export async function updatePlant(gardenId: string, plantId: string, data: { not
   return db.updateGardenPlant(gardenId, plantId, data);
 }
 
+// --- Diary ---
+
+export async function getDiaryEntries(gardenId: string) {
+  return db.findDiaryEntries(gardenId);
+}
+
+export async function addDiaryEntry(gardenId: string, content: string, plantIds: string[]) {
+  return db.insertDiaryEntry(gardenId, content, plantIds);
+}
+
+export async function updateDiaryEntry(entryId: string, content: string, plantIds: string[]) {
+  return db.updateDiaryEntry(entryId, content, plantIds);
+}
+
+export async function deleteDiaryEntry(entryId: string) {
+  return db.deleteDiaryEntry(entryId);
+}
+
+export async function findDiaryEntry(entryId: string) {
+  return db.findDiaryEntryById(entryId);
+}
+
 export async function exportGarden(gardenId: string) {
   const garden = await db.findGardenById(gardenId);
   if (!garden) return null;

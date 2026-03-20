@@ -7,6 +7,8 @@
   import { getPlant, type Plant } from '$lib/api/plants';
   import { getViability, type ViabilityResult } from '$lib/api/viability';
   import { getLocationClimate, type LocationClimate } from '$lib/api/location';
+  import { listDiaryEntries, addDiaryEntry, deleteDiaryEntry, type DiaryEntry } from '$lib/api/gardens';
+  import { authStore } from '$lib/stores/auth.svelte';
   import TemperatureChart from '$lib/components/TemperatureChart.svelte';
   import GardenTimeline from '$lib/components/GardenTimeline.svelte';
   import GardenTable, { type GardenTablePlant } from '$lib/components/GardenTable.svelte';
@@ -23,6 +25,7 @@
   import Download from '@lucide/svelte/icons/download';
   import Upload from '@lucide/svelte/icons/upload';
   import ChevronRight from '@lucide/svelte/icons/chevron-right';
+  import BookOpen from '@lucide/svelte/icons/book-open';
   import CalendarRange from '@lucide/svelte/icons/calendar-range';
   import Table from '@lucide/svelte/icons/table';
 
@@ -219,6 +222,50 @@
     : groupBy === 'sowing' ? groupBySowing()
     : groupByLight()
   );
+
+  // Diary state
+  let diaryEntries = $state<DiaryEntry[]>([]);
+  let diaryOpen = $state(false);
+  let diaryContent = $state('');
+  let diaryPlantIds = $state<string[]>([]);
+  let diaryLoading = $state(false);
+
+  let serverGardenId = $state<string | null>(null);
+
+  async function loadDiary() {
+    if (!serverGardenId) return;
+    try {
+      diaryEntries = await listDiaryEntries(serverGardenId);
+    } catch {
+      // diary not available
+    }
+  }
+
+  async function handleAddDiaryEntry() {
+    if (!serverGardenId || !diaryContent.trim()) return;
+    diaryLoading = true;
+    try {
+      await addDiaryEntry(serverGardenId, diaryContent.trim(), diaryPlantIds);
+      diaryContent = '';
+      diaryPlantIds = [];
+      await loadDiary();
+    } finally {
+      diaryLoading = false;
+    }
+  }
+
+  async function handleDeleteDiaryEntry(entryId: string) {
+    if (!serverGardenId) return;
+    await deleteDiaryEntry(serverGardenId, entryId);
+    await loadDiary();
+  }
+
+  // Ensure garden exists on server + load diary on mount
+  onMount(async () => {
+    if (!garden || !authStore.isAuthenticated) return;
+    serverGardenId = await gardenStore.ensureServerGarden(garden.id);
+    if (serverGardenId) await loadDiary();
+  });
 
   // Delete garden
   let confirmDelete = $state(false);
@@ -477,6 +524,97 @@
           <Plus class="h-4 w-4" />
           Browse Plants
         </a>
+      </div>
+    {/if}
+
+    <!-- Diary -->
+    {#if authStore.isAuthenticated}
+      <div class="rounded-lg border bg-card p-5 space-y-4">
+        <button
+          onclick={() => (diaryOpen = !diaryOpen)}
+          class="flex items-center gap-2 text-lg font-semibold hover:opacity-80 transition-opacity w-full text-left"
+        >
+          <ChevronRight class="h-4 w-4 transition-transform {diaryOpen ? 'rotate-90' : ''}" />
+          <BookOpen class="h-4 w-4" />
+          Garden Diary
+          {#if diaryEntries.length > 0}
+            <span class="text-sm font-normal text-muted-foreground">({diaryEntries.length})</span>
+          {/if}
+        </button>
+
+        {#if diaryOpen}
+          <!-- Add entry form -->
+          <form onsubmit={(e) => { e.preventDefault(); handleAddDiaryEntry(); }} class="space-y-3">
+            <textarea
+              bind:value={diaryContent}
+              placeholder="What's happening in the garden today?"
+              rows={2}
+              class="w-full rounded-md border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none"
+            ></textarea>
+
+            <!-- Plant tag selector -->
+            {#if garden.plants.length > 0}
+              <div class="flex flex-wrap gap-1.5">
+                {#each garden.plants as gp (gp.plantId)}
+                  {@const selected = diaryPlantIds.includes(gp.plantId)}
+                  <button
+                    type="button"
+                    onclick={() => {
+                      if (selected) diaryPlantIds = diaryPlantIds.filter((id) => id !== gp.plantId);
+                      else diaryPlantIds = [...diaryPlantIds, gp.plantId];
+                    }}
+                    class="rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors {selected
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted text-muted-foreground hover:text-foreground'}"
+                  >
+                    {gp.commonName}
+                  </button>
+                {/each}
+              </div>
+            {/if}
+
+            <button
+              type="submit"
+              disabled={diaryLoading || !diaryContent.trim()}
+              class="rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+            >
+              {diaryLoading ? 'Adding...' : 'Add Entry'}
+            </button>
+          </form>
+
+          <!-- Entry list -->
+          {#if diaryEntries.length > 0}
+            <div class="space-y-3 border-t pt-3">
+              {#each diaryEntries as entry (entry.id)}
+                <div class="group relative rounded-md border p-3 space-y-1.5">
+                  <div class="flex items-center gap-2 text-xs text-muted-foreground">
+                    <time>{new Date(entry.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</time>
+                    {#if entry.updatedAt !== entry.createdAt}
+                      <span>(edited)</span>
+                    {/if}
+                  </div>
+                  <p class="text-sm whitespace-pre-wrap">{entry.content}</p>
+                  {#if entry.plantTags.length > 0}
+                    <div class="flex flex-wrap gap-1">
+                      {#each entry.plantTags as tag (tag.plantId)}
+                        <span class="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">{tag.commonName}</span>
+                      {/each}
+                    </div>
+                  {/if}
+                  <button
+                    onclick={() => handleDeleteDiaryEntry(entry.id)}
+                    class="absolute top-2 right-2 rounded-md p-1 text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-destructive hover:bg-destructive/10 transition-all"
+                    title="Delete entry"
+                  >
+                    <X class="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              {/each}
+            </div>
+          {:else}
+            <p class="text-sm text-muted-foreground">No diary entries yet. Start documenting your garden journey!</p>
+          {/if}
+        {/if}
       </div>
     {/if}
 

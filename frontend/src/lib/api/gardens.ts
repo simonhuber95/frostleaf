@@ -52,3 +52,30 @@ export function removePlantFromGarden(gardenId: string, plantId: string) {
 export function updateGardenPlant(gardenId: string, plantId: string, data: { notes?: string; plantedDate?: string | null }) {
   return api.patch(`/api/gardens/${gardenId}/plants/${plantId}`, data);
 }
+
+// --- Diary ---
+
+export type DiaryEntry = {
+  id: string;
+  gardenId: string;
+  content: string;
+  plantTags: { plantId: string; commonName: string }[];
+  createdAt: string;
+  updatedAt: string;
+};
+
+export function listDiaryEntries(gardenId: string) {
+  return api.get<DiaryEntry[]>(`/api/gardens/${gardenId}/diary`);
+}
+
+export function addDiaryEntry(gardenId: string, content: string, plantIds: string[]) {
+  return api.post<DiaryEntry>(`/api/gardens/${gardenId}/diary`, { content, plantIds });
+}
+
+export function updateDiaryEntry(gardenId: string, entryId: string, content: string, plantIds: string[]) {
+  return api.patch<DiaryEntry>(`/api/gardens/${gardenId}/diary/${entryId}`, { content, plantIds });
+}
+
+export function deleteDiaryEntry(gardenId: string, entryId: string) {
+  return api.del<{ ok: boolean }>(`/api/gardens/${gardenId}/diary/${entryId}`);
+}

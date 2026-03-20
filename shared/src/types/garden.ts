@@ -33,6 +33,15 @@ export type LocalGarden = {
   createdAt: string;
 };
 
+export type GardenDiaryEntry = {
+  id: string;
+  gardenId: string;
+  content: string;
+  plantTags: { plantId: string; commonName: string }[];
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type GardenExport = {
   version: 1;
   name: string;

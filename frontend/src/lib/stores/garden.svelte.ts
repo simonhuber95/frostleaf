@@ -114,6 +114,10 @@ export const gardenStore = {
     for (const garden of gardens) {
       try {
         const serverGarden = await gardensApi.createGarden(garden.name, garden.locationId);
+        // Update local ID to match server
+        const oldId = garden.id;
+        garden.id = serverGarden.id;
+        if (activeGardenId === oldId) activeGardenId = serverGarden.id;
         for (const plant of garden.plants) {
           await gardensApi.addPlantToGarden(serverGarden.id, plant.plantId, plant.notes);
         }
@@ -122,7 +126,36 @@ export const gardenStore = {
         // skip gardens that fail (e.g. invalid locationId)
       }
     }
+    persist();
     return synced;
+  },
+
+  /** Ensure a garden exists on the server. Creates it if needed, returns the server garden ID. */
+  async ensureServerGarden(gardenId: string): Promise<string | null> {
+    const garden = gardens.find((g) => g.id === gardenId);
+    if (!garden) return null;
+
+    // Check if it already exists on the server
+    try {
+      await gardensApi.getGarden(gardenId);
+      return gardenId;
+    } catch {
+      // Not on server — create it
+    }
+
+    try {
+      const serverGarden = await gardensApi.createGarden(garden.name, garden.locationId);
+      const oldId = garden.id;
+      garden.id = serverGarden.id;
+      if (activeGardenId === oldId) activeGardenId = serverGarden.id;
+      for (const plant of garden.plants) {
+        await gardensApi.addPlantToGarden(serverGarden.id, plant.plantId, plant.notes);
+      }
+      persist();
+      return serverGarden.id;
+    } catch {
+      return null;
+    }
   },
 
   /** Load gardens from server (replaces local state). */

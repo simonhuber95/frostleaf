@@ -193,3 +193,27 @@ export const gardenPlants = pgTable(
   },
   (table) => [uniqueIndex('garden_plants_garden_plant_idx').on(table.gardenId, table.plantId)],
 );
+
+export const gardenDiaryEntries = pgTable('garden_diary_entries', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  gardenId: uuid('garden_id')
+    .notNull()
+    .references(() => gardens.id, { onDelete: 'cascade' }),
+  content: text('content').notNull(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+export const gardenDiaryPlantTags = pgTable(
+  'garden_diary_plant_tags',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    diaryEntryId: uuid('diary_entry_id')
+      .notNull()
+      .references(() => gardenDiaryEntries.id, { onDelete: 'cascade' }),
+    plantId: uuid('plant_id')
+      .notNull()
+      .references(() => plants.id),
+  },
+  (table) => [uniqueIndex('diary_plant_tag_idx').on(table.diaryEntryId, table.plantId)],
+);
