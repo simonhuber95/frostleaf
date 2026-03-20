@@ -11,6 +11,7 @@
   import GardenTimeline from '$lib/components/GardenTimeline.svelte';
   import GardenTable, { type GardenTablePlant } from '$lib/components/GardenTable.svelte';
   import type { GardenTimelinePlant } from '$lib/components/GardenTimeline.svelte';
+  import { SvelteMap, SvelteSet } from 'svelte/reactivity';
   import type { SowingChoice, LocalGardenPlant } from '@frostleaf/shared';
   import ArrowLeft from '@lucide/svelte/icons/arrow-left';
   import Trash2 from '@lucide/svelte/icons/trash-2';
@@ -30,8 +31,8 @@
   let garden = $derived(gardenStore.getGarden(data.gardenId));
 
   // Plant details for timeline/table
-  let plantDetails = $state<Map<string, Plant>>(new Map());
-  let viabilityMap = $state<Map<string, ViabilityResult>>(new Map());
+  let plantDetails = new SvelteMap<string, Plant>();
+  let viabilityMap = new SvelteMap<string, ViabilityResult>();
   let climateData = $state<LocationClimate | null>(null);
   let loadingDetails = $state(false);
 
@@ -40,13 +41,11 @@
 
   // Group by mode
   let groupBy = $state<'viability' | 'crop_group' | 'soil' | 'sowing' | 'light'>('viability');
-  let collapsedGroups = $state<Set<string>>(new Set());
+  let collapsedGroups = new SvelteSet<string>();
 
   function toggleGroup(label: string) {
-    const next = new Set(collapsedGroups);
-    if (next.has(label)) next.delete(label);
-    else next.add(label);
-    collapsedGroups = next;
+    if (collapsedGroups.has(label)) collapsedGroups.delete(label);
+    else collapsedGroups.add(label);
   }
 
   // Fetch plant details + viability + climate data
@@ -63,18 +62,16 @@
 
       climateData = climate;
 
-      const pMap = new Map<string, Plant>();
+      plantDetails.clear();
       for (const plant of plantResults) {
-        if (plant) pMap.set(plant.id, plant);
+        if (plant) plantDetails.set(plant.id, plant);
       }
-      plantDetails = pMap;
 
       if (viabilityReport) {
-        const vMap = new Map<string, ViabilityResult>();
+        viabilityMap.clear();
         for (const v of viabilityReport.plants) {
-          vMap.set(v.plantId, v);
+          viabilityMap.set(v.plantId, v);
         }
-        viabilityMap = vMap;
         viabilityFrostStart = viabilityReport.lastFrostSpring;
         viabilityFrostEnd = viabilityReport.firstFrostAutumn;
       }
@@ -128,14 +125,6 @@
     return null;
   }
 
-  function toggleSowingChoice(plantId: string) {
-    const gp = garden?.plants.find((p) => p.plantId === plantId);
-    if (!gp || !garden) return;
-    const current = effectiveSowingChoice(gp);
-    const next: SowingChoice = current === 'indoor' ? 'direct' : 'indoor';
-    gardenStore.updatePlant(garden.id, plantId, { sowingChoice: next });
-  }
-
   // Editing garden name
   let editingName = $state(false);
   let editNameValue = $state('');
@@ -171,7 +160,7 @@
   }
 
   function groupByCropGroup(): PlantGroup[] {
-    const buckets = new Map<string, LocalGardenPlant[]>();
+    const buckets = new SvelteMap<string, LocalGardenPlant[]>();
     for (const p of garden?.plants ?? []) {
       const group = plantDetails.get(p.plantId)?.cropGroup ?? 'unknown';
       const label = group.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
@@ -184,7 +173,7 @@
   }
 
   function groupBySoil(): PlantGroup[] {
-    const buckets = new Map<string, LocalGardenPlant[]>();
+    const buckets = new SvelteMap<string, LocalGardenPlant[]>();
     for (const p of garden?.plants ?? []) {
       const prefs = plantDetails.get(p.plantId)?.properties?.soilPreferences ?? [];
       const key = prefs.length > 0 ? prefs[0] : 'unknown';
@@ -198,7 +187,7 @@
   }
 
   function groupBySowing(): PlantGroup[] {
-    const buckets = new Map<string, LocalGardenPlant[]>();
+    const buckets = new SvelteMap<string, LocalGardenPlant[]>();
     const labels: Record<string, string> = { indoor: 'Indoor', direct: 'Direct', both: 'Indoor or Direct' };
     for (const p of garden?.plants ?? []) {
       const method = plantDetails.get(p.plantId)?.properties?.sowingMethod ?? 'unknown';
@@ -211,7 +200,7 @@
   }
 
   function groupByLight(): PlantGroup[] {
-    const buckets = new Map<string, LocalGardenPlant[]>();
+    const buckets = new SvelteMap<string, LocalGardenPlant[]>();
     const labels: Record<string, string> = { full_sun: 'Full Sun', partial_shade: 'Partial Shade', full_shade: 'Full Shade' };
     for (const p of garden?.plants ?? []) {
       const light = plantDetails.get(p.plantId)?.properties?.lightRequirement ?? 'unknown';
@@ -237,7 +226,7 @@
   function handleDelete() {
     if (!garden) return;
     gardenStore.deleteGarden(garden.id);
-    goto('/garden');
+    goto(resolve('/garden'));
   }
 
   // Export
@@ -288,7 +277,7 @@
         plants: data.plants,
         createdAt: new Date().toISOString(),
       });
-      goto('/garden');
+      goto(resolve('/garden'));
     } catch {
       alert('Could not read file');
     }
@@ -298,7 +287,7 @@
 {#if garden}
   <div class="space-y-6">
     <div class="flex items-center justify-between">
-      <a href="/garden" class="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
+      <a href={resolve('/garden')} class="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
         <ArrowLeft class="h-4 w-4" />
         Back to gardens
       </a>
@@ -350,7 +339,7 @@
 
     <!-- Add plant CTA -->
     <a
-      href="/plants?addToGarden={garden.id}"
+      href="{resolve('/plants')}?addToGarden={garden.id}"
       class="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
     >
       <Plus class="h-4 w-4" />
@@ -365,7 +354,7 @@
       {@const choice = effectiveSowingChoice(plant)}
       <div class="group relative rounded-lg border transition-colors hover:bg-accent">
         <a
-          href={resolve('/plants/[id]', { id: plant.plantId }) + `?from=${garden.id}`}
+          href="{resolve('/plants/[id]', { id: plant.plantId })}?from={garden.id}"
           class="flex items-center gap-2.5 p-2.5 pb-1"
         >
           {#if viability}
@@ -445,7 +434,7 @@
             { value: 'sowing', label: 'Sowing' },
           ] as opt (opt.value)}
             <button
-              onclick={() => { groupBy = opt.value as typeof groupBy; collapsedGroups = new Set(); }}
+              onclick={() => { groupBy = opt.value as typeof groupBy; collapsedGroups.clear(); }}
               class="rounded px-2.5 py-1 font-medium transition-colors {groupBy === opt.value
                 ? 'bg-background text-foreground shadow-sm'
                 : 'text-muted-foreground hover:text-foreground'}"
@@ -482,7 +471,7 @@
         <Leaf class="h-10 w-10 text-muted-foreground/50" />
         <p class="mt-3 text-sm text-muted-foreground">No plants added yet</p>
         <a
-          href="/plants?addToGarden={garden.id}"
+          href="{resolve('/plants')}?addToGarden={garden.id}"
           class="mt-3 inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
         >
           <Plus class="h-4 w-4" />
@@ -577,6 +566,6 @@
 {:else}
   <div class="flex flex-col items-center justify-center py-16 text-center">
     <p class="text-muted-foreground">Garden not found</p>
-    <a href="/garden" class="mt-4 text-sm text-primary hover:underline">Back to gardens</a>
+    <a href={resolve('/garden')} class="mt-4 text-sm text-primary hover:underline">Back to gardens</a>
   </div>
 {/if}

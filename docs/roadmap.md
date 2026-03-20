@@ -121,13 +121,8 @@
   - [x] Transplant date calculation (after last frost + hardiness)
   - [x] Direct sow date calculation
   - [x] Per-plant sowing choice toggle in garden (indoor/direct for `both` plants)
-- [ ] Succession planting suggestions
-- [ ] Companion planting data
-- [ ] Harvest window estimates
-  - [x] Basic harvest start/end from daysToHarvest + frost dates
-  - [ ] Multi-harvest crop support (continuous harvest windows)
+- [x] Harvest window estimates (from daysToHarvest + frost dates)
 - [x] Seasonal overview / timeline visualization (GardenTimeline + TemperatureChart)
-  - [ ] Seasonal grouping (spring/summer/fall crops)
 - [x] Photoperiod / daylight awareness (simple version)
   - [x] Calculate daylight hours from latitude + date (sunrise equation, no API)
   - [x] Add `photoperiod_class` field to plant schema (`long-day` / `short-day` / `day-neutral`)
@@ -137,7 +132,24 @@
 
 ---
 
-## Phase 6: Visual Garden Layout
+## Phase 6: Garden UX & Data Quality
+
+**Goal:** Cleaner garden page, better content management, richer plant data.
+
+- [ ] Garden page layout cleanup (organize sections, reduce clutter)
+- [ ] Aggregate soil requirements summary for garden plants
+- [ ] Garden-level notes with diary-style timestamped entries
+  - [ ] Reference plants in notes
+  - [ ] Planting times and update log
+- [ ] Plant property editing (admin UI)
+  - [ ] Edit plant properties from the plant detail page
+  - [ ] Role-based access (admin for now, community later)
+- [ ] Trefle data enrichment mapping
+  - [ ] Map Trefle fields to Frostleaf-specific properties (sowing method, photoperiod, etc.)
+
+---
+
+## Phase 7: Visual Garden Layout
 
 **Goal:** Spatial garden planning with grid-based plots.
 
@@ -150,7 +162,7 @@
 
 ---
 
-## Phase 7: Polish & Extend
+## Phase 8: Polish & Extend
 
 **Goal:** Production readiness and broader use.
 
@@ -163,7 +175,7 @@
 
 ---
 
-## Phase 8: Public API & Hosting
+## Phase 9: Public API & Hosting
 
 **Goal:** Make Frostleaf available to others.
 
