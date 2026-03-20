@@ -11,7 +11,7 @@
   let gardenName = $state('');
   let error = $state('');
 
-  function handleCreate() {
+  async function handleCreate() {
     const name = gardenName.trim();
     if (!name) {
       error = 'Give your garden a name';
@@ -24,7 +24,7 @@
       return;
     }
 
-    gardenStore.createGarden(name, loc.locationId, 0, 0);
+    await gardenStore.createGarden(name, loc.locationId, 0, 0);
     gardenName = '';
     showForm = false;
     error = '';
@@ -37,13 +37,15 @@
       <h1 class="text-3xl font-bold tracking-tight">My Gardens</h1>
       <p class="mt-1 text-muted-foreground">Manage your virtual gardens</p>
     </div>
-    <button
-      onclick={() => (showForm = !showForm)}
-      class="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-    >
-      <Plus class="h-4 w-4" />
-      New Garden
-    </button>
+    {#if gardenStore.gardens.length > 0}
+      <button
+        onclick={() => (showForm = !showForm)}
+        class="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+      >
+        <Plus class="h-4 w-4" />
+        New Garden
+      </button>
+    {/if}
   </div>
 
   <!-- Create form -->

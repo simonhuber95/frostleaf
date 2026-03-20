@@ -26,9 +26,19 @@ export const gardenStore = {
     return gardens.find((g) => g.id === id);
   },
 
-  createGarden(name: string, locationId: string, latitude: number, longitude: number): LocalGarden {
+  async createGarden(name: string, locationId: string, latitude: number, longitude: number): Promise<LocalGarden> {
+    let id: string = crypto.randomUUID();
+
+    // Try to create on server first (if logged in, this will succeed)
+    try {
+      const serverGarden = await gardensApi.createGarden(name, locationId);
+      id = serverGarden.id;
+    } catch {
+      // Not logged in or server unavailable — local only
+    }
+
     const garden: LocalGarden = {
-      id: crypto.randomUUID(),
+      id,
       name,
       locationId,
       latitude,
@@ -63,6 +73,8 @@ export const gardenStore = {
     if (garden.plants.some((p) => p.plantId === plantId)) return false;
     garden.plants.push({ plantId, commonName, plantedDate: null, notes: '', sowingChoice });
     persist();
+    // Sync to server (fire and forget)
+    gardensApi.addPlantToGarden(gardenId, plantId).catch(() => {});
     return true;
   },
 
@@ -71,6 +83,8 @@ export const gardenStore = {
     if (!garden) return;
     garden.plants = garden.plants.filter((p) => p.plantId !== plantId);
     persist();
+    // Sync to server (fire and forget)
+    gardensApi.removePlantFromGarden(gardenId, plantId).catch(() => {});
   },
 
   updatePlant(gardenId: string, plantId: string, patch: Partial<Pick<LocalGardenPlant, 'notes' | 'plantedDate' | 'sowingChoice'>>) {

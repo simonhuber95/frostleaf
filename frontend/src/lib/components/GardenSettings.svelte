@@ -3,6 +3,7 @@
   import { resolve } from '$app/paths';
   import { gardenStore } from '$lib/stores/garden.svelte';
   import { locationStore } from '$lib/stores/location.svelte';
+  import { deleteGarden as deleteServerGarden } from '$lib/api/gardens';
   import type { LocalGarden } from '@frostleaf/shared';
   import Pencil from '@lucide/svelte/icons/pencil';
   import Download from '@lucide/svelte/icons/download';
@@ -86,7 +87,9 @@
   // Delete
   let confirmDelete = $state(false);
 
-  function handleDelete() {
+  async function handleDelete() {
+    // Delete from server (ignore errors — may not exist on server)
+    try { await deleteServerGarden(garden.id); } catch { /* local-only garden */ }
     gardenStore.deleteGarden(garden.id);
     goto(resolve('/garden'));
   }
