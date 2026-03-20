@@ -107,13 +107,10 @@ export const plantProperties = pgTable('plant_properties', {
   bloomMonths: text('bloom_months').array().notNull().default([]),
   growthMonths: text('growth_months').array().notNull().default([]),
 
-  // Temperature tolerance (from Trefle or other sources)
-  minTemperature: real('min_temperature'),
-  maxTemperature: real('max_temperature'),
-
-  // Thermal properties (from GDD paper / curated data)
-  tBase: real('t_base'),
-  tUpper: real('t_upper'),
+  // Thermal properties
+  minTemperature: real('min_temperature'),   // survival minimum (sowing threshold)
+  baseTemperature: real('base_temperature'), // growth starts (GDD base)
+  maxTemperature: real('max_temperature'),   // upper GDD cap / survival max
   gddRequired: integer('gdd_required'),
   thermalSource: thermalDataSourceEnum('thermal_source'),
   thermalConfidence: confidenceLevelEnum('thermal_confidence'),
@@ -128,38 +125,29 @@ export const weatherStations = pgTable('weather_stations', {
   name: text('name').notNull(),
   latitude: real('latitude').notNull(),
   longitude: real('longitude').notNull(),
-  availableObservations: text('available_observations').array().notNull().default([]),
+  dataYearsFrom: integer('data_years_from'),
+  dataYearsTo: integer('data_years_to'),
+  lastFetchedAt: timestamp('last_fetched_at'),
+  // Pre-computed averaged metrics across all fetched years
+  avgGdd: real('avg_gdd'),
+  avgFrostFreeDays: integer('avg_frost_free_days'),
+  lastFrostSpring: text('last_frost_spring'), // MM-DD
+  firstFrostAutumn: text('first_frost_autumn'), // MM-DD
 });
 
-export const climateData = pgTable(
-  'climate_data',
+export const climateDailyAverages = pgTable(
+  'climate_daily_averages',
   {
     id: uuid('id').primaryKey().defaultRandom(),
     stationId: uuid('station_id')
       .notNull()
       .references(() => weatherStations.id, { onDelete: 'cascade' }),
-    date: date('date').notNull(),
-    tempMin: real('temp_min').notNull(),
-    tempMax: real('temp_max').notNull(),
-    fetchedAt: timestamp('fetched_at').notNull().defaultNow(),
+    dayOfYear: integer('day_of_year').notNull(), // 1-366
+    avgMin: real('avg_min').notNull(),
+    avgMax: real('avg_max').notNull(),
+    avgMean: real('avg_mean').notNull(),
   },
-  (table) => [uniqueIndex('climate_data_station_date_idx').on(table.stationId, table.date)],
-);
-
-export const derivedMetrics = pgTable(
-  'derived_metrics',
-  {
-    id: uuid('id').primaryKey().defaultRandom(),
-    stationId: uuid('station_id')
-      .notNull()
-      .references(() => weatherStations.id, { onDelete: 'cascade' }),
-    year: integer('year').notNull(),
-    gddAccumulated: real('gdd_accumulated').notNull(),
-    lastFrostSpring: date('last_frost_spring'),
-    firstFrostAutumn: date('first_frost_autumn'),
-    frostFreeDays: integer('frost_free_days').notNull(),
-  },
-  (table) => [uniqueIndex('derived_metrics_station_year_idx').on(table.stationId, table.year)],
+  (table) => [uniqueIndex('climate_daily_avg_station_doy_idx').on(table.stationId, table.dayOfYear)],
 );
 
 export const locations = pgTable('locations', {
