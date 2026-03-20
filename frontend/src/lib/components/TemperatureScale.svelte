@@ -1,13 +1,13 @@
 <script lang="ts">
   type Props = {
-    tBase: number | null;
-    tUpper: number | null;
-    tMin?: number | null;
+    baseTemperature: number | null;
+    maxTemperature: number | null;
+    minTemperature?: number | null;
     scaleMin?: number;
     scaleMax?: number;
   };
 
-  let { tBase = null, tUpper = null, tMin = null, scaleMin = -5, scaleMax = 45 }: Props = $props();
+  let { baseTemperature = null, maxTemperature = null, minTemperature = null, scaleMin = -5, scaleMax = 45 }: Props = $props();
 
   const range = $derived(scaleMax - scaleMin);
 
@@ -15,8 +15,8 @@
     return Math.max(0, Math.min(100, ((temp - scaleMin) / range) * 100));
   }
 
-  let zoneStart = $derived(tBase != null ? toPercent(tBase) : null);
-  let zoneEnd = $derived(tUpper != null ? toPercent(tUpper) : null);
+  let zoneStart = $derived(baseTemperature != null ? toPercent(baseTemperature) : null);
+  let zoneEnd = $derived(maxTemperature != null ? toPercent(maxTemperature) : null);
 
   const gradientStops = 'linear-gradient(to right, #3b82f6, #06b6d4, #22c55e, #eab308, #ef4444)';
 
@@ -38,22 +38,22 @@
       </div>
     {/if}
 
-    {#if tMin != null}
-      <div class="absolute top-0 flex flex-col items-center" style="left: {toPercent(tMin)}%; transform: translateX(-50%);">
+    {#if minTemperature != null}
+      <div class="absolute top-0 flex flex-col items-center" style="left: {toPercent(minTemperature)}%; transform: translateX(-50%);">
         <div class="text-[10px] font-semibold text-blue-500">Min</div>
         <div class="h-7 w-0.5 bg-blue-500"></div>
       </div>
     {/if}
 
-    {#if tBase != null}
-      <div class="absolute top-0 flex flex-col items-center" style="left: {toPercent(tBase)}%; transform: translateX(-50%);">
+    {#if baseTemperature != null}
+      <div class="absolute top-0 flex flex-col items-center" style="left: {toPercent(baseTemperature)}%; transform: translateX(-50%);">
         <div class="text-[10px] font-semibold text-emerald-600">Base</div>
         <div class="h-7 w-0.5 bg-emerald-600"></div>
       </div>
     {/if}
 
-    {#if tUpper != null}
-      <div class="absolute top-0 flex flex-col items-center" style="left: {toPercent(tUpper)}%; transform: translateX(-50%);">
+    {#if maxTemperature != null}
+      <div class="absolute top-0 flex flex-col items-center" style="left: {toPercent(maxTemperature)}%; transform: translateX(-50%);">
         <div class="text-[10px] font-semibold text-red-500">Max</div>
         <div class="h-7 w-0.5 bg-red-500"></div>
       </div>
@@ -70,14 +70,14 @@
   </div>
 
   <div class="flex gap-4 text-xs text-muted-foreground">
-    {#if tMin != null}
-      <span><span class="font-medium text-blue-500">Min Temperature:</span> {tMin}°C</span>
+    {#if minTemperature != null}
+      <span><span class="font-medium text-blue-500">Min Temperature:</span> {minTemperature}°C</span>
     {/if}
-    {#if tBase != null}
-      <span><span class="font-medium text-emerald-600">Base Temperature:</span> {tBase}°C</span>
+    {#if baseTemperature != null}
+      <span><span class="font-medium text-emerald-600">Base Temperature:</span> {baseTemperature}°C</span>
     {/if}
-    {#if tUpper != null}
-      <span><span class="font-medium text-red-500">Max Temperature:</span> {tUpper}°C</span>
+    {#if maxTemperature != null}
+      <span><span class="font-medium text-red-500">Max Temperature:</span> {maxTemperature}°C</span>
     {/if}
   </div>
 </div>

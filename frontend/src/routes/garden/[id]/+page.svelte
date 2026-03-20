@@ -4,6 +4,7 @@
   import { gardenStore } from '$lib/stores/garden.svelte';
   import { locationStore } from '$lib/stores/location.svelte';
   import { getPlant, type Plant } from '$lib/api/plants';
+  import { getViability, type ViabilityResult } from '$lib/api/viability';
   import GardenTimeline from '$lib/components/GardenTimeline.svelte';
   import GardenTable, { type GardenTablePlant } from '$lib/components/GardenTable.svelte';
   import type { GardenTimelinePlant } from '$lib/components/GardenTimeline.svelte';
@@ -25,69 +26,62 @@
 
   // Plant details for timeline/table
   let plantDetails = $state<Map<string, Plant>>(new Map());
+  let viabilityMap = $state<Map<string, ViabilityResult>>(new Map());
   let loadingDetails = $state(false);
 
   // View mode
   let viewMode = $state<'timeline' | 'table'>('timeline');
 
-  // Fetch plant details for timeline/table
+  // Fetch plant details + viability data for timeline/table
   onMount(async () => {
     if (!garden || garden.plants.length === 0) return;
     loadingDetails = true;
     try {
-      const results = await Promise.all(
-        garden.plants.map((p) => getPlant(p.plantId).catch(() => null)),
-      );
-      const map = new Map<string, Plant>();
-      for (const plant of results) {
-        if (plant) map.set(plant.id, plant);
+      // Fetch plant details and viability in parallel
+      const [plantResults, viabilityReport] = await Promise.all([
+        Promise.all(garden.plants.map((p) => getPlant(p.plantId).catch(() => null))),
+        locationStore.current?.locationId
+          ? getViability(locationStore.current.locationId).catch(() => null)
+          : null,
+      ]);
+
+      const pMap = new Map<string, Plant>();
+      for (const plant of plantResults) {
+        if (plant) pMap.set(plant.id, plant);
       }
-      plantDetails = map;
+      plantDetails = pMap;
+
+      if (viabilityReport) {
+        const vMap = new Map<string, ViabilityResult>();
+        for (const v of viabilityReport.plants) {
+          vMap.set(v.plantId, v);
+        }
+        viabilityMap = vMap;
+        viabilityFrostStart = viabilityReport.lastFrostSpring;
+        viabilityFrostEnd = viabilityReport.firstFrostAutumn;
+      }
     } finally {
       loadingDetails = false;
     }
   });
 
-  const monthNameMap: Record<string, number> = {
-    january: 1, february: 2, march: 3, april: 4, may: 5, june: 6,
-    july: 7, august: 8, september: 9, october: 10, november: 11, december: 12,
-  };
-
-  function monthNamesToNumbers(names: string[]): number[] {
-    return names.map((n) => monthNameMap[n.toLowerCase()]).filter((n) => n != null);
-  }
-
-  // Estimate growth months from daysToHarvest + frost dates (same logic as plant detail page)
-  let sowingStartMonth = $derived(locationStore.lastFrostMonth ?? 5);
-
-  function estimateGrowthMonths(daysToHarvest: number): number[] {
-    const monthsNeeded = Math.ceil(daysToHarvest / 30);
-    return Array.from({ length: monthsNeeded }, (_, i) => sowingStartMonth + i).filter((m) => m <= 12);
-  }
+  // Viability report frost dates (MM-DD averaged across years)
+  let viabilityFrostStart = $state<string | null>(null);
+  let viabilityFrostEnd = $state<string | null>(null);
 
   let timelinePlants = $derived<GardenTimelinePlant[]>(
     garden?.plants
       .map((gp) => {
-        const detail = plantDetails.get(gp.plantId);
-        const props = detail?.properties;
-
-        const growthMonths = props?.growthMonths?.length
-          ? monthNamesToNumbers(props.growthMonths)
-          : props?.daysToHarvest
-            ? estimateGrowthMonths(props.daysToHarvest)
-            : [];
-        const bloomMonths = props?.bloomMonths?.length ? monthNamesToNumbers(props.bloomMonths) : [];
+        const viability = viabilityMap.get(gp.plantId);
+        if (!viability?.timeline) return null;
 
         return {
           plantId: gp.plantId,
           commonName: gp.commonName,
-          sowingMonths: [] as number[],
-          growthMonths,
-          bloomMonths,
-          harvestMonths: [] as number[],
+          timeline: viability.timeline,
         };
       })
-      .filter((p) => p.growthMonths.length > 0 || p.bloomMonths.length > 0) ?? [],
+      .filter((p): p is GardenTimelinePlant => p !== null) ?? [],
   );
 
   let tablePlants = $derived<GardenTablePlant[]>(
@@ -351,8 +345,8 @@
         {:else if viewMode === 'timeline'}
           <GardenTimeline
             plants={timelinePlants}
-            frostFreeStart={locationStore.lastFrostMonth ?? undefined}
-            frostFreeEnd={locationStore.firstFrostMonth ?? undefined}
+            frostFreeStart={viabilityFrostStart}
+            frostFreeEnd={viabilityFrostEnd}
           />
         {:else}
           <GardenTable gardenName={garden.name} plants={tablePlants} />

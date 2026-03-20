@@ -1,8 +1,6 @@
-import dayjs from 'dayjs';
 import * as db from '../clients/db';
 import * as kartverket from '../clients/kartverket';
 import * as weatherService from './weather';
-import * as gddService from './gdd';
 import type { LocationInput } from '../types/location';
 
 export async function resolveLocation(input: LocationInput) {
@@ -12,39 +10,29 @@ export async function resolveLocation(input: LocationInput) {
   // Return existing location if we already have one for this station
   const existingLocation = await db.findLocationByStation(station.id);
   if (existingLocation) {
-    const metrics = await db.findDerivedMetricsByStation(station.id);
+    // Ensure climate data is computed/cached
+    await weatherService.getStationClimate(station.frostApiId, station.id);
+    const updatedStation = await db.findStationById(station.id);
+
     return {
       location: existingLocation,
       displayName: coords.displayName,
       station: { id: station.id, name: station.name },
-      metrics,
+      climate: updatedStation,
     };
   }
 
   const location = await db.insertLocation(coords.latitude, coords.longitude, station.id);
 
-  // Fetch and compute climate metrics
-  const currentYear = dayjs().year();
-  const fromDate = `${currentYear - 5}-01-01`;
-  const toDate = `${currentYear - 1}-12-31`;
-
-  const tempData = await weatherService.getTemperatureData(station.frostApiId, station.id, fromDate, toDate);
-
-  const metrics = [];
-  for (let year = currentYear - 5; year < currentYear; year++) {
-    const yearRecords = tempData.filter((r) => r.date.startsWith(`${year}`));
-    if (yearRecords.length < 100) continue;
-
-    const computed = gddService.computeStationMetrics(station.id, year, yearRecords);
-    const saved = await db.upsertDerivedMetrics(computed);
-    metrics.push(saved);
-  }
+  // Fetch and compute climate averages (handles caching internally)
+  await weatherService.getStationClimate(station.frostApiId, station.id);
+  const updatedStation = await db.findStationById(station.id);
 
   return {
     location,
     displayName: coords.displayName,
     station: { id: station.id, name: station.name },
-    metrics,
+    climate: updatedStation,
   };
 }
 
@@ -52,8 +40,8 @@ export async function getLocation(id: string) {
   const location = await db.findLocationById(id);
   if (!location) return null;
 
-  const metrics = await db.findDerivedMetricsByStation(location.nearestStationId);
-  return { location, metrics };
+  const station = await db.findStationById(location.nearestStationId);
+  return { location, climate: station };
 }
 
 async function resolveCoordinates(input: LocationInput) {

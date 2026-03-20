@@ -42,7 +42,7 @@
   let timelineBloomMonths = $derived(plantProps?.bloomMonths.length ? monthNamesToNumbers(plantProps.bloomMonths) : []);
 
   let hasTimeline = $derived(timelineGrowthMonths.length > 0 || timelineBloomMonths.length > 0);
-  let hasThermal = $derived(plantProps?.tBase != null || plantProps?.tUpper != null);
+  let hasThermal = $derived(plantProps?.baseTemperature != null || plantProps?.maxTemperature != null);
 
   let backHref = '/plants';
   let backLabel = 'Back to plants';
@@ -158,7 +158,7 @@
       {#if hasThermal}
         <div class="rounded-lg border bg-card p-5">
           <h2 class="mb-4 text-lg font-semibold">Temperature Range</h2>
-          <TemperatureScale tBase={plantProps.tBase} tUpper={plantProps.tUpper} />
+          <TemperatureScale baseTemperature={plantProps.baseTemperature} maxTemperature={plantProps.maxTemperature} />
           {#if plantProps.gddRequired}
             <div class="mt-3 text-sm text-muted-foreground">
               <span class="font-medium text-foreground">GDD required:</span> {plantProps.gddRequired}°C-days
