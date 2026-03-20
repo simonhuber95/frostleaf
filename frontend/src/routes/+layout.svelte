@@ -29,7 +29,7 @@
 
 <div class="min-h-screen flex flex-col">
   <header class="border-b bg-card/50 backdrop-blur-sm">
-    <nav class="container mx-auto flex h-14 items-center justify-between px-4">
+    <nav class="container mx-auto flex h-14 items-center justify-between px-4 sm:px-6 lg:px-16">
       <div class="flex items-center gap-6">
         <a href="/" class="text-lg font-semibold tracking-tight text-primary">Frostleaf</a>
         <div class="flex gap-4 text-sm text-muted-foreground">
