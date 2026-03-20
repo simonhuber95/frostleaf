@@ -56,7 +56,7 @@
         </tr>
       </thead>
       <tbody>
-        {#each plants as plant}
+        {#each plants as plant (plant.commonName)}
           <tr class="border-b last:border-0 hover:bg-muted/30">
             <td class="px-3 py-2 font-medium">{plant.commonName}</td>
             <td class="px-3 py-2 text-muted-foreground">{plant.cropGroup}</td>

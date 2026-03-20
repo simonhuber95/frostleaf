@@ -76,7 +76,7 @@
     <div class="flex">
       <div class="w-32 shrink-0"></div>
       <div class="relative flex-1 h-4">
-        {#each monthLabels as label, i}
+        {#each monthLabels as label, i (i)}
           <div
             class="absolute text-[10px] text-muted-foreground"
             style="left: {boundaries[i]}%; width: {(i < 11 ? boundaries[i + 1] : 100) - boundaries[i]}%;"
@@ -98,7 +98,7 @@
             style="left: {frostBar.left}%; width: {frostBar.width}%;"
             title="Frost-free: {frostFreeStart ? formatDate(frostFreeStart) : ''} – {frostFreeEnd ? formatDate(frostFreeEnd) : ''}"
           ></div>
-          {#each boundaries as pct}
+          {#each boundaries as pct, bi (bi)}
             <div class="absolute top-0 h-full w-px bg-border/30" style="left: {pct}%"></div>
           {/each}
         </div>
@@ -106,17 +106,17 @@
     {/if}
 
     <!-- Plant rows -->
-    {#each rows as row}
+    {#each rows as row (row.label)}
       <div class="flex items-center">
         <div class="w-32 shrink-0 text-xs font-medium text-foreground truncate pr-2" title={row.commonName}>
           {row.commonName}
         </div>
         <div class="relative flex-1 h-6">
           <div class="absolute inset-0 rounded-sm bg-muted/30"></div>
-          {#each boundaries as pct}
+          {#each boundaries as pct, bi (bi)}
             <div class="absolute top-0 h-full w-px bg-border/30" style="left: {pct}%"></div>
           {/each}
-          {#each row.stages as stage}
+          {#each row.stages as stage (stage.label)}
             <div
               class="absolute top-1 h-4 rounded-sm {stage.color} opacity-80"
               style="left: {doyToPercent(stage.startDoy)}%; width: {doyWidthPercent(stage.startDoy, stage.endDoy)}%;"
@@ -130,7 +130,7 @@
     <!-- Legend -->
     <div class="flex gap-4 pt-2">
       <div class="w-32 shrink-0"></div>
-      {#each legendItems as item}
+      {#each legendItems as item (item.label)}
         <div class="flex items-center gap-1.5">
           <div class="h-3 w-3 rounded-sm {item.color} opacity-80"></div>
           <span class="text-[10px] text-muted-foreground">{item.label}</span>

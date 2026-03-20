@@ -259,7 +259,7 @@
     <!-- Plant list -->
     {#if garden.plants.length > 0}
       <div class="grid gap-3">
-        {#each garden.plants as plant}
+        {#each garden.plants as plant (plant.id)}
           <div class="flex items-start justify-between rounded-lg border p-4">
             <div class="flex items-start gap-4 flex-1 min-w-0">
               <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-primary/10">

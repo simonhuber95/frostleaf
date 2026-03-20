@@ -104,7 +104,7 @@
           {/if}
           {#if showGardenPicker}
             <div class="absolute top-full left-0 mt-1 z-10 rounded-md border bg-card shadow-md py-1 min-w-48">
-              {#each gardenStore.gardens as g}
+              {#each gardenStore.gardens as g (g.id)}
                 <button
                   onclick={() => addToGarden(g.id)}
                   class="w-full text-left px-3 py-2 text-sm hover:bg-accent transition-colors"
@@ -158,7 +158,7 @@
       {#if hasThermal}
         <div class="rounded-lg border bg-card p-5">
           <h2 class="mb-4 text-lg font-semibold">Temperature Range</h2>
-          <TemperatureScale baseTemperature={plantProps.baseTemperature} maxTemperature={plantProps.maxTemperature} />
+          <TemperatureScale minTemperature={plantProps.minTemperature} baseTemperature={plantProps.baseTemperature} maxTemperature={plantProps.maxTemperature} />
           {#if plantProps.gddRequired}
             <div class="mt-3 text-sm text-muted-foreground">
               <span class="font-medium text-foreground">GDD required:</span> {plantProps.gddRequired}°C-days

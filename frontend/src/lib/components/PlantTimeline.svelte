@@ -19,6 +19,8 @@
     frostFreeEnd,
   }: Props = $props();
 
+  const gridLines = Array.from({ length: 12 }, (__, i) => i);
+
   let rows = $derived<TimelineRow[]>(
     [
       { label: 'Sowing', color: stageColors.Sowing, stages: monthsToStages(sowingMonths, 'Sowing', stageColors.Sowing) },
@@ -35,7 +37,7 @@
     <div class="flex">
       <div class="w-16 shrink-0"></div>
       <div class="flex flex-1">
-        {#each monthLabels as label}
+        {#each monthLabels as label, i (i)}
           <div class="flex-1 text-center text-[10px] text-muted-foreground">{label}</div>
         {/each}
       </div>
@@ -51,23 +53,23 @@
             class="absolute top-0 h-full rounded-sm bg-sky-200/60 dark:bg-sky-800/40"
             style="left: {monthToPercent(frostFreeStart)}%; width: {monthWidthPercent(frostFreeStart, frostFreeEnd)}%;"
           ></div>
-          {#each Array(12) as _, i}
-            <div class="absolute top-0 h-full w-px bg-border/30" style="left: {(i / 12) * 100}%"></div>
+          {#each gridLines as gi (gi)}
+            <div class="absolute top-0 h-full w-px bg-border/30" style="left: {(gi / 12) * 100}%"></div>
           {/each}
         </div>
       </div>
     {/if}
 
     <!-- Stage rows -->
-    {#each rows as row}
+    {#each rows as row (row.label)}
       <div class="flex items-center">
         <div class="w-16 shrink-0 text-xs font-medium text-muted-foreground">{row.label}</div>
         <div class="relative flex-1 h-5">
           <div class="absolute inset-0 rounded-sm bg-muted/30"></div>
-          {#each Array(12) as _, i}
-            <div class="absolute top-0 h-full w-px bg-border/30" style="left: {(i / 12) * 100}%"></div>
+          {#each gridLines as gi (gi)}
+            <div class="absolute top-0 h-full w-px bg-border/30" style="left: {(gi / 12) * 100}%"></div>
           {/each}
-          {#each row.stages as stage}
+          {#each row.stages as stage (stage.label)}
             <div
               class="absolute top-0.5 h-4 rounded-sm {stage.color} opacity-80"
               style="left: {monthToPercent(stage.startMonth)}%; width: {monthWidthPercent(stage.startMonth, stage.endMonth)}%;"

@@ -91,7 +91,7 @@
   <!-- Garden list -->
   {#if gardenStore.gardens.length > 0}
     <div class="grid gap-3">
-      {#each gardenStore.gardens as garden}
+      {#each gardenStore.gardens as garden (garden.id)}
         <a
           href="/garden/{garden.id}"
           class="flex items-center justify-between rounded-lg border p-4 transition-colors hover:bg-accent"

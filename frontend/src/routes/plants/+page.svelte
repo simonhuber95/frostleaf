@@ -237,7 +237,7 @@
         class="rounded-md border bg-background px-3 py-1.5 text-sm"
       >
         <option value="">All crops</option>
-        {#each cropGroups as group}
+        {#each cropGroups as group (group)}
           <option value={group}>{group}</option>
         {/each}
       </select>
@@ -251,7 +251,7 @@
       <p class="text-center text-muted-foreground py-8">No plants found for "{query}"</p>
     {/if}
     <div class="grid gap-3">
-      {#each searchResults as plant}
+      {#each searchResults as plant (plant.id)}
         {@const viability = viabilityMap.get(plant.id)}
         <a
           href="/plants/{plant.id}"
@@ -308,7 +308,7 @@
   {:else if report}
     <!-- Viability plant list -->
     <div class="grid gap-3">
-      {#each filteredViabilityPlants() as plant}
+      {#each filteredViabilityPlants() as plant (plant.plantId)}
         <a
           href="/plants/{plant.plantId}"
           class="flex items-center justify-between rounded-lg border p-4 transition-colors hover:bg-accent"
