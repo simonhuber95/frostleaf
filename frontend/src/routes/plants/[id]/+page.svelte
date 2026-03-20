@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { page } from '$app/stores';
   import type { Plant } from '$lib/api/plants';
   import { locationStore } from '$lib/stores/location.svelte';
   import { gardenStore } from '$lib/stores/garden.svelte';
@@ -44,8 +45,10 @@
   let hasTimeline = $derived(timelineGrowthMonths.length > 0 || timelineBloomMonths.length > 0);
   let hasThermal = $derived(plantProps?.baseTemperature != null || plantProps?.maxTemperature != null);
 
-  let backHref = '/plants';
-  let backLabel = 'Back to plants';
+  let fromGardenId = $derived($page.url.searchParams.get('from'));
+  let fromGarden = $derived(fromGardenId ? gardenStore.getGarden(fromGardenId) : null);
+  let backHref = $derived(fromGarden ? `/garden/${fromGardenId}` : '/plants');
+  let backLabel = $derived(fromGarden ? `Back to ${fromGarden.name}` : 'Back to plants');
 
   // Add to garden
   let showGardenPicker = $state(false);
