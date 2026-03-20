@@ -115,20 +115,16 @@
     editingName = false;
   }
 
-  // Editing plant notes
-  let editingPlantId = $state<string | null>(null);
-  let editNotesValue = $state('');
 
-  function startEditNotes(plantId: string, currentNotes: string) {
-    editingPlantId = plantId;
-    editNotesValue = currentNotes;
-  }
-
-  function saveNotes() {
-    if (!garden || !editingPlantId) return;
-    gardenStore.updatePlant(garden.id, editingPlantId, { notes: editNotesValue });
-    editingPlantId = null;
-  }
+  // Plant bins by viability
+  let sortedPlants = $derived(
+    [...(garden?.plants ?? [])].sort((a, b) =>
+      (viabilityMap.get(b.plantId)?.viabilityScore ?? -1) - (viabilityMap.get(a.plantId)?.viabilityScore ?? -1)
+    ),
+  );
+  let viablePlants = $derived(sortedPlants.filter((p) => (viabilityMap.get(p.plantId)?.viabilityScore ?? 0) >= 0.6));
+  let maybePlants = $derived(sortedPlants.filter((p) => { const s = viabilityMap.get(p.plantId)?.viabilityScore ?? 0; return s >= 0.25 && s < 0.6; }));
+  let unviablePlants = $derived(sortedPlants.filter((p) => (viabilityMap.get(p.plantId)?.viabilityScore ?? 0) < 0.25));
 
   // Delete garden
   let confirmDelete = $state(false);
@@ -257,47 +253,81 @@
     </a>
 
     <!-- Plant list -->
-    {#if garden.plants.length > 0}
-      <div class="grid gap-3">
-        {#each garden.plants as plant (plant.plantId)}
-          <div class="flex items-start justify-between rounded-lg border p-4">
-            <div class="flex items-start gap-4 flex-1 min-w-0">
-              <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-primary/10">
-                <Leaf class="h-5 w-5 text-primary" />
-              </div>
-              <div class="flex-1 min-w-0">
-                <a href="/plants/{plant.plantId}" class="font-medium hover:underline">{plant.commonName}</a>
-                {#if editingPlantId === plant.plantId}
-                  <div class="mt-1 flex items-center gap-2">
-                    <input
-                      bind:value={editNotesValue}
-                      type="text"
-                      placeholder="Add a note..."
-                      class="flex-1 rounded-md border border-input bg-background px-3 py-1.5 text-sm"
-                      onkeydown={(e) => { if (e.key === 'Enter') saveNotes(); if (e.key === 'Escape') editingPlantId = null; }}
-                    />
-                    <button onclick={saveNotes} class="text-primary"><Check class="h-4 w-4" /></button>
-                    <button onclick={() => (editingPlantId = null)} class="text-muted-foreground"><X class="h-4 w-4" /></button>
-                  </div>
-                {:else}
-                  <button
-                    onclick={() => startEditNotes(plant.plantId, plant.notes)}
-                    class="mt-0.5 text-sm text-muted-foreground hover:text-foreground"
-                  >
-                    {plant.notes || 'Add note...'}
-                  </button>
-                {/if}
-              </div>
-            </div>
-            <button
-              onclick={() => gardenStore.removePlant(garden.id, plant.plantId)}
-              class="ml-2 shrink-0 text-muted-foreground hover:text-destructive transition-colors"
-              title="Remove plant"
-            >
-              <Trash2 class="h-4 w-4" />
-            </button>
+    {#snippet plantCard(plant: typeof garden.plants[0])}
+      {@const detail = plantDetails.get(plant.plantId)}
+      {@const viability = viabilityMap.get(plant.plantId)}
+      <a
+        href="/plants/{plant.plantId}"
+        class="group relative flex items-center gap-3 rounded-lg border p-3 transition-colors hover:bg-accent"
+      >
+        {#if viability}
+          <div
+            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold {viability.viabilityScore >= 0.6
+              ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+              : viability.viabilityScore >= 0.25
+                ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'}"
+          >
+            {Math.round(viability.viabilityScore * 100)}
           </div>
-        {/each}
+        {:else}
+          <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10">
+            <Leaf class="h-4 w-4 text-primary" />
+          </div>
+        {/if}
+        <div class="min-w-0 flex-1">
+          <p class="truncate text-sm font-medium">{plant.commonName}</p>
+          <p class="truncate text-xs text-muted-foreground">
+            {detail?.scientificName ?? ''}{detail ? ' · ' + detail.cropGroup : ''}
+          </p>
+          {#if viability?.requiredGdd}
+            <p class="text-xs text-muted-foreground">GDD: {viability.requiredGdd}</p>
+          {/if}
+        </div>
+        <button
+          onclick={(e) => { e.preventDefault(); gardenStore.removePlant(garden.id, plant.plantId); }}
+          class="absolute top-1.5 right-1.5 rounded-md p-1 text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-destructive hover:bg-destructive/10 transition-all"
+          title="Remove plant"
+        >
+          <X class="h-3.5 w-3.5" />
+        </button>
+      </a>
+    {/snippet}
+
+    {#if garden.plants.length > 0}
+      <div class="space-y-6">
+        {#if viablePlants.length > 0}
+          <div>
+            <h3 class="mb-2 text-sm font-medium text-green-700 dark:text-green-400">Viable ({viablePlants.length})</h3>
+            <div class="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+              {#each viablePlants as plant (plant.plantId)}
+                {@render plantCard(plant)}
+              {/each}
+            </div>
+          </div>
+        {/if}
+
+        {#if maybePlants.length > 0}
+          <div>
+            <h3 class="mb-2 text-sm font-medium text-yellow-700 dark:text-yellow-400">Maybe viable ({maybePlants.length})</h3>
+            <div class="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+              {#each maybePlants as plant (plant.plantId)}
+                {@render plantCard(plant)}
+              {/each}
+            </div>
+          </div>
+        {/if}
+
+        {#if unviablePlants.length > 0}
+          <div>
+            <h3 class="mb-2 text-sm font-medium text-red-700 dark:text-red-400">Not viable ({unviablePlants.length})</h3>
+            <div class="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+              {#each unviablePlants as plant (plant.plantId)}
+                {@render plantCard(plant)}
+              {/each}
+            </div>
+          </div>
+        {/if}
       </div>
     {:else}
       <div class="flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center">
