@@ -19,8 +19,9 @@ type SeedPlant = {
   lightRequirement: 'full_sun' | 'partial_shade' | 'full_shade';
   soilPreferences: string[];
   thermal: {
-    tBase: number;
-    tUpper: number;
+    minTemperature: number | null;
+    baseTemperature: number;
+    maxTemperature: number;
     gddRequired: number | null;
     source: 'measured' | 'estimated' | 'inferred';
     confidence: 'high' | 'medium' | 'low';
@@ -54,8 +55,9 @@ async function seed() {
       daysToHarvest: plant.daysToHarvest,
       lightRequirement: plant.lightRequirement,
       soilPreferences: plant.soilPreferences,
-      tBase: plant.thermal.tBase,
-      tUpper: plant.thermal.tUpper,
+      minTemperature: plant.thermal.minTemperature,
+      baseTemperature: plant.thermal.baseTemperature,
+      maxTemperature: plant.thermal.maxTemperature,
       gddRequired: plant.thermal.gddRequired,
       thermalSource: plant.thermal.source,
       thermalConfidence: plant.thermal.confidence,

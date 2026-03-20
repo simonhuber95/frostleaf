@@ -1,7 +1,7 @@
 import { db } from '../db/index';
-import { plants, plantProperties, weatherStations, climateData, derivedMetrics, locations, gardens, gardenPlants } from '../db/schema';
+import { plants, plantProperties, weatherStations, climateDailyAverages, locations, gardens, gardenPlants } from '../db/schema';
 import { eq, and, ilike, or } from 'drizzle-orm';
-import type { StationMetrics } from '../types/weather';
+import type { DailyClimateAverage } from '../types/weather';
 
 // --- Plants ---
 
@@ -99,7 +99,6 @@ export async function upsertStation(data: {
   name: string;
   latitude: number;
   longitude: number;
-  availableObservations: string[];
 }) {
   const [station] = await db
     .insert(weatherStations)
@@ -113,44 +112,57 @@ export async function upsertStation(data: {
   return station;
 }
 
-// --- Climate Data ---
+// --- Climate Daily Averages ---
 
-export async function findClimateDataByStation(stationId: string) {
-  return db.select().from(climateData).where(eq(climateData.stationId, stationId));
+export async function findDailyAveragesByStation(stationId: string): Promise<DailyClimateAverage[]> {
+  const rows = await db
+    .select()
+    .from(climateDailyAverages)
+    .where(eq(climateDailyAverages.stationId, stationId))
+    .orderBy(climateDailyAverages.dayOfYear);
+
+  return rows.map((r) => ({
+    dayOfYear: r.dayOfYear,
+    avgMin: r.avgMin,
+    avgMax: r.avgMax,
+    avgMean: r.avgMean,
+  }));
 }
 
-export async function upsertClimateRecord(stationId: string, date: string, tempMin: number, tempMax: number) {
+export async function insertDailyAverages(
+  stationId: string,
+  averages: DailyClimateAverage[],
+) {
+  await db.insert(climateDailyAverages).values(
+    averages.map((a) => ({
+      stationId,
+      dayOfYear: a.dayOfYear,
+      avgMin: a.avgMin,
+      avgMax: a.avgMax,
+      avgMean: a.avgMean,
+    })),
+  );
+}
+
+export async function deleteDailyAveragesByStation(stationId: string) {
+  await db.delete(climateDailyAverages).where(eq(climateDailyAverages.stationId, stationId));
+}
+
+export async function updateStationClimate(
+  stationId: string,
+  data: {
+    dataYearsFrom: number;
+    dataYearsTo: number;
+    avgGdd: number;
+    avgFrostFreeDays: number;
+    lastFrostSpring: string | null;
+    firstFrostAutumn: string | null;
+  },
+) {
   await db
-    .insert(climateData)
-    .values({ stationId, date, tempMin, tempMax })
-    .onConflictDoUpdate({
-      target: [climateData.stationId, climateData.date],
-      set: { tempMin, tempMax, fetchedAt: new Date() },
-    });
-}
-
-// --- Derived Metrics ---
-
-export async function upsertDerivedMetrics(metrics: StationMetrics) {
-  const [saved] = await db
-    .insert(derivedMetrics)
-    .values(metrics)
-    .onConflictDoUpdate({
-      target: [derivedMetrics.stationId, derivedMetrics.year],
-      set: {
-        gddAccumulated: metrics.gddAccumulated,
-        lastFrostSpring: metrics.lastFrostSpring,
-        firstFrostAutumn: metrics.firstFrostAutumn,
-        frostFreeDays: metrics.frostFreeDays,
-      },
-    })
-    .returning();
-
-  return saved;
-}
-
-export async function findDerivedMetricsByStation(stationId: string) {
-  return db.select().from(derivedMetrics).where(eq(derivedMetrics.stationId, stationId));
+    .update(weatherStations)
+    .set({ ...data, lastFetchedAt: new Date() })
+    .where(eq(weatherStations.id, stationId));
 }
 
 // --- Locations ---
