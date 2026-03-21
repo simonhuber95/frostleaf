@@ -69,6 +69,18 @@ export async function searchPlants(query: string, includeExternal = false) {
   return local;
 }
 
+// --- Update plant properties ---
+
+export async function updatePlantProperties(plantId: string, data: Record<string, unknown>) {
+  const plant = await db.findPlantById(plantId);
+  if (!plant) return null;
+
+  const updated = await db.updatePlantProperties(plantId, data);
+  if (!updated) return null;
+
+  return { ...plant, properties: updated };
+}
+
 // --- Import from external source into our DB ---
 
 export async function importExternal(trefleId: number) {

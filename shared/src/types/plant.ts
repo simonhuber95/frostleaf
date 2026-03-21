@@ -53,6 +53,8 @@ export type ThermalDataSource = 'measured' | 'estimated' | 'inferred';
 
 export type ConfidenceLevel = 'high' | 'medium' | 'low';
 
+export type UpdatePlantPropertiesBody = Partial<Omit<PlantProperties, 'plantId' | 'lastEnrichedAt'>>;
+
 export type PlantViability = {
   plant: PlantWithProperties;
   viabilityScore: number; // 0-1

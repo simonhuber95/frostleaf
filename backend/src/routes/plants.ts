@@ -1,5 +1,6 @@
 import { Router, type Router as RouterType } from 'express';
-import { listPlants, getPlant, searchPlants, importExternal } from '../services/plants';
+import { listPlants, getPlant, searchPlants, importExternal, updatePlantProperties } from '../services/plants';
+import { requireAuth } from '../middleware/auth';
 
 export const plantsRouter: RouterType = Router();
 
@@ -40,6 +41,29 @@ plantsRouter.post('/import/:trefleId', async (req, res) => {
     const result = await importExternal(trefleId);
     if (!result) {
       res.status(404).json({ error: 'Plant not found on Trefle' });
+      return;
+    }
+    res.json(result);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    res.status(500).json({ error: message });
+  }
+});
+
+// PUT /api/plants/:id/properties — update plant properties (auth required)
+plantsRouter.put('/:id/properties', requireAuth, async (req, res) => {
+  const id = req.params.id as string;
+  const body = req.body;
+
+  if (!body || typeof body !== 'object') {
+    res.status(400).json({ error: 'Request body is required' });
+    return;
+  }
+
+  try {
+    const result = await updatePlantProperties(id, body);
+    if (!result) {
+      res.status(404).json({ error: 'Plant not found' });
       return;
     }
     res.json(result);

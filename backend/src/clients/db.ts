@@ -83,6 +83,16 @@ export async function upsertPlantProperties(data: typeof plantProperties.$inferI
   return result;
 }
 
+export async function updatePlantProperties(plantId: string, data: Record<string, unknown>) {
+  const [result] = await db
+    .update(plantProperties)
+    .set(data)
+    .where(eq(plantProperties.plantId, plantId))
+    .returning();
+
+  return result ?? null;
+}
+
 // --- Weather Stations ---
 
 export async function findAllStations() {

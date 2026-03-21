@@ -46,3 +46,7 @@ export function getPlant(id: string) {
 export function importPlant(trefleId: number) {
   return api.post<Plant>(`/api/plants/import/${trefleId}`);
 }
+
+export function updatePlantProperties(plantId: string, data: Partial<PlantProperties>) {
+  return api.put<Plant>(`/api/plants/${plantId}/properties`, data);
+}

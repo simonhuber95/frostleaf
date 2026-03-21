@@ -158,6 +158,10 @@
   - [ ] Role-based access (admin for now, community later)
 - [ ] Trefle data enrichment mapping
   - [ ] Map Trefle fields to Frostleaf-specific properties (sowing method, photoperiod, etc.)
+- [ ] Current year weather overlay
+  - [ ] Fetch ongoing year's temperature data from Frost API
+  - [ ] Show current year vs historical average on temperature chart
+  - [ ] Highlight deviations (warmer/colder than normal)
 
 ---
 
