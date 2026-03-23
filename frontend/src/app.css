@@ -75,6 +75,23 @@
   --radius: 0.625rem;
 }
 
+@keyframes shiver {
+  0%, 100% { transform: rotate(0deg); }
+  10% { transform: rotate(-2deg); }
+  20% { transform: rotate(2.5deg); }
+  30% { transform: rotate(-1.5deg); }
+  40% { transform: rotate(2deg); }
+  50% { transform: rotate(-2.5deg); }
+  60% { transform: rotate(1.5deg); }
+  70% { transform: rotate(-2deg); }
+  80% { transform: rotate(2deg); }
+  90% { transform: rotate(-1deg); }
+}
+
+@utility animate-shiver {
+  animation: shiver 5s ease-in-out infinite;
+}
+
 @layer base {
   * {
     @apply border-border;

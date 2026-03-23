@@ -1,11 +1,18 @@
 export type ThemeMode = 'light' | 'dark';
 
 // Fresh Greens palette
-const c1 = '#386641'; // dark green
-const c2 = '#6A994E'; // medium green
-const c3 = '#A7C957'; // light green
-const c4 = '#F2E8CF'; // warm cream
-const c5 = '#BC4749'; // red accent
+// const c1 = '#386641'; // dark green
+// const c2 = '#6A994E'; // medium green
+// const c3 = '#A7C957'; // light green
+// const c4 = '#F2E8CF'; // warm cream
+// const c5 = '#BC4749'; // red accent
+
+// Ice Blue palette
+const c1 = '#1B3A4B'; // deep frost navy
+const c2 = '#3A7CA5'; // steel blue
+const c3 = '#81C3D7'; // light ice blue
+const c4 = '#E8F1F2'; // frost white
+const c5 = '#C44536'; // warm red accent
 
 function getInitialMode(): ThemeMode {
   if (typeof window === 'undefined') return 'light';
@@ -82,28 +89,49 @@ function applyTheme() {
   root.classList.toggle('dark', mode === 'dark');
 
   if (mode === 'light') {
-    // Light: soft sage background, clean white cards, forest green primary
-    root.style.setProperty('--color-background', 'oklch(96.5% 0.008 160)');
+    // Light (Fresh Greens):
+    // root.style.setProperty('--color-background', 'oklch(96.5% 0.008 160)');
+    // root.style.setProperty('--color-foreground', mixHex(c1, -0.5));
+    // root.style.setProperty('--color-card', 'oklch(99.5% 0 0)');
+    // root.style.setProperty('--color-card-foreground', mixHex(c1, -0.5));
+    // root.style.setProperty('--color-popover', 'oklch(99.5% 0 0)');
+    // root.style.setProperty('--color-popover-foreground', mixHex(c1, -0.5));
+    // root.style.setProperty('--color-primary', hexToOklch(c1));
+    // root.style.setProperty('--color-primary-foreground', 'oklch(99% 0 0)');
+    // root.style.setProperty('--color-secondary', 'oklch(94% 0.015 155)');
+    // root.style.setProperty('--color-secondary-foreground', mixHex(c1, -0.4));
+    // root.style.setProperty('--color-muted', 'oklch(94% 0.01 155)');
+    // root.style.setProperty('--color-muted-foreground', mixHex(c1, 0.15));
+    // root.style.setProperty('--color-accent', 'oklch(92% 0.02 155)');
+    // root.style.setProperty('--color-accent-foreground', mixHex(c1, -0.4));
+    // root.style.setProperty('--color-destructive', hexToOklch(c5));
+    // root.style.setProperty('--color-destructive-foreground', 'oklch(99% 0 0)');
+    // root.style.setProperty('--color-border', 'oklch(90% 0.015 155)');
+    // root.style.setProperty('--color-input', 'oklch(90% 0.015 155)');
+    // root.style.setProperty('--color-ring', hexToOklch(c2));
+
+    // Light: frosty ice-blue background, clean white cards, deep frost primary
+    root.style.setProperty('--color-background', 'oklch(96.5% 0.008 220)');
     root.style.setProperty('--color-foreground', mixHex(c1, -0.5));
-    root.style.setProperty('--color-card', 'oklch(99.5% 0 0)'); // clean white
+    root.style.setProperty('--color-card', 'oklch(99.5% 0.002 220)'); // near-white with ice tint
     root.style.setProperty('--color-card-foreground', mixHex(c1, -0.5));
-    root.style.setProperty('--color-popover', 'oklch(99.5% 0 0)');
+    root.style.setProperty('--color-popover', 'oklch(99.5% 0.002 220)');
     root.style.setProperty('--color-popover-foreground', mixHex(c1, -0.5));
     root.style.setProperty('--color-primary', hexToOklch(c1));
     root.style.setProperty('--color-primary-foreground', 'oklch(99% 0 0)');
-    root.style.setProperty('--color-secondary', 'oklch(94% 0.015 155)');
+    root.style.setProperty('--color-secondary', 'oklch(94% 0.015 220)');
     root.style.setProperty('--color-secondary-foreground', mixHex(c1, -0.4));
-    root.style.setProperty('--color-muted', 'oklch(94% 0.01 155)');
+    root.style.setProperty('--color-muted', 'oklch(94% 0.01 220)');
     root.style.setProperty('--color-muted-foreground', mixHex(c1, 0.15));
-    root.style.setProperty('--color-accent', 'oklch(92% 0.02 155)');
+    root.style.setProperty('--color-accent', 'oklch(92% 0.02 220)');
     root.style.setProperty('--color-accent-foreground', mixHex(c1, -0.4));
     root.style.setProperty('--color-destructive', hexToOklch(c5));
     root.style.setProperty('--color-destructive-foreground', 'oklch(99% 0 0)');
-    root.style.setProperty('--color-border', 'oklch(90% 0.015 155)');
-    root.style.setProperty('--color-input', 'oklch(90% 0.015 155)');
+    root.style.setProperty('--color-border', 'oklch(90% 0.015 220)');
+    root.style.setProperty('--color-input', 'oklch(90% 0.015 220)');
     root.style.setProperty('--color-ring', hexToOklch(c2));
   } else {
-    // Dark: deep green bg, lighter green accents
+    // Dark: deep frost navy bg, lighter ice-blue accents
     root.style.setProperty('--color-background', mixHex(c1, -0.8));
     root.style.setProperty('--color-foreground', mixHex(c4, 0.1));
     root.style.setProperty('--color-card', mixHex(c1, -0.7));

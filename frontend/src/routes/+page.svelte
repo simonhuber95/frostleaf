@@ -6,6 +6,7 @@
   import MapPin from '@lucide/svelte/icons/map-pin';
   import Loader from '@lucide/svelte/icons/loader';
   import Radio from '@lucide/svelte/icons/radio';
+  import FrostleafLogo from '$lib/components/FrostleafLogo.svelte';
 
   let query = $state('');
   let locationType = $state<'address' | 'municipality' | 'coordinates'>('municipality');
@@ -81,9 +82,14 @@
   }
 </script>
 
-<div class="flex flex-col items-center justify-center gap-8 pt-24">
+<div class="flex flex-col items-center justify-center gap-8 pt-6">
   <div class="text-center">
-    <h1 class="text-5xl font-bold tracking-tight">Frostleaf</h1>
+      <h1 class="flex items-center justify-center gap-3 text-5xl font-bold tracking-tight text-primary pb-6">
+      <FrostleafLogo class="h-24 w-24 text-primary animate-shiver" />
+    </h1>
+    <h1 class="flex items-center justify-center gap-3 text-5xl font-bold tracking-tight text-primary">
+      Frostleaf
+    </h1>
     <p class="mt-3 text-lg text-muted-foreground">
       Find out which plants thrive in your Norwegian garden
     </p>

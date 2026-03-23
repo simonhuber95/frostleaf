@@ -10,6 +10,7 @@
   import X from '@lucide/svelte/icons/x';
   import User from '@lucide/svelte/icons/user';
   import LogOut from '@lucide/svelte/icons/log-out';
+  import FrostleafLogo from '$lib/components/FrostleafLogo.svelte';
   import '../app.css';
 
   let { children } = $props();
@@ -34,7 +35,10 @@
   <header class="border-b bg-card/50 backdrop-blur-sm">
     <nav class="container mx-auto flex h-14 items-center justify-between px-4 sm:px-6 lg:px-16">
       <div class="flex items-center gap-6">
-        <a href="/" class="text-lg font-semibold tracking-tight text-primary">Frostleaf</a>
+        <a href="/" class="flex items-center gap-2 text-lg font-semibold tracking-tight text-primary">
+          <FrostleafLogo class="h-10 w-10 text-sky-300" />
+          Frostleaf
+        </a>
         <div class="flex gap-4 text-sm text-muted-foreground">
           <a href="/plants" class="hover:text-foreground transition-colors">Plants</a>
           <a href="/garden" class="hover:text-foreground transition-colors">My Garden</a>

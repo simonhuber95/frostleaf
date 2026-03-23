@@ -158,6 +158,9 @@
   - [ ] Role-based access (admin for now, community later)
 - [ ] Trefle data enrichment mapping
   - [ ] Map Trefle fields to Frostleaf-specific properties (sowing method, photoperiod, etc.)
+- [ ] Persist user default location
+  - [ ] Save selected location to user profile on the server
+  - [ ] Auto-populate location on login (no re-entry needed)
 - [ ] Current year weather overlay
   - [ ] Fetch ongoing year's temperature data from Frost API
   - [ ] Show current year vs historical average on temperature chart
